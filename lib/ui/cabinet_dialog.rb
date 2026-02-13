@@ -47,12 +47,6 @@ def save_cabinet(raw_params)
       filling = params['filling']
       shelf_count = params['shelf_count'].to_i
 
-      puts "shelf_count"
-
-      puts "params['shelf_count']"
-      puts params['shelf_count']
-
-
       model = Sketchup.active_model
       model.start_operation('Create / Update Cabinet', true)
 

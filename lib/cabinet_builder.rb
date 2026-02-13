@@ -134,8 +134,6 @@ def initialize(width, height, depth, panel_thickness, back_thickness, color = Ca
       @filling = filling
       @shelf_count = shelf_count
 
-      puts "shelf_countttt"
-      puts @shelf_count
     end
 
     def draw_bottom_panel
