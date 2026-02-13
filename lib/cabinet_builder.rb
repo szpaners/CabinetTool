@@ -19,6 +19,101 @@ module CabinetBuilder
     end
   end
 
+  class BottomPanel
+    attr_reader :group, :face
+
+    def initialize(entities, material, thickness)
+      @group = entities.add_group
+      @group.name = "Bottom Panel"
+      @group.material = material
+      @thickness = thickness
+    end
+
+    def create_face(points)
+      @face = @group.entities.add_face(points)
+    end
+
+    def pushpull(distance)
+      @face.pushpull(distance)
+    end
+  end
+
+  class TopPanel
+    attr_reader :group, :face
+
+    def initialize(entities, material, thickness)
+      @group = entities.add_group
+      @group.name = "Top Panel"
+      @group.material = material
+      @thickness = thickness
+    end
+
+    def create_face(points)
+      @face = @group.entities.add_face(points)
+    end
+
+    def pushpull(distance)
+      @face.pushpull(distance)
+    end
+  end
+
+  class LeftPanel
+    attr_reader :group, :face
+
+    def initialize(entities, material, thickness)
+      @group = entities.add_group
+      @group.name = "Left Panel"
+      @group.material = material
+      @thickness = thickness
+    end
+
+    def create_face(points)
+      @face = @group.entities.add_face(points)
+    end
+
+    def pushpull(distance)
+      @face.pushpull(distance)
+    end
+  end
+
+  class RightPanel
+    attr_reader :group, :face
+
+    def initialize(entities, material, thickness)
+      @group = entities.add_group
+      @group.name = "Right Panel"
+      @group.material = material
+      @thickness = thickness
+    end
+
+    def create_face(points)
+      @face = @group.entities.add_face(points)
+    end
+
+    def pushpull(distance)
+      @face.pushpull(distance)
+    end
+  end
+
+  class BackPanel
+    attr_reader :group, :face
+
+    def initialize(entities, material, thickness)
+      @group = entities.add_group
+      @group.name = "Back Panel"
+      @group.material = material
+      @thickness = thickness
+    end
+
+    def create_face(points)
+      @face = @group.entities.add_face(points)
+    end
+
+    def pushpull(distance)
+      @face.pushpull(distance)
+    end
+  end
+
   class Cabinet
     attr_reader :group, :entities
 
@@ -51,7 +146,7 @@ module CabinetBuilder
         [bottom_x4, bottom_y4, bottom_z4]
       ]
 
-      bottom_panel = Panel.new(@cabinet_entities, "Bottom Panel", Sketchup::Color.new(139, 90, 43), CabinetDimensions::PANEL_THICKNESS)
+      bottom_panel = BottomPanel.new(@cabinet_entities, Sketchup::Color.new(139, 90, 43), CabinetDimensions::PANEL_THICKNESS)
       bottom_panel.create_face(bottom_rectangle)
       bottom_panel.pushpull(-CabinetDimensions::PANEL_THICKNESS)
     end
@@ -78,7 +173,7 @@ module CabinetBuilder
         [top_x4, top_y4, top_z4]
       ]
 
-      top_panel = Panel.new(@cabinet_entities, "Top Panel", Sketchup::Color.new(139, 90, 43), CabinetDimensions::PANEL_THICKNESS)
+      top_panel = TopPanel.new(@cabinet_entities, Sketchup::Color.new(139, 90, 43), CabinetDimensions::PANEL_THICKNESS)
       top_panel.create_face(top_rectangle)
       top_panel.pushpull(CabinetDimensions::PANEL_THICKNESS)
     end
@@ -105,7 +200,7 @@ module CabinetBuilder
         [left_x4, left_y4, left_z4]
       ]
 
-      left_panel = Panel.new(@cabinet_entities, "Left Panel", Sketchup::Color.new(139, 90, 43), CabinetDimensions::PANEL_THICKNESS)
+      left_panel = LeftPanel.new(@cabinet_entities, Sketchup::Color.new(139, 90, 43), CabinetDimensions::PANEL_THICKNESS)
       left_panel.create_face(left_rectangle)
       left_panel.pushpull(CabinetDimensions::PANEL_THICKNESS)
     end
@@ -132,7 +227,7 @@ module CabinetBuilder
         [right_x4, right_y4, right_z4]
       ]
 
-      right_panel = Panel.new(@cabinet_entities, "Right Panel", Sketchup::Color.new(139, 90, 43), CabinetDimensions::PANEL_THICKNESS)
+      right_panel = RightPanel.new(@cabinet_entities, Sketchup::Color.new(139, 90, 43), CabinetDimensions::PANEL_THICKNESS)
       right_panel.create_face(right_rectangle)
       right_panel.pushpull(CabinetDimensions::PANEL_THICKNESS)
     end
@@ -152,7 +247,7 @@ module CabinetBuilder
         [back_x1, back_y, back_z2]
       ]
 
-      back_panel = Panel.new(@cabinet_entities, "Back Panel", Sketchup::Color.new(139, 90, 43), CabinetDimensions::PANEL_THICKNESS_BACK)
+      back_panel = BackPanel.new(@cabinet_entities, Sketchup::Color.new(139, 90, 43), CabinetDimensions::PANEL_THICKNESS_BACK)
       back_panel.create_face(back_rectangle)
       back_panel.pushpull(CabinetDimensions::PANEL_THICKNESS_BACK)
     end
@@ -166,10 +261,10 @@ module CabinetBuilder
 
       puts "Kitchen cabinet created successfully!"
     end
-  end
 
-  def self.draw_cabinet
-    cabinet = Cabinet.new
-    cabinet.draw_cabinet
+    def self.draw_cabinet
+      cabinet = Cabinet.new
+      cabinet.draw_cabinet
+    end
   end
 end
