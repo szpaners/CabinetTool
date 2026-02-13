@@ -43,9 +43,6 @@ module CabinetDialog
       depth = params['depth'].to_f.mm
       panel_thickness = params['panel_thickness'].to_f.mm
       back_thickness = params['back_thickness'].to_f.mm
-      material = params['material']
-      back_offset = params['back_offset'].to_f.mm
-      panel_gap = params['panel_gap'].to_f.mm
       color = params['color']
 
       model = Sketchup.active_model
@@ -57,10 +54,10 @@ module CabinetDialog
           transformation = @edit_target.transformation
           @edit_target.erase!
 
-          new_group = CabinetBuilder::Cabinet.new(width, height, depth, panel_thickness, back_thickness, material, back_offset, panel_gap, color).draw_cabinet
+          new_group = CabinetBuilder::Cabinet.new(width, height, depth, panel_thickness, back_thickness, color).draw_cabinet
           new_group.transformation = transformation if new_group
         else
-          new_group = CabinetBuilder::Cabinet.new(width, height, depth, panel_thickness, back_thickness, material, back_offset, panel_gap, color).draw_cabinet
+          new_group = CabinetBuilder::Cabinet.new(width, height, depth, panel_thickness, back_thickness, color).draw_cabinet
         end
 
         model.commit_operation

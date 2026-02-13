@@ -107,26 +107,10 @@
       <label for="back_thickness">Grubość tylnej ścianki (mm):</label>
       <input type="number" id="back_thickness" value="3">
     </div>
-    <div class="form-group">
-      <label for="material">Materiał:</label>
-      <select id="material">
-        <option value="wood">Dąb</option>
-        <option value="laminate">Laminat</option>
-        <option value="mdf">MDF</option>
-      </select>
-    </div>
   </div>
 
   <div id="advanced" class="tab-content">
     <h3>Ustawienia zaawansowane</h3>
-    <div class="form-group">
-      <label for="back_offset">Offset tylnej ścianki (mm):</label>
-      <input type="number" id="back_offset" value="0">
-    </div>
-    <div class="form-group">
-      <label for="panel_gap">Odstęp między panelami (mm):</label>
-      <input type="number" id="panel_gap" value="0">
-    </div>
     <div class="form-group">
       <label for="color">Kolor:</label>
       <input type="color" id="color" value="#8B5A2B">
@@ -164,9 +148,6 @@ function setFormData(params) {
       document.getElementById('depth').value = params.depth;
       document.getElementById('panel_thickness').value = params.panel_thickness;
       document.getElementById('back_thickness').value = params.back_thickness;
-      document.getElementById('material').value = params.material;
-      document.getElementById('back_offset').value = params.back_offset;
-      document.getElementById('panel_gap').value = params.panel_gap;
       document.getElementById('color').value = params.color;
     }
 
@@ -178,9 +159,6 @@ function saveCabinet() {
         depth: document.getElementById('depth').value,
         panel_thickness: document.getElementById('panel_thickness').value,
         back_thickness: document.getElementById('back_thickness').value,
-        material: document.getElementById('material').value,
-        back_offset: document.getElementById('back_offset').value,
-        panel_gap: document.getElementById('panel_gap').value,
         color: document.getElementById('color').value
       };
       window.sketchup.saveCabinet(JSON.stringify(params));

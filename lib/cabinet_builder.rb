@@ -119,7 +119,7 @@ module CabinetBuilder
 
     attr_reader :group, :entities
 
-    def initialize(width, height, depth, panel_thickness, back_thickness, material = CabinetDimensions::DEFAULT_MATERIAL, back_offset = CabinetDimensions::DEFAULT_BACK_OFFSET, panel_gap = CabinetDimensions::DEFAULT_PANEL_GAP, color = CabinetDimensions::DEFAULT_COLOR)
+    def initialize(width, height, depth, panel_thickness, back_thickness, color = CabinetDimensions::DEFAULT_COLOR)
       @model = Sketchup.active_model
       @entities = @model.active_entities
       @group = @entities.add_group
@@ -129,9 +129,6 @@ module CabinetBuilder
       @depth = depth.to_f
       @panel_thickness = panel_thickness.to_f
       @back_thickness = back_thickness.to_f
-      @material = material
-      @back_offset = back_offset.to_f
-      @panel_gap = panel_gap.to_f
       @color = color
       @material_color = Sketchup::Color.new(color)
     end
@@ -170,10 +167,10 @@ module CabinetBuilder
       top_y2 = 0
       top_z2 = @height - @panel_thickness
       top_x3 = @width
-      top_y3 = @depth - @back_thickness - @back_offset
+      top_y3 = @depth - @back_thickness
       top_z3 = @height - @panel_thickness
       top_x4 = 0
-      top_y4 = @depth - @back_thickness - @back_offset
+      top_y4 = @depth - @back_thickness
       top_z4 = @height - @panel_thickness
 
       top_rectangle = [
@@ -189,18 +186,18 @@ module CabinetBuilder
     end
 
     def draw_left_panel
-      left_x1 = @panel_thickness + @panel_gap
+      left_x1 = @panel_thickness
       left_y1 = 0
-      left_z1 = @panel_thickness + @panel_gap
-      left_x2 = @panel_thickness + @panel_gap
+      left_z1 = @panel_thickness
+      left_x2 = @panel_thickness
       left_y2 = 0
-      left_z2 = @height - @panel_thickness - @panel_gap
-      left_x3 = @panel_thickness + @panel_gap
-      left_y3 = @depth - @back_thickness - @back_offset
-      left_z3 = @height - @panel_thickness - @panel_gap
-      left_x4 = @panel_thickness + @panel_gap
-      left_y4 = @depth - @back_thickness - @back_offset
-      left_z4 = @panel_thickness + @panel_gap
+      left_z2 = @height - @panel_thickness
+      left_x3 = @panel_thickness
+      left_y3 = @depth - @back_thickness
+      left_z3 = @height - @panel_thickness
+      left_x4 = @panel_thickness
+      left_y4 = @depth - @back_thickness
+      left_z4 = @panel_thickness
 
       left_rectangle = [
         [left_x1, left_y1, left_z1],
@@ -215,18 +212,18 @@ module CabinetBuilder
     end
 
     def draw_right_panel
-      right_x1 = @width - @panel_gap
+      right_x1 = @width
       right_y1 = 0
-      right_z1 = @panel_thickness + @panel_gap
-      right_x2 = @width - @panel_gap
+      right_z1 = @panel_thickness
+      right_x2 = @width
       right_y2 = 0
-      right_z2 = @height - @panel_thickness - @panel_gap
-      right_x3 = @width - @panel_gap
-      right_y3 = @depth - @back_thickness - @back_offset
-      right_z3 = @height - @panel_thickness - @panel_gap
-      right_x4 = @width - @panel_gap
-      right_y4 = @depth - @back_thickness - @back_offset
-      right_z4 = @panel_thickness + @panel_gap
+      right_z2 = @height - @panel_thickness
+      right_x3 = @width
+      right_y3 = @depth - @back_thickness
+      right_z3 = @height - @panel_thickness
+      right_x4 = @width
+      right_y4 = @depth - @back_thickness
+      right_z4 = @panel_thickness
 
       right_rectangle = [
         [right_x1, right_y1, right_z1],
@@ -241,11 +238,11 @@ module CabinetBuilder
     end
 
     def draw_back_panel
-      back_x1 = @panel_gap
-      back_x2 = @width - @panel_gap
-      back_y = @depth - @back_offset
-      back_z1 = @panel_gap
-      back_z2 = @height - @panel_gap
+      back_x1 = 0
+      back_x2 = @width
+      back_y = @depth
+      back_z1 = 0
+      back_z2 = @height
 
       back_rectangle = [
         [back_x1, back_y, back_z1],
@@ -277,12 +274,9 @@ module CabinetBuilder
       depth = params['depth'] || CabinetDimensions::CABINET_DEPTH
       panel_thickness = params['panel_thickness'] || CabinetDimensions::PANEL_THICKNESS
       back_thickness = params['back_thickness'] || CabinetDimensions::PANEL_THICKNESS_BACK
-      material = params['material'] || CabinetDimensions::DEFAULT_MATERIAL
-      back_offset = params['back_offset'] || CabinetDimensions::DEFAULT_BACK_OFFSET
-      panel_gap = params['panel_gap'] || CabinetDimensions::DEFAULT_PANEL_GAP
       color = params['color'] || CabinetDimensions::DEFAULT_COLOR
 
-      cabinet = Cabinet.new(width, height, depth, panel_thickness, back_thickness, material, back_offset, panel_gap, color)
+      cabinet = Cabinet.new(width, height, depth, panel_thickness, back_thickness, color)
       cabinet.draw_cabinet
     end
 
@@ -295,9 +289,6 @@ module CabinetBuilder
         'depth' => group.get_attribute(CABINET_DICT, 'depth_mm', CabinetDimensions::CABINET_DEPTH.to_mm),
         'panel_thickness' => group.get_attribute(CABINET_DICT, 'panel_thickness_mm', CabinetDimensions::PANEL_THICKNESS.to_mm),
         'back_thickness' => group.get_attribute(CABINET_DICT, 'back_thickness_mm', CabinetDimensions::PANEL_THICKNESS_BACK.to_mm),
-        'material' => group.get_attribute(CABINET_DICT, 'material', CabinetDimensions::DEFAULT_MATERIAL),
-        'back_offset' => group.get_attribute(CABINET_DICT, 'back_offset_mm', CabinetDimensions::DEFAULT_BACK_OFFSET.to_mm),
-        'panel_gap' => group.get_attribute(CABINET_DICT, 'panel_gap_mm', CabinetDimensions::DEFAULT_PANEL_GAP.to_mm),
         'color' => group.get_attribute(CABINET_DICT, 'color', CabinetDimensions::DEFAULT_COLOR)
       }
     end
@@ -336,9 +327,6 @@ module CabinetBuilder
       @group.set_attribute(CABINET_DICT, 'depth_mm', @depth.to_l.to_mm)
       @group.set_attribute(CABINET_DICT, 'panel_thickness_mm', @panel_thickness.to_l.to_mm)
       @group.set_attribute(CABINET_DICT, 'back_thickness_mm', @back_thickness.to_l.to_mm)
-      @group.set_attribute(CABINET_DICT, 'material', @material)
-      @group.set_attribute(CABINET_DICT, 'back_offset_mm', @back_offset.to_l.to_mm)
-      @group.set_attribute(CABINET_DICT, 'panel_gap_mm', @panel_gap.to_l.to_mm)
       @group.set_attribute(CABINET_DICT, 'color', @color)
     end
   end
