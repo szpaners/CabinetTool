@@ -119,7 +119,7 @@ module CabinetBuilder
 
     attr_reader :group, :entities
 
-    def initialize(width, height, depth, panel_thickness, back_thickness, color = CabinetDimensions::DEFAULT_COLOR)
+def initialize(width, height, depth, panel_thickness, back_thickness, color = CabinetDimensions::DEFAULT_COLOR, filling = 'none', shelf_count = 0)
       @model = Sketchup.active_model
       @entities = @model.active_entities
       @group = @entities.add_group
@@ -131,6 +131,8 @@ module CabinetBuilder
       @back_thickness = back_thickness.to_f
       @color = color
       @material_color = Sketchup::Color.new(color)
+      @filling = filling
+      @shelf_count = shelf_count
     end
 
     def draw_bottom_panel
@@ -268,19 +270,21 @@ module CabinetBuilder
       @group
     end
 
-    def self.draw_cabinet(params = {})
+def self.draw_cabinet(params = {})
       width = params['width'] || CabinetDimensions::CABINET_WIDTH
       height = params['height'] || CabinetDimensions::CABINET_HEIGHT
       depth = params['depth'] || CabinetDimensions::CABINET_DEPTH
       panel_thickness = params['panel_thickness'] || CabinetDimensions::PANEL_THICKNESS
       back_thickness = params['back_thickness'] || CabinetDimensions::PANEL_THICKNESS_BACK
       color = params['color'] || CabinetDimensions::DEFAULT_COLOR
+      filling = params['filling'] || 'none'
+      shelf_count = params['shelf_count'] || 0
 
-      cabinet = Cabinet.new(width, height, depth, panel_thickness, back_thickness, color)
+cabinet = Cabinet.new(width, height, depth, panel_thickness, back_thickness, color, filling, shelf_count)
       cabinet.draw_cabinet
     end
 
-    def self.read_params_from_group(group)
+def self.read_params_from_group(group)
       return nil unless group
 
       {
@@ -289,7 +293,9 @@ module CabinetBuilder
         'depth' => group.get_attribute(CABINET_DICT, 'depth_mm', CabinetDimensions::CABINET_DEPTH.to_mm),
         'panel_thickness' => group.get_attribute(CABINET_DICT, 'panel_thickness_mm', CabinetDimensions::PANEL_THICKNESS.to_mm),
         'back_thickness' => group.get_attribute(CABINET_DICT, 'back_thickness_mm', CabinetDimensions::PANEL_THICKNESS_BACK.to_mm),
-        'color' => group.get_attribute(CABINET_DICT, 'color', CabinetDimensions::DEFAULT_COLOR)
+        'color' => group.get_attribute(CABINET_DICT, 'color', CabinetDimensions::DEFAULT_COLOR),
+        'filling' => group.get_attribute(CABINET_DICT, 'filling', 'none'),
+        'shelf_count' => group.get_attribute(CABINET_DICT, 'shelf_count', 0)
       }
     end
 
@@ -320,7 +326,7 @@ module CabinetBuilder
 
     private
 
-    def save_metadata
+def save_metadata
       @group.set_attribute(CABINET_DICT, 'is_cabinet', true)
       @group.set_attribute(CABINET_DICT, 'width_mm', @width.to_l.to_mm)
       @group.set_attribute(CABINET_DICT, 'height_mm', @height.to_l.to_mm)
@@ -328,6 +334,8 @@ module CabinetBuilder
       @group.set_attribute(CABINET_DICT, 'panel_thickness_mm', @panel_thickness.to_l.to_mm)
       @group.set_attribute(CABINET_DICT, 'back_thickness_mm', @back_thickness.to_l.to_mm)
       @group.set_attribute(CABINET_DICT, 'color', @color)
+      @group.set_attribute(CABINET_DICT, 'filling', @filling)
+      @group.set_attribute(CABINET_DICT, 'shelf_count', @shelf_count)
     end
   end
 end

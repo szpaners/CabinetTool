@@ -158,14 +158,30 @@
         </div>
       </div>
     </div>
+
+    <div class="section">
+      <h3 class="section-title">Wypełnienie</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="filling">Wypełnienie:</label>
+          <select id="filling">
+            <option value="none">Brak</option>
+            <option value="shelves">Półki</option>
+          </select>
+        </div>
+        <div class="form-group" id="shelf-count-group" style="display: none;">
+          <label for="shelf_count">Ilość półek:</label>
+          <input type="number" id="shelf_count" value="1" min="1">
+        </div>
+      </div>
+    </div>
   </div>
 
   <div id="materials" class="tab-content">
     <p class="placeholder">Ta zakładka jest obecnie pusta.</p>
   </div>
 
-  <div id="advanced" class="tab-content">
-    <p class="placeholder">Ta zakładka jest obecnie pusta.</p>
+<div id="advanced" class="tab-content">
   </div>
 
   <div class="button-group">
@@ -206,10 +222,24 @@ function saveCabinet() {
         depth: document.getElementById('depth').value,
         panel_thickness: document.getElementById('panel_thickness').value,
         back_thickness: document.getElementById('back_thickness').value,
-        color: document.getElementById('color').value
+        color: document.getElementById('color').value,
+        filling: document.getElementById('filling').value,
+        shelf_count: document.getElementById('shelf_count').value
       };
       window.sketchup.saveCabinet(JSON.stringify(params));
     }
+
+function updateFillingOptions() {
+      const filling = document.getElementById('filling').value;
+      const shelfCountGroup = document.getElementById('shelf-count-group');
+      if (filling === 'shelves') {
+        shelfCountGroup.style.display = 'block';
+      } else {
+        shelfCountGroup.style.display = 'none';
+      }
+    }
+
+document.getElementById('filling').addEventListener('change', updateFillingOptions);
 
 function closeDialog() {
       console.log('closeDialog called');
