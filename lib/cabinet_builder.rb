@@ -262,14 +262,17 @@ def draw_back_panel
     end
 
 def draw_shelves
-      puts @shelf_count
       return if @shelf_count <= 0
 
-      available_height = @height - 2 * @panel_thickness
-      shelf_height = available_height / (@shelf_count + 1)
+      internal_height = @height - (2 * @panel_thickness)
+      total_shelves_thickness = @shelf_count * @panel_thickness
+      free_openings_height = internal_height - total_shelves_thickness
+      opening_height = free_openings_height / (@shelf_count + 1)
+
+      return if opening_height < 0
 
       (@shelf_count).times do |i|
-        shelf_z = (@panel_thickness / 2 ) + (i + 1) * shelf_height
+        shelf_z = @panel_thickness + ((i + 1) * opening_height) + (i * @panel_thickness)
 
         shelf_x1 = @panel_thickness
         shelf_y1 = 0
