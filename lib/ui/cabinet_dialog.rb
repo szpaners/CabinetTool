@@ -47,6 +47,12 @@ def save_cabinet(raw_params)
       filling = params['filling']
       shelf_count = params['shelf_count'].to_i
 
+      puts "shelf_count"
+
+      puts "params['shelf_count']"
+      puts params['shelf_count']
+
+
       model = Sketchup.active_model
       model.start_operation('Create / Update Cabinet', true)
 
@@ -56,10 +62,10 @@ def save_cabinet(raw_params)
           transformation = @edit_target.transformation
           @edit_target.erase!
 
-new_group = CabinetBuilder::Cabinet.new(width, height, depth, panel_thickness, back_thickness, color, filling, shelf_count).draw_cabinet
+          new_group = CabinetBuilder::Cabinet.new(width, height, depth, panel_thickness, back_thickness, color, filling, shelf_count).draw_cabinet
           new_group.transformation = transformation if new_group
         else
-          new_group = CabinetBuilder::Cabinet.new(width, height, depth, panel_thickness, back_thickness, color).draw_cabinet
+          new_group = CabinetBuilder::Cabinet.new(width, height, depth, panel_thickness, back_thickness, color, filling, shelf_count).draw_cabinet
         end
 
         model.commit_operation

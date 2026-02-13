@@ -133,6 +133,9 @@ def initialize(width, height, depth, panel_thickness, back_thickness, color = Ca
       @material_color = Sketchup::Color.new(color)
       @filling = filling
       @shelf_count = shelf_count
+
+      puts "shelf_countttt"
+      puts @shelf_count
     end
 
     def draw_bottom_panel
@@ -239,7 +242,7 @@ def initialize(width, height, depth, panel_thickness, back_thickness, color = Ca
       right_panel.pushpull(@panel_thickness)
     end
 
-    def draw_back_panel
+def draw_back_panel
       back_x1 = 0
       back_x2 = @width
       back_y = @depth
@@ -258,12 +261,49 @@ def initialize(width, height, depth, panel_thickness, back_thickness, color = Ca
       back_panel.pushpull(@back_thickness)
     end
 
-    def draw_cabinet
+def draw_shelves
+      puts @shelf_count
+      return if @shelf_count <= 0
+
+      available_height = @height - 2 * @panel_thickness
+      shelf_height = available_height / (@shelf_count + 1)
+
+      (@shelf_count).times do |i|
+        shelf_z = (@panel_thickness / 2 ) + (i + 1) * shelf_height
+
+        shelf_x1 = @panel_thickness
+        shelf_y1 = 0
+        shelf_z1 = shelf_z
+        shelf_x2 = @width - @panel_thickness
+        shelf_y2 = 0
+        shelf_z2 = shelf_z
+        shelf_x3 = @width - @panel_thickness
+        shelf_y3 = @depth - @back_thickness
+        shelf_z3 = shelf_z
+        shelf_x4 = @panel_thickness
+        shelf_y4 = @depth - @back_thickness
+        shelf_z4 = shelf_z
+
+        shelf_rectangle = [
+          [shelf_x1, shelf_y1, shelf_z1],
+          [shelf_x2, shelf_y2, shelf_z2],
+          [shelf_x3, shelf_y3, shelf_z3],
+          [shelf_x4, shelf_y4, shelf_z4]
+        ]
+
+        shelf_panel = Panel.new(@cabinet_entities, "Shelf #{i + 1}", @material_color, @panel_thickness)
+        shelf_panel.create_face(shelf_rectangle)
+        shelf_panel.pushpull(@panel_thickness)
+      end
+    end
+
+def draw_cabinet
       draw_bottom_panel
       draw_top_panel
       draw_left_panel
       draw_right_panel
       draw_back_panel
+      draw_shelves
       save_metadata
 
       puts 'Kitchen cabinet created successfully!'
