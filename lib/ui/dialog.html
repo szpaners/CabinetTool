@@ -6,20 +6,23 @@
   <style>
     body {
       font-family: Arial, sans-serif;
+      font-size: 13px;
       margin: 0;
-      padding: 10px;
+      padding: 8px;
+      background: #fafafa;
     }
     .tabs {
       display: flex;
       border-bottom: 1px solid #ccc;
+      gap: 4px;
     }
     .tab {
-      padding: 10px 20px;
+      padding: 7px 14px;
+      font-size: 12px;
       cursor: pointer;
       border: 1px solid #ccc;
       border-bottom: none;
-      background-color: #f9f9f9;
-      margin-right: 5px;
+      background-color: #f2f2f2;
       border-radius: 5px 5px 0 0;
     }
     .tab.active {
@@ -28,35 +31,67 @@
     }
     .tab-content {
       display: none;
-      padding: 20px;
+      padding: 14px;
       background-color: white;
       border: 1px solid #ccc;
       border-top: none;
+      min-height: 250px;
     }
     .tab-content.active {
       display: block;
     }
+    .section {
+      margin-bottom: 12px;
+      padding: 10px;
+      border: 1px solid #e2e2e2;
+      border-radius: 6px;
+      background: #fcfcfc;
+    }
+    .section-title {
+      margin: 0 0 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #444;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px 10px;
+    }
     .form-group {
-      margin-bottom: 15px;
+      margin-bottom: 0;
     }
     label {
       display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
+      margin-bottom: 3px;
+      font-weight: 600;
+      font-size: 12px;
     }
-    input[type="number"] {
+    input[type="number"],
+    input[type="color"] {
       width: 100%;
-      padding: 8px;
+      box-sizing: border-box;
+      padding: 5px 6px;
       border: 1px solid #ccc;
       border-radius: 4px;
+      font-size: 12px;
+      height: 30px;
+    }
+    .placeholder {
+      color: #888;
+      font-size: 12px;
+      font-style: italic;
     }
     .button-group {
       display: flex;
-      gap: 10px;
-      margin-top: 20px;
+      gap: 8px;
+      margin-top: 12px;
     }
     button {
-      padding: 10px 20px;
+      padding: 8px 12px;
+      font-size: 12px;
       background-color: #007bff;
       color: white;
       border: none;
@@ -76,45 +111,61 @@
 </head>
 <body>
   <div class="tabs">
-<div class="tab active" onclick="switchTab(this, 'dimensions')">Wymiary</div>
+    <div class="tab active" onclick="switchTab(this, 'dimensions')">Dolna</div>
     <div class="tab" onclick="switchTab(this, 'materials')">Materiały</div>
     <div class="tab" onclick="switchTab(this, 'advanced')">Zaawansowane</div>
   </div>
 
   <div id="dimensions" class="tab-content active">
-    <h3>Wymiary szafki</h3>
-    <div class="form-group">
-      <label for="width">Szerokość (mm):</label>
-      <input type="number" id="width" value="600">
+    <div class="section">
+      <h3 class="section-title">Wymiary korpusu</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="width">Szerokość (mm):</label>
+          <input type="number" id="width" value="600">
+        </div>
+        <div class="form-group">
+          <label for="height">Wysokość (mm):</label>
+          <input type="number" id="height" value="800">
+        </div>
+        <div class="form-group">
+          <label for="depth">Głębokość (mm):</label>
+          <input type="number" id="depth" value="300">
+        </div>
+      </div>
     </div>
-    <div class="form-group">
-      <label for="height">Wysokość (mm):</label>
-      <input type="number" id="height" value="800">
+
+    <div class="section">
+      <h3 class="section-title">Grubości paneli</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="panel_thickness">Grubość panelów (mm):</label>
+          <input type="number" id="panel_thickness" value="18">
+        </div>
+        <div class="form-group">
+          <label for="back_thickness">Grubość tylnej ścianki (mm):</label>
+          <input type="number" id="back_thickness" value="3">
+        </div>
+      </div>
     </div>
-    <div class="form-group">
-      <label for="depth">Głębokość (mm):</label>
-      <input type="number" id="depth" value="300">
+
+    <div class="section">
+      <h3 class="section-title">Wygląd</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="color">Kolor:</label>
+          <input type="color" id="color" value="#8B5A2B">
+        </div>
+      </div>
     </div>
   </div>
 
   <div id="materials" class="tab-content">
-    <h3>Materiały</h3>
-    <div class="form-group">
-      <label for="panel_thickness">Grubość panelów (mm):</label>
-      <input type="number" id="panel_thickness" value="18">
-    </div>
-    <div class="form-group">
-      <label for="back_thickness">Grubość tylnej ścianki (mm):</label>
-      <input type="number" id="back_thickness" value="3">
-    </div>
+    <p class="placeholder">Ta zakładka jest obecnie pusta.</p>
   </div>
 
   <div id="advanced" class="tab-content">
-    <h3>Ustawienia zaawansowane</h3>
-    <div class="form-group">
-      <label for="color">Kolor:</label>
-      <input type="color" id="color" value="#8B5A2B">
-    </div>
+    <p class="placeholder">Ta zakładka jest obecnie pusta.</p>
   </div>
 
   <div class="button-group">
@@ -125,17 +176,13 @@
 <script>
 function switchTab(element, tabName) {
       console.log('switchTab called with:', element, tabName);
-      // Ukryj wszystkie zakładki
       document.querySelectorAll('.tab-content').forEach(tab => {
         tab.classList.remove('active');
       });
-      // Ukryj wszystkie przyciski zakładek
       document.querySelectorAll('.tab').forEach(tab => {
         tab.classList.remove('active');
       });
-      // Pokaż wybraną zakładkę
       document.getElementById(tabName).classList.add('active');
-      // Aktywuj przycisk zakładki
       element.classList.add('active');
     }
 
