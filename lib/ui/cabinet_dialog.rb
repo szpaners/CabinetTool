@@ -1,54 +1,73 @@
+require 'json'
+
 # Dialog do konfiguracji szafki z zakładkami
 module CabinetDialog
   class CabinetPropertiesDialog
-def initialize
+    def initialize(edit_target: nil, initial_params: nil)
+      @edit_target = edit_target
+      @initial_params = initial_params
+
       @dialog = UI::HtmlDialog.new(
-        preferences_key: "cabinet-properties",
+        preferences_key: 'cabinet-properties',
         width: 600,
         height: 400,
         left: 100,
         top: 100,
         resizable: true,
-        title: "Właściwości szafki"
+        title: 'Właściwości szafki'
       )
-      @dialog.set_file(File.join(File.dirname(__FILE__), "dialog.html"))
-      @dialog.add_action_callback("saveCabinet") do |_, params|
-        save_cabinet(params)
-      end
-      @dialog.add_action_callback("closeDialog") do |_, _|
-        @dialog.close
-      end
+
+      @dialog.set_file(File.join(File.dirname(__FILE__), 'dialog.html'))
+      @dialog.add_action_callback('saveCabinet') { |_, params| save_cabinet(params) }
+      @dialog.add_action_callback('closeDialog') { |_, _| @dialog.close }
+      @dialog.add_action_callback('dialogReady') { |_, _| prefill_form }
     end
 
-def show
+    def show
       @dialog.show
       @dialog.bring_to_front
     end
 
     private
 
-def save_cabinet(params)
-      params = JSON.parse(params)
-      width = params["width"].to_f.mm
-      height = params["height"].to_f.mm
-      depth = params["depth"].to_f.mm
-      panel_thickness = params["panel_thickness"].to_f.mm
-      back_thickness = params["back_thickness"].to_f.mm
-      material = params["material"]
-      back_offset = params["back_offset"]
-      panel_gap = params["panel_gap"]
-      color = params["color"]
+    def prefill_form
+      return unless @initial_params
 
-      puts params
-      puts width
-      puts height
-      puts depth
-      puts panel_thickness
-      puts back_thickness
-      puts color
+      @dialog.execute_script("setFormData(#{JSON.generate(@initial_params)})")
+    end
 
-      cabinet = CabinetBuilder::Cabinet.new(width, height, depth, panel_thickness, back_thickness, material, back_offset, panel_gap, color)
-      cabinet.draw_cabinet
+    def save_cabinet(raw_params)
+      params = JSON.parse(raw_params)
+      width = params['width'].to_f.mm
+      height = params['height'].to_f.mm
+      depth = params['depth'].to_f.mm
+      panel_thickness = params['panel_thickness'].to_f.mm
+      back_thickness = params['back_thickness'].to_f.mm
+      material = params['material']
+      back_offset = params['back_offset'].to_f.mm
+      panel_gap = params['panel_gap'].to_f.mm
+      color = params['color']
+
+      model = Sketchup.active_model
+      model.start_operation('Create / Update Cabinet', true)
+
+      new_group = nil
+      begin
+        if @edit_target&.valid?
+          transformation = @edit_target.transformation
+          @edit_target.erase!
+
+          new_group = CabinetBuilder::Cabinet.new(width, height, depth, panel_thickness, back_thickness, material, back_offset, panel_gap, color).draw_cabinet
+          new_group.transformation = transformation if new_group
+        else
+          new_group = CabinetBuilder::Cabinet.new(width, height, depth, panel_thickness, back_thickness, material, back_offset, panel_gap, color).draw_cabinet
+        end
+
+        model.commit_operation
+      rescue StandardError => e
+        model.abort_operation
+        UI.messagebox("Błąd podczas zapisu szafki: #{e.message}")
+      end
 
       @dialog.close
     end

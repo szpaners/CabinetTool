@@ -155,6 +155,21 @@ function switchTab(element, tabName) {
       element.classList.add('active');
     }
 
+
+function setFormData(params) {
+      if (!params) return;
+
+      document.getElementById('width').value = params.width;
+      document.getElementById('height').value = params.height;
+      document.getElementById('depth').value = params.depth;
+      document.getElementById('panel_thickness').value = params.panel_thickness;
+      document.getElementById('back_thickness').value = params.back_thickness;
+      document.getElementById('material').value = params.material;
+      document.getElementById('back_offset').value = params.back_offset;
+      document.getElementById('panel_gap').value = params.panel_gap;
+      document.getElementById('color').value = params.color;
+    }
+
 function saveCabinet() {
       console.log('saveCabinet called');
       const params = {
@@ -175,6 +190,12 @@ function closeDialog() {
       console.log('closeDialog called');
       window.sketchup.closeDialog();
     }
+
+window.addEventListener('DOMContentLoaded', () => {
+      if (window.sketchup && typeof window.sketchup.dialogReady === 'function') {
+        window.sketchup.dialogReady();
+      }
+    });
   </script>
 </body>
 </html>
