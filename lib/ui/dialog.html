@@ -159,8 +159,8 @@
       </div>
     </div>
 
-    <div class="section">
-      <h3 class="section-title">Wypełnienie</h3>
+<div class="section">
+      <h3 class="section-title">-Wypełnienie</h3>
       <div class="form-grid">
         <div class="form-group">
           <label for="filling">Wypełnienie:</label>
@@ -172,6 +172,48 @@
         <div class="form-group" id="shelf-count-group" style="display: none;">
           <label for="shelf_count">Ilość półek:</label>
           <input type="number" id="shelf_count" value="1" min="1">
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3 class="section-title">-Cokół</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="cokol_checkbox" onchange="toggleCokolInput()">
+            Cokół
+          </label>
+        </div>
+        <div class="form-group" id="cokol_input" style="display: none;">
+          <label for="cokol_value">Wartość (mm):</label>
+          <input type="number" id="cokol_value" value="0">
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3 class="section-title">-Blenda</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="blend_right" onchange="toggleBlendInput('right')">
+            Prawa
+          </label>
+        </div>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="blend_left" onchange="toggleBlendInput('left')">
+            Lewa
+          </label>
+        </div>
+        <div class="form-group" id="blend_right_input" style="display: none;">
+          <label for="blend_right_value">Wartość (mm):</label>
+          <input type="number" id="blend_right_value" value="0">
+        </div>
+        <div class="form-group" id="blend_left_input" style="display: none;">
+          <label for="blend_left_value">Wartość (mm):</label>
+          <input type="number" id="blend_left_value" value="0">
         </div>
       </div>
     </div>
@@ -244,6 +286,26 @@ document.getElementById('filling').addEventListener('change', updateFillingOptio
 function closeDialog() {
       console.log('closeDialog called');
       window.sketchup.closeDialog();
+    }
+
+function toggleBlendInput(side) {
+      const checkbox = document.getElementById(`blend_${side}`);
+      const input = document.getElementById(`blend_${side}_input`);
+      if (checkbox.checked) {
+        input.style.display = 'block';
+      } else {
+        input.style.display = 'none';
+      }
+    }
+
+function toggleCokolInput() {
+      const checkbox = document.getElementById('cokol_checkbox');
+      const input = document.getElementById('cokol_input');
+      if (checkbox.checked) {
+        input.style.display = 'block';
+      } else {
+        input.style.display = 'none';
+      }
     }
 
 window.addEventListener('DOMContentLoaded', () => {
