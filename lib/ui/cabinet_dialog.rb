@@ -34,6 +34,10 @@ def save_cabinet(params)
       depth = params["depth"].to_f.mm
       panel_thickness = params["panel_thickness"].to_f.mm
       back_thickness = params["back_thickness"].to_f.mm
+      material = params["material"]
+      back_offset = params["back_offset"]
+      panel_gap = params["panel_gap"]
+      color = params["color"]
 
       puts params
       puts width
@@ -41,8 +45,9 @@ def save_cabinet(params)
       puts depth
       puts panel_thickness
       puts back_thickness
+      puts color
 
-      cabinet = CabinetBuilder::Cabinet.new(width, height, depth, panel_thickness, back_thickness)
+      cabinet = CabinetBuilder::Cabinet.new(width, height, depth, panel_thickness, back_thickness, material, back_offset, panel_gap, color)
       cabinet.draw_cabinet
 
       @dialog.close

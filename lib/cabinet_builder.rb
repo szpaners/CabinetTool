@@ -122,15 +122,16 @@ def initialize(width, height, depth, panel_thickness, back_thickness, material =
       @entities = @model.active_entities
       @group = @entities.add_group
       @cabinet_entities = @group.entities
-      @width = width
-      @height = height
-      @depth = depth
-      @panel_thickness = panel_thickness
-      @back_thickness = back_thickness
+      @width = width.to_f
+      @height = height.to_f
+      @depth = depth.to_f
+      @panel_thickness = panel_thickness.to_f
+      @back_thickness = back_thickness.to_f
       @material = material
-      @back_offset = back_offset
-      @panel_gap = panel_gap
+      @back_offset = back_offset.to_f
+      @panel_gap = panel_gap.to_f
       @color = Sketchup::Color.new(color)
+      @material_color = Sketchup::Color.new(color)
     end
 
 def draw_bottom_panel
@@ -154,7 +155,7 @@ def draw_bottom_panel
         [bottom_x4, bottom_y4, bottom_z4]
       ]
 
-      bottom_panel = BottomPanel.new(@cabinet_entities, @color, @panel_thickness)
+      bottom_panel = BottomPanel.new(@cabinet_entities, @material_color, @panel_thickness)
       bottom_panel.create_face(bottom_rectangle)
       bottom_panel.pushpull(-@panel_thickness)
     end
@@ -180,7 +181,7 @@ def draw_top_panel
         [top_x4, top_y4, top_z4]
       ]
 
-      top_panel = TopPanel.new(@cabinet_entities, @color, @panel_thickness)
+      top_panel = TopPanel.new(@cabinet_entities, @material_color, @panel_thickness)
       top_panel.create_face(top_rectangle)
       top_panel.pushpull(@panel_thickness)
     end
@@ -206,7 +207,7 @@ def draw_left_panel
         [left_x4, left_y4, left_z4]
       ]
 
-      left_panel = LeftPanel.new(@cabinet_entities, @color, @panel_thickness)
+      left_panel = LeftPanel.new(@cabinet_entities, @material_color, @panel_thickness)
       left_panel.create_face(left_rectangle)
       left_panel.pushpull(@panel_thickness)
     end
@@ -232,7 +233,7 @@ def draw_right_panel
         [right_x4, right_y4, right_z4]
       ]
 
-      right_panel = RightPanel.new(@cabinet_entities, @color, @panel_thickness)
+      right_panel = RightPanel.new(@cabinet_entities, @material_color, @panel_thickness)
       right_panel.create_face(right_rectangle)
       right_panel.pushpull(@panel_thickness)
     end
@@ -251,7 +252,7 @@ def draw_back_panel
         [back_x1, back_y, back_z2]
       ]
 
-      back_panel = BackPanel.new(@cabinet_entities, @color, @back_thickness)
+      back_panel = BackPanel.new(@cabinet_entities, @material_color, @back_thickness)
       back_panel.create_face(back_rectangle)
       back_panel.pushpull(@back_thickness)
     end
@@ -277,6 +278,10 @@ def self.draw_cabinet(params = {})
       panel_gap = params["panel_gap"] || CabinetDimensions::DEFAULT_PANEL_GAP
       color = params["color"] || CabinetDimensions::DEFAULT_COLOR
 
+      puts "colorrr"
+      puts color
+      puts "params[color]"
+      puts params["color"]
       cabinet = Cabinet.new(width, height, depth, panel_thickness, back_thickness, material, back_offset, panel_gap, color)
       cabinet.draw_cabinet
     end
