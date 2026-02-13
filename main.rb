@@ -9,6 +9,7 @@ require_relative 'lib/panels/top_panel'
 require_relative 'lib/panels/left_panel'
 require_relative 'lib/panels/right_panel'
 require_relative 'lib/panels/back_panel'
+require_relative 'lib/ui/cabinet_dialog'
 
 module KitchenCabinetPlugin
   # Menu item handler
@@ -16,7 +17,8 @@ module KitchenCabinetPlugin
     tool_menu = UI.menu("Plugins")
 timestamp = Time.now.strftime("%M_%S")
     tool_menu.add_item("Draw Kitchen Cabinet (#{timestamp})") {
-      CabinetBuilder::Cabinet.draw_cabinet
+      dialog = CabinetDialog::CabinetPropertiesDialog.new
+      dialog.show
     }
   end
 end
@@ -26,7 +28,6 @@ if Sketchup.version.to_i >= 26
 timestamp = Time.now.strftime("%M_%S")
 puts "#{PluginConfig::PLUGIN_NAME} loaded for SketchUp 2026 (#{timestamp})"
   KitchenCabinetPlugin.activate
-  CabinetBuilder::Cabinet.draw_cabinet
 else
 puts "This plugin requires SketchUp 2026 or later"
 end

@@ -117,7 +117,7 @@ module CabinetBuilder
   class Cabinet
     attr_reader :group, :entities
 
-    def initialize(width, height, depth, panel_thickness, back_thickness)
+def initialize(width, height, depth, panel_thickness, back_thickness, material = CabinetDimensions::DEFAULT_MATERIAL, back_offset = CabinetDimensions::DEFAULT_BACK_OFFSET, panel_gap = CabinetDimensions::DEFAULT_PANEL_GAP, color = CabinetDimensions::DEFAULT_COLOR)
       @model = Sketchup.active_model
       @entities = @model.active_entities
       @group = @entities.add_group
@@ -127,9 +127,13 @@ module CabinetBuilder
       @depth = depth
       @panel_thickness = panel_thickness
       @back_thickness = back_thickness
+      @material = material
+      @back_offset = back_offset
+      @panel_gap = panel_gap
+      @color = Sketchup::Color.new(color)
     end
 
-    def draw_bottom_panel
+def draw_bottom_panel
       bottom_x1 = 0
       bottom_y1 = 0
       bottom_z1 = 0
@@ -143,15 +147,14 @@ module CabinetBuilder
       bottom_y4 = @depth - @back_thickness
       bottom_z4 = 0
 
-      bottom_point = [bottom_x1, bottom_y1, bottom_z1]
       bottom_rectangle = [
-        bottom_point,
+        [bottom_x1, bottom_y1, bottom_z1],
         [bottom_x2, bottom_y2, bottom_z2],
         [bottom_x3, bottom_y3, bottom_z3],
         [bottom_x4, bottom_y4, bottom_z4]
       ]
 
-      bottom_panel = BottomPanel.new(@cabinet_entities, Sketchup::Color.new(139, 90, 43), @panel_thickness)
+      bottom_panel = BottomPanel.new(@cabinet_entities, @color, @panel_thickness)
       bottom_panel.create_face(bottom_rectangle)
       bottom_panel.pushpull(-@panel_thickness)
     end
@@ -164,95 +167,91 @@ def draw_top_panel
       top_y2 = 0
       top_z2 = @height - @panel_thickness
       top_x3 = @width
-      top_y3 = @depth - @back_thickness
+      top_y3 = @depth - @back_thickness - @back_offset
       top_z3 = @height - @panel_thickness
       top_x4 = 0
-      top_y4 = @depth - @back_thickness
+      top_y4 = @depth - @back_thickness - @back_offset
       top_z4 = @height - @panel_thickness
 
-      top_point = [top_x1, top_y1, top_z1]
       top_rectangle = [
-        top_point,
+        [top_x1, top_y1, top_z1],
         [top_x2, top_y2, top_z2],
         [top_x3, top_y3, top_z3],
         [top_x4, top_y4, top_z4]
       ]
 
-      top_panel = TopPanel.new(@cabinet_entities, Sketchup::Color.new(139, 90, 43), @panel_thickness)
+      top_panel = TopPanel.new(@cabinet_entities, @color, @panel_thickness)
       top_panel.create_face(top_rectangle)
       top_panel.pushpull(@panel_thickness)
     end
 
 def draw_left_panel
-      left_x1 = @panel_thickness
+      left_x1 = @panel_thickness + @panel_gap
       left_y1 = 0
-      left_z1 = @panel_thickness
-      left_x2 = @panel_thickness
+      left_z1 = @panel_thickness + @panel_gap
+      left_x2 = @panel_thickness + @panel_gap
       left_y2 = 0
-      left_z2 = @height - @panel_thickness
-      left_x3 = @panel_thickness
-      left_y3 = @depth - @back_thickness
-      left_z3 = @height - @panel_thickness
-      left_x4 = @panel_thickness
-      left_y4 = @depth - @back_thickness
-      left_z4 = @panel_thickness
+      left_z2 = @height - @panel_thickness - @panel_gap
+      left_x3 = @panel_thickness + @panel_gap
+      left_y3 = @depth - @back_thickness - @back_offset
+      left_z3 = @height - @panel_thickness - @panel_gap
+      left_x4 = @panel_thickness + @panel_gap
+      left_y4 = @depth - @back_thickness - @back_offset
+      left_z4 = @panel_thickness + @panel_gap
 
-      left_point = [left_x1, left_y1, left_z1]
       left_rectangle = [
-        left_point,
+        [left_x1, left_y1, left_z1],
         [left_x2, left_y2, left_z2],
         [left_x3, left_y3, left_z3],
         [left_x4, left_y4, left_z4]
       ]
 
-      left_panel = LeftPanel.new(@cabinet_entities, Sketchup::Color.new(139, 90, 43), @panel_thickness)
+      left_panel = LeftPanel.new(@cabinet_entities, @color, @panel_thickness)
       left_panel.create_face(left_rectangle)
       left_panel.pushpull(@panel_thickness)
     end
 
 def draw_right_panel
-      right_x1 = @width
+      right_x1 = @width - @panel_gap
       right_y1 = 0
-      right_z1 = @panel_thickness
-      right_x2 = @width
+      right_z1 = @panel_thickness + @panel_gap
+      right_x2 = @width - @panel_gap
       right_y2 = 0
-      right_z2 = @height - @panel_thickness
-      right_x3 = @width
-      right_y3 = @depth - @back_thickness
-      right_z3 = @height - @panel_thickness
-      right_x4 = @width
-      right_y4 = @depth - @back_thickness
-      right_z4 = @panel_thickness
+      right_z2 = @height - @panel_thickness - @panel_gap
+      right_x3 = @width - @panel_gap
+      right_y3 = @depth - @back_thickness - @back_offset
+      right_z3 = @height - @panel_thickness - @panel_gap
+      right_x4 = @width - @panel_gap
+      right_y4 = @depth - @back_thickness - @back_offset
+      right_z4 = @panel_thickness + @panel_gap
 
-      right_point = [right_x1, right_y1, right_z1]
       right_rectangle = [
-        right_point,
+        [right_x1, right_y1, right_z1],
         [right_x2, right_y2, right_z2],
         [right_x3, right_y3, right_z3],
         [right_x4, right_y4, right_z4]
       ]
 
-      right_panel = RightPanel.new(@cabinet_entities, Sketchup::Color.new(139, 90, 43), @panel_thickness)
+      right_panel = RightPanel.new(@cabinet_entities, @color, @panel_thickness)
       right_panel.create_face(right_rectangle)
       right_panel.pushpull(@panel_thickness)
     end
 
 def draw_back_panel
-      back_x1 = 0
-      back_x2 = @width
-      back_y = @depth
-      back_z1 = 0
-      back_z2 = @height
+      back_x1 = @panel_gap
+      back_x2 = @width - @panel_gap
+      back_y = @depth - @back_offset
+      back_z1 = @panel_gap
+      back_z2 = @height - @panel_gap
 
-      back_point = [back_x1, back_y, back_z1]
       back_rectangle = [
-        back_point,
+        [back_x1, back_y, back_z1],
         [back_x2, back_y, back_z1],
         [back_x2, back_y, back_z2],
         [back_x1, back_y, back_z2]
       ]
 
-      back_panel = BackPanel.new(@cabinet_entities, Sketchup::Color.new(139, 90, 43), @back_thickness)
+      back_panel = BackPanel.new(@cabinet_entities, @color, @back_thickness)
       back_panel.create_face(back_rectangle)
       back_panel.pushpull(@back_thickness)
     end
@@ -267,14 +266,18 @@ def draw_back_panel
       puts "Kitchen cabinet created successfully!"
     end
 
-def self.draw_cabinet
-      width = UI.inputbox(["Podaj szerokość szafki (mm):"], ["600"]).first.to_f.mm
-      height = UI.inputbox(["Podaj wysokość szafki (mm):"], ["800"]).first.to_f.mm
-      depth = UI.inputbox(["Podaj głębokość szafki (mm):"], ["300"]).first.to_f.mm
-      panel_thickness = UI.inputbox(["Podaj grubość paneli (mm):"], ["18"]).first.to_f.mm
-      back_thickness = UI.inputbox(["Podaj grubość tylnej ścianki (mm):"], ["3"]).first.to_f.mm
+def self.draw_cabinet(params = {})
+      width = params["width"] || CabinetDimensions::CABINET_WIDTH
+      height = params["height"] || CabinetDimensions::CABINET_HEIGHT
+      depth = params["depth"] || CabinetDimensions::CABINET_DEPTH
+      panel_thickness = params["panel_thickness"] || CabinetDimensions::PANEL_THICKNESS
+      back_thickness = params["back_thickness"] || CabinetDimensions::PANEL_THICKNESS_BACK
+      material = params["material"] || CabinetDimensions::DEFAULT_MATERIAL
+      back_offset = params["back_offset"] || CabinetDimensions::DEFAULT_BACK_OFFSET
+      panel_gap = params["panel_gap"] || CabinetDimensions::DEFAULT_PANEL_GAP
+      color = params["color"] || CabinetDimensions::DEFAULT_COLOR
 
-      cabinet = Cabinet.new(width, height, depth, panel_thickness, back_thickness)
+      cabinet = Cabinet.new(width, height, depth, panel_thickness, back_thickness, material, back_offset, panel_gap, color)
       cabinet.draw_cabinet
     end
   end
