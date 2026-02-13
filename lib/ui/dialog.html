@@ -254,6 +254,34 @@ function setFormData(params) {
       document.getElementById('panel_thickness').value = params.panel_thickness;
       document.getElementById('back_thickness').value = params.back_thickness;
       document.getElementById('color').value = params.color;
+      document.getElementById('filling').value = params.filling;
+      document.getElementById('shelf_count').value = params.shelf_count;
+
+      // Pokaż/ukryj inputy na podstawie parametrów
+      if (params.filling === 'shelves') {
+        document.getElementById('shelf-count-group').style.display = 'block';
+        document.getElementById('shelf_count').value = params.shelf_count || 1;
+      } else {
+        document.getElementById('shelf-count-group').style.display = 'none';
+      }
+
+      if (params.cokol_value && params.cokol_value > 0) {
+        document.getElementById('cokol_checkbox').checked = true;
+        document.getElementById('cokol_input').style.display = 'block';
+        document.getElementById('cokol_value').value = params.cokol_value;
+      }
+
+      if (params.blend_right_value && params.blend_right_value > 0) {
+        document.getElementById('blend_right').checked = true;
+        document.getElementById('blend_right_input').style.display = 'block';
+        document.getElementById('blend_right_value').value = params.blend_right_value;
+      }
+
+      if (params.blend_left_value && params.blend_left_value > 0) {
+        document.getElementById('blend_left').checked = true;
+        document.getElementById('blend_left_input').style.display = 'block';
+        document.getElementById('blend_left_value').value = params.blend_left_value;
+      }
     }
 
 function saveCabinet() {
@@ -268,6 +296,14 @@ function saveCabinet() {
         filling: document.getElementById('filling').value,
         shelf_count: document.getElementById('shelf_count').value
       };
+
+      const filling = document.getElementById('filling').value;
+      if (filling === 'shelves') {
+        params.shelf_count = document.getElementById('shelf_count').value;
+      } else {
+        params.shelf_count = 0;
+      }
+
       window.sketchup.saveCabinet(JSON.stringify(params));
     }
 
