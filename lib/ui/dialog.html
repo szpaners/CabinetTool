@@ -343,12 +343,14 @@
         if (params.blend_right_value && params.blend_right_value > 0) {
             document.getElementById('blend_right').checked = true;
             document.getElementById('blend_right_input').style.display = 'block';
+            document.getElementById('blend_right_input').classList.remove('is-hidden');
             document.getElementById('blend_right_value').value = params.blend_right_value;
         }
 
         if (params.blend_left_value && params.blend_left_value > 0) {
             document.getElementById('blend_left').checked = true;
             document.getElementById('blend_left_input').style.display = 'block';
+            document.getElementById('blend_left_input').classList.remove('is-hidden');
             document.getElementById('blend_left_value').value = params.blend_left_value;
         }
 

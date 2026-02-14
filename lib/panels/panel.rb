@@ -1,8 +1,7 @@
 module CabinetBuilder
-  class Panel < BasePanel
+  class Panel < NamedPanel
     def initialize(config)
-      super(config)
-      @thickness = config[:thickness]
+      super(config, name: config[:name])
     end
   end
 end

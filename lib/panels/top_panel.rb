@@ -1,8 +1,7 @@
 module CabinetBuilder
-  class TopPanel < BasePanel
+  class TopPanel < NamedPanel
     def initialize(config)
-      super(config.merge(name: 'Top Panel'))
-      @thickness = config[:thickness]
+      super(config, name: 'Top Panel')
     end
   end
 end

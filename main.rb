@@ -5,6 +5,7 @@ require_relative 'lib/cabinet_dimensions'
 require_relative 'lib/cabinet_builder'
 require_relative 'config/plugin_config'
 require_relative 'lib/panels/base_panel'
+require_relative 'lib/panels/named_panel'
 require_relative 'lib/panels/panel'
 require_relative 'lib/panels/bottom_panel'
 require_relative 'lib/panels/top_panel'
@@ -30,6 +31,7 @@ module KitchenCabinetPlugin
       menu.add_separator
       menu.add_item('Edytuj szafkę') do
         initial_params = CabinetBuilder::Cabinet.read_params_from_group(selected_group)
+        puts initial_params
         dialog = CabinetDialog::CabinetPropertiesDialog.new(edit_target: selected_group, initial_params: initial_params)
         dialog.show
       end

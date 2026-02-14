@@ -1,28 +1,25 @@
+require_relative 'cabinet_builder/configuration'
+require_relative 'cabinet_builder/geometry'
+require_relative 'cabinet_builder/panel_drawing'
+require_relative 'cabinet_builder/metadata'
+
 # Klasa do budowania szafki
 module CabinetBuilder
   class Cabinet
+    include CabinetConfiguration
+    include CabinetGeometry
+    include CabinetPanelDrawing
+    include CabinetMetadata
+
     CABINET_DICT = 'cabinet_tool'.freeze
 
     attr_reader :group, :entities
 
     def initialize(config = {})
-      @model = Sketchup.active_model
-      @entities = @model.active_entities
-      @group = @entities.add_group
-      @cabinet_entities = @group.entities
-      @width = read_config_value(config: config, key: :width, default: CabinetDimensions::CABINET_WIDTH).to_f
-      @height = read_config_value(config: config, key: :height, default: CabinetDimensions::CABINET_HEIGHT).to_f
-      @depth = read_config_value(config: config, key: :depth, default: CabinetDimensions::CABINET_DEPTH).to_f
-      @panel_thickness = read_config_value(config: config, key: :panel_thickness, default: CabinetDimensions::PANEL_THICKNESS).to_f
-      @back_thickness = read_config_value(config: config, key: :back_thickness, default: CabinetDimensions::PANEL_THICKNESS_BACK).to_f
-      @color = read_config_value(config: config, key: :color, default: CabinetDimensions::DEFAULT_COLOR)
-      @material_color = Sketchup::Color.new(@color)
-      @filling = read_config_value(config: config, key: :filling, default: 'none')
-      @shelf_count = read_config_value(config: config, key: :shelf_count, default: 0).to_i
-      @blend_left_value = read_config_value(config: config, key: :blend_left_value, default: 0).to_f
-      @blend_right_value = read_config_value(config: config, key: :blend_right_value, default: 0).to_f
-      @blend_left_depth_value = read_config_value(config: config, key: :blend_left_depth_value, default: 0).to_f
-      @blend_right_depth_value = read_config_value(config: config, key: :blend_right_depth_value, default: 0).to_f
+      setup_context
+      setup_dimensions(config)
+      setup_appearance(config)
+      setup_blends(config)
     end
 
     def draw_bottom_panel
@@ -68,7 +65,13 @@ module CabinetBuilder
 
       @shelf_count.times do |i|
         shelf_z = @panel_thickness + ((i + 1) * opening_height) + (i * @panel_thickness)
-        points = horizontal_rectangle(x_min: @panel_thickness, x_max: @width - @panel_thickness, y_min: 0, y_max: @depth - @back_thickness, z: shelf_z)
+        points = horizontal_rectangle(
+          x_min: @panel_thickness,
+          x_max: @width - @panel_thickness,
+          y_min: 0,
+          y_max: @depth - @back_thickness,
+          z: shelf_z
+        )
 
         draw_named_panel(name: "Shelf #{i + 1}", points: points, thickness: @panel_thickness, extrusion: @panel_thickness)
       end
@@ -119,125 +122,6 @@ module CabinetBuilder
 
     def self.draw_cabinet(params = {})
       Cabinet.new(params).draw_cabinet
-    end
-
-    def self.read_params_from_group(group)
-      return nil unless group
-
-      blend_left_value_mm = read_blend_value_mm(group, { mm: 'blend_left_value_mm', legacy: 'blend_left_value' })
-      blend_right_value_mm = read_blend_value_mm(group, { mm: 'blend_right_value_mm', legacy: 'blend_right_value' })
-      blend_left_depth_value_mm = read_blend_value_mm(group, { mm: 'blend_left_depth_value_mm', legacy: 'blend_left_depth_value' })
-      blend_right_depth_value_mm = read_blend_value_mm(group, { mm: 'blend_right_depth_value_mm', legacy: 'blend_right_depth_value' })
-
-      {
-        'width' => group.get_attribute(CABINET_DICT, 'width_mm', CabinetDimensions::CABINET_WIDTH.to_mm),
-        'height' => group.get_attribute(CABINET_DICT, 'height_mm', CabinetDimensions::CABINET_HEIGHT.to_mm),
-        'depth' => group.get_attribute(CABINET_DICT, 'depth_mm', CabinetDimensions::CABINET_DEPTH.to_mm),
-        'panel_thickness' => group.get_attribute(CABINET_DICT, 'panel_thickness_mm', CabinetDimensions::PANEL_THICKNESS.to_mm),
-        'back_thickness' => group.get_attribute(CABINET_DICT, 'back_thickness_mm', CabinetDimensions::PANEL_THICKNESS_BACK.to_mm),
-        'color' => group.get_attribute(CABINET_DICT, 'color', CabinetDimensions::DEFAULT_COLOR),
-        'filling' => group.get_attribute(CABINET_DICT, 'filling', 'none'),
-        'shelf_count' => group.get_attribute(CABINET_DICT, 'shelf_count', 0),
-        'blend_left_value' => blend_left_value_mm,
-        'blend_right_value' => blend_right_value_mm,
-        'blend_left_depth_value' => blend_left_depth_value_mm,
-        'blend_right_depth_value' => blend_right_depth_value_mm
-      }
-    end
-
-    def self.find_selected_cabinet_group
-      model = Sketchup.active_model
-      return nil unless model
-
-      model.selection.each do |entity|
-        group = find_cabinet_group_for_entity(entity)
-        return group if group
-      end
-
-      nil
-    end
-
-    def self.find_cabinet_group_for_entity(entity)
-      current = entity
-      until current.nil?
-        if current.is_a?(Sketchup::Group) && current.get_attribute(CABINET_DICT, 'is_cabinet', false)
-          return current
-        end
-
-        current = current.respond_to?(:parent) ? current.parent : nil
-      end
-
-      nil
-    end
-
-    private
-
-    def read_config_value(config:, key:, default:)
-      config.fetch(key.to_s, config.fetch(key, default))
-    end
-
-    def horizontal_rectangle(coords)
-      [
-        [coords[:x_min], coords[:y_min], coords[:z]],
-        [coords[:x_max], coords[:y_min], coords[:z]],
-        [coords[:x_max], coords[:y_max], coords[:z]],
-        [coords[:x_min], coords[:y_max], coords[:z]]
-      ]
-    end
-
-    def vertical_side_rectangle(coords)
-      x = coords[:x]
-      [
-        [x, 0, @panel_thickness],
-        [x, 0, @height - @panel_thickness],
-        [x, @depth - @back_thickness, @height - @panel_thickness],
-        [x, @depth - @back_thickness, @panel_thickness]
-      ]
-    end
-
-    def draw_panel(config)
-      panel = config[:panel_klass].new(
-        entities: @cabinet_entities,
-        material: @material_color,
-        thickness: config[:thickness]
-      )
-      panel.create_face(config[:points])
-      panel.pushpull(config[:extrusion])
-    end
-
-    def draw_named_panel(config)
-      panel = Panel.new(
-        entities: @cabinet_entities,
-        name: config[:name],
-        material: @material_color,
-        thickness: config[:thickness]
-      )
-      panel.create_face(config[:points])
-      panel.pushpull(config[:extrusion])
-    end
-
-    def self.read_blend_value_mm(group, keys)
-      mm_value = group.get_attribute(CABINET_DICT, keys[:mm], nil)
-      return mm_value if mm_value
-
-      legacy_value = group.get_attribute(CABINET_DICT, keys[:legacy], 0)
-      legacy_value.to_l.to_mm
-    end
-
-    def save_metadata
-      @group.set_attribute(CABINET_DICT, 'is_cabinet', true)
-      @group.set_attribute(CABINET_DICT, 'width_mm', @width.to_l.to_mm)
-      @group.set_attribute(CABINET_DICT, 'height_mm', @height.to_l.to_mm)
-      @group.set_attribute(CABINET_DICT, 'depth_mm', @depth.to_l.to_mm)
-      @group.set_attribute(CABINET_DICT, 'panel_thickness_mm', @panel_thickness.to_l.to_mm)
-      @group.set_attribute(CABINET_DICT, 'back_thickness_mm', @back_thickness.to_l.to_mm)
-      @group.set_attribute(CABINET_DICT, 'color', @color)
-      @group.set_attribute(CABINET_DICT, 'filling', @filling)
-      @group.set_attribute(CABINET_DICT, 'shelf_count', @shelf_count)
-      @group.set_attribute(CABINET_DICT, 'blend_left_value_mm', @blend_left_value.to_l.to_mm)
-      @group.set_attribute(CABINET_DICT, 'blend_right_value_mm', @blend_right_value.to_l.to_mm)
-      @group.set_attribute(CABINET_DICT, 'blend_left_depth_value_mm', @blend_left_depth_value.to_l.to_mm)
-      @group.set_attribute(CABINET_DICT, 'blend_right_depth_value_mm', @blend_right_depth_value.to_l.to_mm)
     end
   end
 end

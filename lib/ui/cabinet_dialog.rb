@@ -62,21 +62,21 @@ module CabinetDialog
       @dialog.close
     end
 
-    def cabinet_params(params)
-      {
-        width: params['width'].to_f.mm,
-        height: params['height'].to_f.mm,
-        depth: params['depth'].to_f.mm,
-        panel_thickness: params['panel_thickness'].to_f.mm,
-        back_thickness: params['back_thickness'].to_f.mm,
-        color: params['color'],
-        filling: params['filling'],
-        shelf_count: params['shelf_count'].to_i,
-        blend_left_value: params['blend_left_value'].to_f.mm,
-        blend_right_value: params['blend_right_value'].to_f.mm,
-        blend_left_depth_value: params['blend_left_depth_value'].to_f.mm,
-        blend_right_depth_value: params['blend_right_depth_value'].to_f.mm
-      }
+def cabinet_params(params)
+  {
+    width: params['width'].to_f.round.mm,
+    height: params['height'].to_f.round.mm,
+    depth: params['depth'].to_f.round.mm,
+    panel_thickness: params['panel_thickness'].to_f.round.mm,
+    back_thickness: params['back_thickness'].to_f.round.mm,
+    color: params['color'],
+    filling: params['filling'],
+    shelf_count: params['shelf_count'].to_i,
+    blend_left_value: params['blend_left_value'].to_f.round.mm,
+    blend_right_value: params['blend_right_value'].to_f.round.mm,
+    blend_left_depth_value: params['blend_left_depth_value'].to_f.round.mm,
+    blend_right_depth_value: params['blend_right_depth_value'].to_f.round.mm
+  }
     end
   end
 end
