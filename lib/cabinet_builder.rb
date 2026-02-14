@@ -391,6 +391,11 @@ module CabinetBuilder
     def self.read_params_from_group(group)
       return nil unless group
 
+      blend_left_value_mm = read_blend_value_mm(group, 'blend_left_value_mm', 'blend_left_value')
+      blend_right_value_mm = read_blend_value_mm(group, 'blend_right_value_mm', 'blend_right_value')
+      blend_left_depth_value_mm = read_blend_value_mm(group, 'blend_left_depth_value_mm', 'blend_left_depth_value')
+      blend_right_depth_value_mm = read_blend_value_mm(group, 'blend_right_depth_value_mm', 'blend_right_depth_value')
+
       {
         'width' => group.get_attribute(CABINET_DICT, 'width_mm', CabinetDimensions::CABINET_WIDTH.to_mm),
         'height' => group.get_attribute(CABINET_DICT, 'height_mm', CabinetDimensions::CABINET_HEIGHT.to_mm),
@@ -400,10 +405,10 @@ module CabinetBuilder
         'color' => group.get_attribute(CABINET_DICT, 'color', CabinetDimensions::DEFAULT_COLOR),
         'filling' => group.get_attribute(CABINET_DICT, 'filling', 'none'),
         'shelf_count' => group.get_attribute(CABINET_DICT, 'shelf_count', 0),
-        'blend_left_value' => group.get_attribute(CABINET_DICT, 'blend_left_value', 0),
-        'blend_right_value' => group.get_attribute(CABINET_DICT, 'blend_right_value', 0),
-        'blend_left_depth_value' => group.get_attribute(CABINET_DICT, 'blend_left_depth_value', 0),
-        'blend_right_depth_value' => group.get_attribute(CABINET_DICT, 'blend_right_depth_value', 0)
+        'blend_left_value' => blend_left_value_mm,
+        'blend_right_value' => blend_right_value_mm,
+        'blend_left_depth_value' => blend_left_depth_value_mm,
+        'blend_right_depth_value' => blend_right_depth_value_mm
       }
     end
 
@@ -434,6 +439,14 @@ module CabinetBuilder
 
     private
 
+    def self.read_blend_value_mm(group, mm_key, legacy_key)
+      mm_value = group.get_attribute(CABINET_DICT, mm_key, nil)
+      return mm_value if mm_value
+
+      legacy_value = group.get_attribute(CABINET_DICT, legacy_key, 0)
+      legacy_value.to_l.to_mm
+    end
+
     def save_metadata
       @group.set_attribute(CABINET_DICT, 'is_cabinet', true)
       @group.set_attribute(CABINET_DICT, 'width_mm', @width.to_l.to_mm)
@@ -444,10 +457,10 @@ module CabinetBuilder
       @group.set_attribute(CABINET_DICT, 'color', @color)
       @group.set_attribute(CABINET_DICT, 'filling', @filling)
       @group.set_attribute(CABINET_DICT, 'shelf_count', @shelf_count)
-      @group.set_attribute(CABINET_DICT, 'blend_left_value', @blend_left_value)
-      @group.set_attribute(CABINET_DICT, 'blend_right_value', @blend_right_value)
-      @group.set_attribute(CABINET_DICT, 'blend_left_depth_value', @blend_left_depth_value)
-      @group.set_attribute(CABINET_DICT, 'blend_right_depth_value', @blend_right_depth_value)
+      @group.set_attribute(CABINET_DICT, 'blend_left_value_mm', @blend_left_value.to_l.to_mm)
+      @group.set_attribute(CABINET_DICT, 'blend_right_value_mm', @blend_right_value.to_l.to_mm)
+      @group.set_attribute(CABINET_DICT, 'blend_left_depth_value_mm', @blend_left_depth_value.to_l.to_mm)
+      @group.set_attribute(CABINET_DICT, 'blend_right_depth_value_mm', @blend_right_depth_value.to_l.to_mm)
     end
   end
 end
