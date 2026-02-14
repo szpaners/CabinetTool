@@ -11,7 +11,7 @@
         <div class="tab" onclick="switchTab(this, 'materials')">Materiały</div>
         <div class="tab" onclick="switchTab(this, 'advanced')">Zaawansowane</div>
     </div>
-    
+
     <div id="dimensions" class="tab-content active">
         <div class="section">
             <h3 class="section-title">Wymiary korpusu</h3>
@@ -30,7 +30,7 @@
                 </div>
             </div>
         </div>
-    
+
         <div class="section">
             <h3 class="section-title">Front</h3>
             <div class="form-grid">
@@ -83,7 +83,7 @@
                     </div>
                     <div class="form-group">
                         <label for="front_technological_gap">Przerwa technologiczna:</label>
-                        <input type="number" id="front_technological_gap" value="0">
+                        <input type="number" id="front_technological_gap" value="2">
                     </div>
                     <div class="form-group" id="frame_width_group" style="display: none;">
                         <label for="frame_width">Szerokość Ramki:</label>
@@ -92,7 +92,7 @@
                 </div>
             </div>
         </div>
-    
+
         <div class="section">
             <h3 class="section-title">Grubości paneli</h3>
             <div class="form-grid">
@@ -106,7 +106,7 @@
                 </div>
             </div>
         </div>
-    
+
         <div class="section">
             <h3 class="section-title">Wygląd</h3>
             <div class="form-grid">
@@ -116,7 +116,7 @@
                 </div>
             </div>
         </div>
-    
+
         <div class="section">
             <h3 class="section-title">Wypełnienie</h3>
             <div class="form-grid">
@@ -133,7 +133,7 @@
                 </div>
             </div>
         </div>
-    
+
         <div class="section">
             <h3 class="section-title">-Cokół</h3>
             <div class="form-grid">
@@ -149,7 +149,7 @@
                 </div>
             </div>
         </div>
-    
+
         <div class="section">
             <h3 class="section-title">Blenda</h3>
             <div class="blend-section">
@@ -174,7 +174,7 @@
                         <label for="blend_left_depth_value">Głębokość (mm):</label>
                         <input type="number" id="blend_left_depth_value" value="0">
                     </div>
-    
+
                 </div>
                 <div class="form-grid">
                     <div class="form-group">
@@ -201,19 +201,19 @@
             </div>
         </div>
     </div>
-    
+
     <div id="materials" class="tab-content">
         <p class="placeholder">Ta zakładka jest obecnie pusta.</p>
     </div>
-    
+
     <div id="advanced" class="tab-content">
     </div>
-    
+
     <div class="button-group">
         <button onclick="saveCabinet()">Zapisz i rysuj</button>
         <button class="cancel" onclick="closeDialog()">Anuluj</button>
     </div>
-    
+
     <script src="dialog.js"></script>
 </body>
 </html>

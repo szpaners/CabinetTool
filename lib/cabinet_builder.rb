@@ -61,12 +61,11 @@ module CabinetBuilder
       front_height = @height - (2 * @front_technological_gap)
       return if front_width <= 0 || front_height <= 0
 
-      puts @front_technological_gap
       points = [
-        [@front_technological_gap, 0, @front_technological_gap],
-        [@front_technological_gap + front_width, 0, @front_technological_gap],
-        [@front_technological_gap + front_width, 0, @front_technological_gap + front_height],
-        [@front_technological_gap, 0, @front_technological_gap + front_height]
+        [@front_technological_gap, -@panel_thickness, @front_technological_gap],
+        [@front_technological_gap + front_width, -@panel_thickness, @front_technological_gap],
+        [@front_technological_gap + front_width, -@panel_thickness, @front_technological_gap + front_height],
+        [@front_technological_gap, -@panel_thickness, @front_technological_gap + front_height]
       ]
 
       draw_named_panel(name: 'Front', points: points, thickness: @panel_thickness, extrusion: -@panel_thickness)
