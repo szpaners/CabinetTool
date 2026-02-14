@@ -24,6 +24,12 @@ module CabinetBuilder
       @shelf_count = read_config_value(config: config, key: :shelf_count, default: 0).to_i
     end
 
+    def setup_front(config)
+      front_enabled_value = read_config_value(config: config, key: :front_enabled, default: false)
+      @front_enabled = front_enabled_value == true || front_enabled_value.to_s == 'true'
+      @front_technological_gap = [read_config_value(config: config, key: :front_technological_gap, default: 0).to_f, 0].max
+    end
+
     def setup_blends(config)
       @blend_left_value = read_config_value(config: config, key: :blend_left_value, default: 0).to_f
       @blend_right_value = read_config_value(config: config, key: :blend_right_value, default: 0).to_f

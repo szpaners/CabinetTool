@@ -7,6 +7,7 @@ module CabinetBuilder
       'depth_mm' => :@depth,
       'panel_thickness_mm' => :@panel_thickness,
       'back_thickness_mm' => :@back_thickness,
+      'front_technological_gap_mm' => :@front_technological_gap,
       'blend_left_value_mm' => :@blend_left_value,
       'blend_right_value_mm' => :@blend_right_value,
       'blend_left_depth_value_mm' => :@blend_left_depth_value,
@@ -37,6 +38,8 @@ module CabinetBuilder
           'color' => group.get_attribute(CABINET_DICT, 'color', CabinetDimensions::DEFAULT_COLOR),
           'filling' => group.get_attribute(CABINET_DICT, 'filling', 'none'),
           'shelf_count' => group.get_attribute(CABINET_DICT, 'shelf_count', 0),
+          'front_enabled' => group.get_attribute(CABINET_DICT, 'front_enabled', false),
+          'front_technological_gap' => group.get_attribute(CABINET_DICT, 'front_technological_gap_mm', 0),
           'blend_left_value' => read_blend_value_mm(group, LEGACY_BLEND_KEYS['blend_left_value']),
           'blend_right_value' => read_blend_value_mm(group, LEGACY_BLEND_KEYS['blend_right_value']),
           'blend_left_depth_value' => read_blend_value_mm(group, LEGACY_BLEND_KEYS['blend_left_depth_value']),
@@ -88,6 +91,7 @@ def read_blend_value_mm(group, keys)
       @group.set_attribute(CABINET_DICT, 'color', @color)
       @group.set_attribute(CABINET_DICT, 'filling', @filling)
       @group.set_attribute(CABINET_DICT, 'shelf_count', @shelf_count)
+      @group.set_attribute(CABINET_DICT, 'front_enabled', @front_enabled)
     end
 
 def save_mm_attributes

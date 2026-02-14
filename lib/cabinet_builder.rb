@@ -19,6 +19,7 @@ module CabinetBuilder
       setup_context
       setup_dimensions(config)
       setup_appearance(config)
+      setup_front(config)
       setup_blends(config)
     end
 
@@ -51,6 +52,24 @@ module CabinetBuilder
         [0, @depth, @height]
       ]
       draw_panel(panel_klass: BackPanel, points: points, thickness: @back_thickness, extrusion: @back_thickness)
+    end
+
+    def draw_front
+      return unless @front_enabled
+
+      front_width = @width - (2 * @front_technological_gap)
+      front_height = @height - (2 * @front_technological_gap)
+      return if front_width <= 0 || front_height <= 0
+
+      puts @front_technological_gap
+      points = [
+        [@front_technological_gap, 0, @front_technological_gap],
+        [@front_technological_gap + front_width, 0, @front_technological_gap],
+        [@front_technological_gap + front_width, 0, @front_technological_gap + front_height],
+        [@front_technological_gap, 0, @front_technological_gap + front_height]
+      ]
+
+      draw_named_panel(name: 'Front', points: points, thickness: @panel_thickness, extrusion: -@panel_thickness)
     end
 
     def draw_shelves
@@ -112,6 +131,7 @@ module CabinetBuilder
       draw_left_panel
       draw_right_panel
       draw_back_panel
+      draw_front
       draw_shelves
       draw_blend_left
       draw_blend_right

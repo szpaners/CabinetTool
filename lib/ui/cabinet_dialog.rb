@@ -72,6 +72,8 @@ def cabinet_params(params)
     color: params['color'],
     filling: params['filling'],
     shelf_count: params['shelf_count'].to_i,
+    front_enabled: params['front_enabled'],
+    front_technological_gap: params['front_technological_gap'].to_f.mm,
     blend_left_value: params['blend_left_value'].to_f.round.mm,
     blend_right_value: params['blend_right_value'].to_f.round.mm,
     blend_left_depth_value: params['blend_left_depth_value'].to_f.round.mm,
