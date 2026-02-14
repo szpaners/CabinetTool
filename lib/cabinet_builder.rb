@@ -119,7 +119,7 @@ module CabinetBuilder
 
     attr_reader :group, :entities
 
-def initialize(width, height, depth, panel_thickness, back_thickness, color = CabinetDimensions::DEFAULT_COLOR, filling = 'none', shelf_count = 0)
+def initialize(width, height, depth, panel_thickness, back_thickness, color = CabinetDimensions::DEFAULT_COLOR, filling = 'none', shelf_count = 0, blend_left_value = 0, blend_right_value = 0)
       @model = Sketchup.active_model
       @entities = @model.active_entities
       @group = @entities.add_group
@@ -133,7 +133,8 @@ def initialize(width, height, depth, panel_thickness, back_thickness, color = Ca
       @material_color = Sketchup::Color.new(color)
       @filling = filling
       @shelf_count = shelf_count
-
+      @blend_left_value = blend_left_value
+      @blend_right_value = blend_right_value
     end
 
     def draw_bottom_panel
@@ -298,13 +299,70 @@ def draw_shelves
       end
     end
 
-def draw_cabinet
+def draw_blend_left
+      return unless @blend_left_value > 0
+
+      blend_x1 = 0
+      blend_y1 = 0
+      blend_z1 = 0
+      blend_x2 = 0
+      blend_y2 = 0
+      blend_z2 = @height
+      blend_x3 = 0
+      blend_y3 = @depth - @back_thickness
+      blend_z3 = @height
+      blend_x4 = 0
+      blend_y4 = @depth - @back_thickness
+      blend_z4 = 0
+
+      blend_rectangle = [
+        [blend_x1, blend_y1, blend_z1],
+        [blend_x2, blend_y2, blend_z2],
+        [blend_x3, blend_y3, blend_z3],
+        [blend_x4, blend_y4, blend_z4]
+      ]
+
+      blend_panel = Panel.new(@cabinet_entities, "Blend Left", @material_color, @blend_left_value)
+      blend_panel.create_face(blend_rectangle)
+      blend_panel.pushpull(@blend_left_value)
+    end
+
+def draw_blend_right
+      return unless @blend_right_value > 0
+      blend_x1 = @width + @blend_right_value
+      blend_y1 = 0
+      blend_z1 = 0
+      blend_x2 = @width + @blend_right_value
+      blend_y2 = 0
+      blend_z2 = @height
+      blend_x3 = @width + @blend_right_value
+      blend_y3 = @depth - @back_thickness
+      blend_z3 = @height
+      blend_x4 = @width + @blend_right_value
+      blend_y4 = @depth - @back_thickness
+      blend_z4 = 0
+
+      blend_rectangle = [
+        [blend_x1, blend_y1, blend_z1],
+        [blend_x2, blend_y2, blend_z2],
+        [blend_x3, blend_y3, blend_z3],
+        [blend_x4, blend_y4, blend_z4]
+      ]
+
+      blend_panel = Panel.new(@cabinet_entities, "Blend Right", @material_color, @blend_right_value)
+      blend_panel.create_face(blend_rectangle)
+      blend_panel.pushpull(@blend_right_value)
+    end
+
+    def draw_cabinet
       draw_bottom_panel
       draw_top_panel
       draw_left_panel
       draw_right_panel
       draw_back_panel
       draw_shelves
+      draw_blend_left
+      draw_blend_right
       save_metadata
 
       puts 'Kitchen cabinet created successfully!'
@@ -320,8 +378,10 @@ def self.draw_cabinet(params = {})
       color = params['color'] || CabinetDimensions::DEFAULT_COLOR
       filling = params['filling'] || 'none'
       shelf_count = params['shelf_count'] || 0
+      blend_left_value = params['blend_left_value'] || 0
+      blend_right_value = params['blend_right_value'] || 0
 
-cabinet = Cabinet.new(width, height, depth, panel_thickness, back_thickness, color, filling, shelf_count)
+cabinet = Cabinet.new(width, height, depth, panel_thickness, back_thickness, color, filling, shelf_count, blend_left_value, blend_right_value)
       cabinet.draw_cabinet
     end
 
@@ -336,7 +396,9 @@ def self.read_params_from_group(group)
         'back_thickness' => group.get_attribute(CABINET_DICT, 'back_thickness_mm', CabinetDimensions::PANEL_THICKNESS_BACK.to_mm),
         'color' => group.get_attribute(CABINET_DICT, 'color', CabinetDimensions::DEFAULT_COLOR),
         'filling' => group.get_attribute(CABINET_DICT, 'filling', 'none'),
-        'shelf_count' => group.get_attribute(CABINET_DICT, 'shelf_count', 0)
+        'shelf_count' => group.get_attribute(CABINET_DICT, 'shelf_count', 0),
+        'blend_left_value' => group.get_attribute(CABINET_DICT, 'blend_left_value', 0),
+        'blend_right_value' => group.get_attribute(CABINET_DICT, 'blend_right_value', 0)
       }
     end
 
@@ -377,6 +439,8 @@ def save_metadata
       @group.set_attribute(CABINET_DICT, 'color', @color)
       @group.set_attribute(CABINET_DICT, 'filling', @filling)
       @group.set_attribute(CABINET_DICT, 'shelf_count', @shelf_count)
+      @group.set_attribute(CABINET_DICT, 'blend_left_value', @blend_left_value)
+      @group.set_attribute(CABINET_DICT, 'blend_right_value', @blend_right_value)
     end
   end
 end

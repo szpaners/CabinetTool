@@ -1,247 +1,264 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Właściwości szafki</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      font-size: 13px;
-      margin: 0;
-      padding: 8px;
-      background: #fafafa;
-    }
-    .tabs {
-      display: flex;
-      border-bottom: 1px solid #ccc;
-      gap: 4px;
-    }
-    .tab {
-      padding: 7px 14px;
-      font-size: 12px;
-      cursor: pointer;
-      border: 1px solid #ccc;
-      border-bottom: none;
-      background-color: #f2f2f2;
-      border-radius: 5px 5px 0 0;
-    }
-    .tab.active {
-      background-color: white;
-      border-bottom: 1px solid white;
-    }
-    .tab-content {
-      display: none;
-      padding: 14px;
-      background-color: white;
-      border: 1px solid #ccc;
-      border-top: none;
-      min-height: 250px;
-    }
-    .tab-content.active {
-      display: block;
-    }
-    .section {
-      margin-bottom: 12px;
-      padding: 10px;
-      border: 1px solid #e2e2e2;
-      border-radius: 6px;
-      background: #fcfcfc;
-    }
-    .section-title {
-      margin: 0 0 8px;
-      font-size: 12px;
-      font-weight: 700;
-      color: #444;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px 10px;
-    }
-    .form-group {
-      margin-bottom: 0;
-    }
-    label {
-      display: block;
-      margin-bottom: 3px;
-      font-weight: 600;
-      font-size: 12px;
-    }
-    input[type="number"],
-    input[type="color"] {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 5px 6px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 12px;
-      height: 30px;
-    }
-    .placeholder {
-      color: #888;
-      font-size: 12px;
-      font-style: italic;
-    }
-    .button-group {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-    }
-    button {
-      padding: 8px 12px;
-      font-size: 12px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-    button.cancel {
-      background-color: #6c757d;
-    }
-    button.cancel:hover {
-      background-color: #545b62;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Właściwości szafki</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            margin: 0;
+            padding: 8px;
+            background: #fafafa;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ccc;
+            gap: 4px;
+        }
+
+        .tab {
+            padding: 7px 14px;
+            font-size: 12px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            border-bottom: none;
+            background-color: #f2f2f2;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .tab.active {
+            background-color: white;
+            border-bottom: 1px solid white;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 14px;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-top: none;
+            min-height: 250px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            margin-bottom: 12px;
+            padding: 10px;
+            border: 1px solid #e2e2e2;
+            border-radius: 6px;
+            background: #fcfcfc;
+        }
+
+        .section-title {
+            margin: 0 0 8px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #444;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px 10px;
+        }
+
+        .form-group {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 3px;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        input[type="number"],
+        input[type="color"] {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 5px 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 12px;
+            height: 30px;
+        }
+
+        .placeholder {
+            color: #888;
+            font-size: 12px;
+            font-style: italic;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        button {
+            padding: 8px 12px;
+            font-size: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        button.cancel {
+            background-color: #6c757d;
+        }
+
+        button.cancel:hover {
+            background-color: #545b62;
+        }
+    </style>
 </head>
 <body>
-  <div class="tabs">
+<div class="tabs">
     <div class="tab active" onclick="switchTab(this, 'dimensions')">Dolna</div>
     <div class="tab" onclick="switchTab(this, 'materials')">Materiały</div>
     <div class="tab" onclick="switchTab(this, 'advanced')">Zaawansowane</div>
-  </div>
+</div>
 
-  <div id="dimensions" class="tab-content active">
+<div id="dimensions" class="tab-content active">
     <div class="section">
-      <h3 class="section-title">Wymiary korpusu</h3>
-      <div class="form-grid">
-        <div class="form-group">
-          <label for="width">Szerokość (mm):</label>
-          <input type="number" id="width" value="600">
+        <h3 class="section-title">Wymiary korpusu</h3>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="width">Szerokość (mm):</label>
+                <input type="number" id="width" value="600">
+            </div>
+            <div class="form-group">
+                <label for="height">Wysokość (mm):</label>
+                <input type="number" id="height" value="800">
+            </div>
+            <div class="form-group">
+                <label for="depth">Głębokość (mm):</label>
+                <input type="number" id="depth" value="300">
+            </div>
         </div>
-        <div class="form-group">
-          <label for="height">Wysokość (mm):</label>
-          <input type="number" id="height" value="800">
-        </div>
-        <div class="form-group">
-          <label for="depth">Głębokość (mm):</label>
-          <input type="number" id="depth" value="300">
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <h3 class="section-title">Grubości paneli</h3>
-      <div class="form-grid">
-        <div class="form-group">
-          <label for="panel_thickness">Grubość panelów (mm):</label>
-          <input type="number" id="panel_thickness" value="18">
-        </div>
-        <div class="form-group">
-          <label for="back_thickness">Grubość tylnej ścianki (mm):</label>
-          <input type="number" id="back_thickness" value="3">
-        </div>
-      </div>
     </div>
 
     <div class="section">
-      <h3 class="section-title">Wygląd</h3>
-      <div class="form-grid">
-        <div class="form-group">
-          <label for="color">Kolor:</label>
-          <input type="color" id="color" value="#8B5A2B">
+        <h3 class="section-title">Grubości paneli</h3>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="panel_thickness">Grubość panelów (mm):</label>
+                <input type="number" id="panel_thickness" value="18">
+            </div>
+            <div class="form-group">
+                <label for="back_thickness">Grubość tylnej ścianki (mm):</label>
+                <input type="number" id="back_thickness" value="3">
+            </div>
         </div>
-      </div>
-    </div>
-
-<div class="section">
-      <h3 class="section-title">-Wypełnienie</h3>
-      <div class="form-grid">
-        <div class="form-group">
-          <label for="filling">Wypełnienie:</label>
-          <select id="filling">
-            <option value="none">Brak</option>
-            <option value="shelves">Półki</option>
-          </select>
-        </div>
-        <div class="form-group" id="shelf-count-group" style="display: none;">
-          <label for="shelf_count">Ilość półek:</label>
-          <input type="number" id="shelf_count" value="1" min="1">
-        </div>
-      </div>
     </div>
 
     <div class="section">
-      <h3 class="section-title">-Cokół</h3>
-      <div class="form-grid">
-        <div class="form-group">
-          <label>
-            <input type="checkbox" id="cokol_checkbox" onchange="toggleCokolInput()">
-            Cokół
-          </label>
+        <h3 class="section-title">Wygląd</h3>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="color">Kolor:</label>
+                <input type="color" id="color" value="#8B5A2B">
+            </div>
         </div>
-        <div class="form-group" id="cokol_input" style="display: none;">
-          <label for="cokol_value">Wartość (mm):</label>
-          <input type="number" id="cokol_value" value="0">
-        </div>
-      </div>
     </div>
 
     <div class="section">
-      <h3 class="section-title">-Blenda</h3>
-      <div class="form-grid">
-        <div class="form-group">
-          <label>
-            <input type="checkbox" id="blend_right" onchange="toggleBlendInput('right')">
-            Prawa
-          </label>
+        <h3 class="section-title">Wypełnienie</h3>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="filling">Wypełnienie:</label>
+                <select id="filling">
+                    <option value="none">Brak</option>
+                    <option value="shelves">Półki</option>
+                </select>
+            </div>
+            <div class="form-group" id="shelf-count-group" style="display: none;">
+                <label for="shelf_count">Ilość półek:</label>
+                <input type="number" id="shelf_count" value="1" min="1">
+            </div>
         </div>
-        <div class="form-group">
-          <label>
-            <input type="checkbox" id="blend_left" onchange="toggleBlendInput('left')">
-            Lewa
-          </label>
-        </div>
-        <div class="form-group" id="blend_right_input" style="display: none;">
-          <label for="blend_right_value">Wartość (mm):</label>
-          <input type="number" id="blend_right_value" value="0">
-        </div>
-        <div class="form-group" id="blend_left_input" style="display: none;">
-          <label for="blend_left_value">Wartość (mm):</label>
-          <input type="number" id="blend_left_value" value="0">
-        </div>
-      </div>
     </div>
-  </div>
 
-  <div id="materials" class="tab-content">
+    <div class="section">
+        <h3 class="section-title">-Cokół</h3>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="cokol_checkbox" onchange="toggleCokolInput()">
+                    Cokół
+                </label>
+            </div>
+            <div class="form-group" id="cokol_input" style="display: none;">
+                <label for="cokol_value">Wartość (mm):</label>
+                <input type="number" id="cokol_value" value="0">
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3 class="section-title">-Blenda</h3>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="blend_right" onchange="toggleBlendInput('right')">
+                    Prawa
+                </label>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="blend_left" onchange="toggleBlendInput('left')">
+                    Lewa
+                </label>
+            </div>
+            <div class="form-group" id="blend_right_input" style="display: none;">
+                <label for="blend_right_value">Wartość (mm):</label>
+                <input type="number" id="blend_right_value" value="0">
+            </div>
+            <div class="form-group" id="blend_left_input" style="display: none;">
+                <label for="blend_left_value">Wartość (mm):</label>
+                <input type="number" id="blend_left_value" value="0">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="materials" class="tab-content">
     <p class="placeholder">Ta zakładka jest obecnie pusta.</p>
-  </div>
+</div>
 
 <div id="advanced" class="tab-content">
-  </div>
+</div>
 
-  <div class="button-group">
+<div class="button-group">
     <button onclick="saveCabinet()">Zapisz i rysuj</button>
     <button class="cancel" onclick="closeDialog()">Anuluj</button>
-  </div>
+</div>
 
 <script>
-function switchTab(element, tabName) {
-      console.log('switchTab called with:', element, tabName);
-      document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.remove('active');
-      });
-      document.querySelectorAll('.tab').forEach(tab => {
-        tab.classList.remove('active');
-      });
-      document.getElementById(tabName).classList.add('active');
-      element.classList.add('active');
+    function switchTab(element, tabName) {
+        console.log('switchTab called with:', element, tabName);
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.getElementById(tabName).classList.add('active');
+        element.classList.add('active');
     }
 
 
@@ -294,7 +311,9 @@ function saveCabinet() {
         back_thickness: document.getElementById('back_thickness').value,
         color: document.getElementById('color').value,
         filling: document.getElementById('filling').value,
-        shelf_count: document.getElementById('shelf_count').value
+        shelf_count: document.getElementById('shelf_count').value,
+        blend_left_value: document.getElementById('blend_left').checked ? document.getElementById('blend_left_value').value : 0,
+        blend_right_value: document.getElementById('blend_right').checked ? document.getElementById('blend_right_value').value : 0
       };
 
       const filling = document.getElementById('filling').value;
@@ -307,48 +326,48 @@ function saveCabinet() {
       window.sketchup.saveCabinet(JSON.stringify(params));
     }
 
-function updateFillingOptions() {
-      const filling = document.getElementById('filling').value;
-      const shelfCountGroup = document.getElementById('shelf-count-group');
-      if (filling === 'shelves') {
-        shelfCountGroup.style.display = 'block';
-      } else {
-        shelfCountGroup.style.display = 'none';
-      }
+    function updateFillingOptions() {
+        const filling = document.getElementById('filling').value;
+        const shelfCountGroup = document.getElementById('shelf-count-group');
+        if (filling === 'shelves') {
+            shelfCountGroup.style.display = 'block';
+        } else {
+            shelfCountGroup.style.display = 'none';
+        }
     }
 
-document.getElementById('filling').addEventListener('change', updateFillingOptions);
+    document.getElementById('filling').addEventListener('change', updateFillingOptions);
 
-function closeDialog() {
-      console.log('closeDialog called');
-      window.sketchup.closeDialog();
+    function closeDialog() {
+        console.log('closeDialog called');
+        window.sketchup.closeDialog();
     }
 
-function toggleBlendInput(side) {
-      const checkbox = document.getElementById(`blend_${side}`);
-      const input = document.getElementById(`blend_${side}_input`);
-      if (checkbox.checked) {
-        input.style.display = 'block';
-      } else {
-        input.style.display = 'none';
-      }
+    function toggleBlendInput(side) {
+        const checkbox = document.getElementById(`blend_${side}`);
+        const input = document.getElementById(`blend_${side}_input`);
+        if (checkbox.checked) {
+            input.style.display = 'block';
+        } else {
+            input.style.display = 'none';
+        }
     }
 
-function toggleCokolInput() {
-      const checkbox = document.getElementById('cokol_checkbox');
-      const input = document.getElementById('cokol_input');
-      if (checkbox.checked) {
-        input.style.display = 'block';
-      } else {
-        input.style.display = 'none';
-      }
+    function toggleCokolInput() {
+        const checkbox = document.getElementById('cokol_checkbox');
+        const input = document.getElementById('cokol_input');
+        if (checkbox.checked) {
+            input.style.display = 'block';
+        } else {
+            input.style.display = 'none';
+        }
     }
 
-window.addEventListener('DOMContentLoaded', () => {
-      if (window.sketchup && typeof window.sketchup.dialogReady === 'function') {
-        window.sketchup.dialogReady();
-      }
+    window.addEventListener('DOMContentLoaded', () => {
+        if (window.sketchup && typeof window.sketchup.dialogReady === 'function') {
+            window.sketchup.dialogReady();
+        }
     });
-  </script>
+</script>
 </body>
 </html>
