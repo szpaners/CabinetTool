@@ -38,18 +38,6 @@ module CabinetDialog
 
     def save_cabinet(raw_params)
       params = JSON.parse(raw_params)
-      width = params['width'].to_f.mm
-      height = params['height'].to_f.mm
-      depth = params['depth'].to_f.mm
-      panel_thickness = params['panel_thickness'].to_f.mm
-      back_thickness = params['back_thickness'].to_f.mm
-      color = params['color']
-      filling = params['filling']
-      shelf_count = params['shelf_count'].to_i
-      blend_left_value = params['blend_left_value'].to_f.mm
-      blend_right_value = params['blend_right_value'].to_f.mm
-      blend_left_depth_value = params['blend_left_depth_value'].to_f.mm
-      blend_right_depth_value = params['blend_right_depth_value'].to_f.mm
 
       model = Sketchup.active_model
       model.start_operation('Create / Update Cabinet', true)
@@ -59,10 +47,10 @@ module CabinetDialog
         if @edit_target&.valid?
           transformation = @edit_target.transformation
           @edit_target.erase!
-          new_group = CabinetBuilder::Cabinet.new(width, height, depth, panel_thickness, back_thickness, color, filling, shelf_count,blend_left_value, blend_right_value, blend_left_depth_value, blend_right_depth_value).draw_cabinet
+          new_group = CabinetBuilder::Cabinet.new(cabinet_params(params)).draw_cabinet
           new_group.transformation = transformation if new_group
         else
-          new_group = CabinetBuilder::Cabinet.new(width, height, depth, panel_thickness, back_thickness, color, filling, shelf_count,blend_left_value, blend_right_value, blend_left_depth_value, blend_right_depth_value).draw_cabinet
+          new_group = CabinetBuilder::Cabinet.new(cabinet_params(params)).draw_cabinet
         end
 
         model.commit_operation
@@ -72,6 +60,23 @@ module CabinetDialog
       end
 
       @dialog.close
+    end
+
+    def cabinet_params(params)
+      {
+        width: params['width'].to_f.mm,
+        height: params['height'].to_f.mm,
+        depth: params['depth'].to_f.mm,
+        panel_thickness: params['panel_thickness'].to_f.mm,
+        back_thickness: params['back_thickness'].to_f.mm,
+        color: params['color'],
+        filling: params['filling'],
+        shelf_count: params['shelf_count'].to_i,
+        blend_left_value: params['blend_left_value'].to_f.mm,
+        blend_right_value: params['blend_right_value'].to_f.mm,
+        blend_left_depth_value: params['blend_left_depth_value'].to_f.mm,
+        blend_right_depth_value: params['blend_right_depth_value'].to_f.mm
+      }
     end
   end
 end

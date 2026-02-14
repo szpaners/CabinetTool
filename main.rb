@@ -4,6 +4,8 @@
 require_relative 'lib/cabinet_dimensions'
 require_relative 'lib/cabinet_builder'
 require_relative 'config/plugin_config'
+require_relative 'lib/panels/base_panel'
+require_relative 'lib/panels/panel'
 require_relative 'lib/panels/bottom_panel'
 require_relative 'lib/panels/top_panel'
 require_relative 'lib/panels/left_panel'

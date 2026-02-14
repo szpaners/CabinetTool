@@ -1,20 +1,8 @@
 module CabinetBuilder
-  class BottomPanel
-    attr_reader :group, :face
-
-    def initialize(entities, material, thickness)
-      @group = entities.add_group
-      @group.name = "Bottom Panel"
-      @group.material = material
-      @thickness = thickness
-    end
-
-    def create_face(points)
-      @face = @group.entities.add_face(points)
-    end
-
-    def pushpull(distance)
-      @face.pushpull(distance)
+  class BottomPanel < BasePanel
+    def initialize(config)
+      super(config.merge(name: 'Bottom Panel'))
+      @thickness = config[:thickness]
     end
   end
 end
