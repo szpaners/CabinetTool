@@ -36,7 +36,7 @@ module CabinetDialog
       @dialog.execute_script("setFormData(#{JSON.generate(@initial_params)})")
     end
 
-def save_cabinet(raw_params)
+    def save_cabinet(raw_params)
       params = JSON.parse(raw_params)
       width = params['width'].to_f.mm
       height = params['height'].to_f.mm
@@ -48,6 +48,8 @@ def save_cabinet(raw_params)
       shelf_count = params['shelf_count'].to_i
       blend_left_value = params['blend_left_value'].to_f.mm
       blend_right_value = params['blend_right_value'].to_f.mm
+      blend_left_depth_value = params['blend_left_depth_value'].to_f.mm
+      blend_right_depth_value = params['blend_right_depth_value'].to_f.mm
 
       model = Sketchup.active_model
       model.start_operation('Create / Update Cabinet', true)
@@ -57,11 +59,10 @@ def save_cabinet(raw_params)
         if @edit_target&.valid?
           transformation = @edit_target.transformation
           @edit_target.erase!
-
-          new_group = CabinetBuilder::Cabinet.new(width, height, depth, panel_thickness, back_thickness, color, filling, shelf_count,blend_left_value, blend_right_value).draw_cabinet
+          new_group = CabinetBuilder::Cabinet.new(width, height, depth, panel_thickness, back_thickness, color, filling, shelf_count,blend_left_value, blend_right_value, blend_left_depth_value, blend_right_depth_value).draw_cabinet
           new_group.transformation = transformation if new_group
         else
-          new_group = CabinetBuilder::Cabinet.new(width, height, depth, panel_thickness, back_thickness, color, filling, shelf_count,blend_left_value, blend_right_value).draw_cabinet
+          new_group = CabinetBuilder::Cabinet.new(width, height, depth, panel_thickness, back_thickness, color, filling, shelf_count,blend_left_value, blend_right_value, blend_left_depth_value, blend_right_depth_value).draw_cabinet
         end
 
         model.commit_operation

@@ -54,6 +54,21 @@
             background: #fcfcfc;
         }
 
+        .blend-section {
+            display: flex;
+            gap: 16px;
+        }
+
+        .blend-section .form-grid {
+            flex: 1 1 0;
+            max-width: none;
+        }
+
+        .is-hidden {
+            display: none;
+            pointer-events: none;
+        }
+
         .section-title {
             margin: 0 0 8px;
             font-size: 12px;
@@ -64,9 +79,15 @@
         }
 
         .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 8px 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-content: flex-start;
+        }
+
+        .form-grid .form-group {
+            flex: 0 0 240px;
+            max-width: 240px;
         }
 
         .form-group {
@@ -210,27 +231,52 @@
     </div>
 
     <div class="section">
-        <h3 class="section-title">-Blenda</h3>
-        <div class="form-grid">
-            <div class="form-group">
-                <label>
-                    <input type="checkbox" id="blend_right" onchange="toggleBlendInput('right')">
-                    Prawa
-                </label>
+        <h3 class="section-title">Blenda</h3>
+        <div class="blend-section">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="blend_left" onchange="toggleBlendInput('left')">
+                        Lewa
+                    </label>
+                </div>
+                <div class="form-group is-hidden" id="blend_left_input">
+                    <label for="blend_left_value">Wartość (mm):</label>
+                    <input type="number" id="blend_left_value" value="0">
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="blend_left_depth_checkbox" onchange="toggleBlendLeftDepthInput()">
+                        Głębokość lewa
+                    </label>
+                </div>
+                <div class="form-group is-hidden" id="blend_left_depth_input">
+                    <label for="blend_left_depth_value">Głębokość (mm):</label>
+                    <input type="number" id="blend_left_depth_value" value="0">
+                </div>
+
             </div>
-            <div class="form-group">
-                <label>
-                    <input type="checkbox" id="blend_left" onchange="toggleBlendInput('left')">
-                    Lewa
-                </label>
-            </div>
-            <div class="form-group" id="blend_right_input" style="display: none;">
-                <label for="blend_right_value">Wartość (mm):</label>
-                <input type="number" id="blend_right_value" value="0">
-            </div>
-            <div class="form-group" id="blend_left_input" style="display: none;">
-                <label for="blend_left_value">Wartość (mm):</label>
-                <input type="number" id="blend_left_value" value="0">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="blend_right" onchange="toggleBlendInput('right')">
+                        Prawa
+                    </label>
+                </div>
+                <div class="form-group is-hidden" id="blend_right_input">
+                    <label for="blend_right_value">Wartość (mm):</label>
+                    <input type="number" id="blend_right_value" value="0">
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="blend_right_depth_checkbox" onchange="toggleBlendRightDepthInput()">
+                        Głębokość prawa
+                    </label>
+                </div>
+                <div class="form-group is-hidden" id="blend_right_depth_input">
+                    <label for="blend_right_depth_value">Głębokość (mm):</label>
+                    <input type="number" id="blend_right_depth_value" value="0">
+                </div>
             </div>
         </div>
     </div>
@@ -262,68 +308,76 @@
     }
 
 
-function setFormData(params) {
-      if (!params) return;
+    function setFormData(params) {
+        if (!params) return;
 
-      document.getElementById('width').value = params.width;
-      document.getElementById('height').value = params.height;
-      document.getElementById('depth').value = params.depth;
-      document.getElementById('panel_thickness').value = params.panel_thickness;
-      document.getElementById('back_thickness').value = params.back_thickness;
-      document.getElementById('color').value = params.color;
-      document.getElementById('filling').value = params.filling;
-      document.getElementById('shelf_count').value = params.shelf_count;
+        console.log(params);
 
-      // Pokaż/ukryj inputy na podstawie parametrów
-      if (params.filling === 'shelves') {
-        document.getElementById('shelf-count-group').style.display = 'block';
-        document.getElementById('shelf_count').value = params.shelf_count || 1;
-      } else {
-        document.getElementById('shelf-count-group').style.display = 'none';
-      }
-
-      if (params.cokol_value && params.cokol_value > 0) {
-        document.getElementById('cokol_checkbox').checked = true;
-        document.getElementById('cokol_input').style.display = 'block';
-        document.getElementById('cokol_value').value = params.cokol_value;
-      }
-
-      if (params.blend_right_value && params.blend_right_value > 0) {
-        document.getElementById('blend_right').checked = true;
-        document.getElementById('blend_right_input').style.display = 'block';
-        document.getElementById('blend_right_value').value = params.blend_right_value;
-      }
-
-      if (params.blend_left_value && params.blend_left_value > 0) {
-        document.getElementById('blend_left').checked = true;
-        document.getElementById('blend_left_input').style.display = 'block';
+        document.getElementById('width').value = params.width;
+        document.getElementById('height').value = params.height;
+        document.getElementById('depth').value = params.depth;
+        document.getElementById('panel_thickness').value = params.panel_thickness;
+        document.getElementById('back_thickness').value = params.back_thickness;
+        document.getElementById('color').value = params.color;
+        document.getElementById('filling').value = params.filling;
+        document.getElementById('shelf_count').value = params.shelf_count;
         document.getElementById('blend_left_value').value = params.blend_left_value;
-      }
+        document.getElementById('blend_right_value').value = params.blend_right_value;
+        document.getElementById('blend_left_depth_value').value = params.blend_left_depth_value;
+        document.getElementById('blend_right_depth_value').value = params.blend_right_depth_value;
+
+        // Pokaż/ukryj inputy na podstawie parametrów
+        if (params.filling === 'shelves') {
+            document.getElementById('shelf-count-group').style.display = 'block';
+            document.getElementById('shelf_count').value = params.shelf_count || 1;
+        } else {
+            document.getElementById('shelf-count-group').style.display = 'none';
+        }
+
+        if (params.cokol_value && params.cokol_value > 0) {
+            document.getElementById('cokol_checkbox').checked = true;
+            document.getElementById('cokol_input').style.display = 'block';
+            document.getElementById('cokol_value').value = params.cokol_value;
+        }
+
+        if (params.blend_right_value && params.blend_right_value > 0) {
+            document.getElementById('blend_right').checked = true;
+            document.getElementById('blend_right_input').style.display = 'block';
+            document.getElementById('blend_right_value').value = params.blend_right_value;
+        }
+
+        if (params.blend_left_value && params.blend_left_value > 0) {
+            document.getElementById('blend_left').checked = true;
+            document.getElementById('blend_left_input').style.display = 'block';
+            document.getElementById('blend_left_value').value = params.blend_left_value;
+        }
     }
 
-function saveCabinet() {
-      console.log('saveCabinet called');
-      const params = {
-        width: document.getElementById('width').value,
-        height: document.getElementById('height').value,
-        depth: document.getElementById('depth').value,
-        panel_thickness: document.getElementById('panel_thickness').value,
-        back_thickness: document.getElementById('back_thickness').value,
-        color: document.getElementById('color').value,
-        filling: document.getElementById('filling').value,
-        shelf_count: document.getElementById('shelf_count').value,
-        blend_left_value: document.getElementById('blend_left').checked ? document.getElementById('blend_left_value').value : 0,
-        blend_right_value: document.getElementById('blend_right').checked ? document.getElementById('blend_right_value').value : 0
-      };
+    function saveCabinet() {
+        const params = {
+            width: document.getElementById('width').value,
+            height: document.getElementById('height').value,
+            depth: document.getElementById('depth').value,
+            panel_thickness: document.getElementById('panel_thickness').value,
+            back_thickness: document.getElementById('back_thickness').value,
+            color: document.getElementById('color').value,
+            filling: document.getElementById('filling').value,
+            shelf_count: document.getElementById('shelf_count').value,
+            blend_left_value: document.getElementById('blend_left').checked ? document.getElementById('blend_left_value').value : 0,
+            blend_right_value: document.getElementById('blend_right').checked ? document.getElementById('blend_right_value').value : 0,
+            blend_left_depth_value: document.getElementById('blend_left_depth_checkbox').checked ? document.getElementById('blend_left_depth_value').value : 0,
+            blend_right_depth_value: document.getElementById('blend_right_depth_checkbox').checked ? document.getElementById('blend_right_depth_value').value : 0
+        };
 
-      const filling = document.getElementById('filling').value;
-      if (filling === 'shelves') {
-        params.shelf_count = document.getElementById('shelf_count').value;
-      } else {
-        params.shelf_count = 0;
-      }
 
-      window.sketchup.saveCabinet(JSON.stringify(params));
+        const filling = document.getElementById('filling').value;
+        if (filling === 'shelves') {
+            params.shelf_count = document.getElementById('shelf_count').value;
+        } else {
+            params.shelf_count = 0;
+        }
+
+        window.sketchup.saveCabinet(JSON.stringify(params));
     }
 
     function updateFillingOptions() {
@@ -347,9 +401,29 @@ function saveCabinet() {
         const checkbox = document.getElementById(`blend_${side}`);
         const input = document.getElementById(`blend_${side}_input`);
         if (checkbox.checked) {
-            input.style.display = 'block';
+            input.classList.remove('is-hidden');
         } else {
-            input.style.display = 'none';
+            input.classList.add('is-hidden');
+        }
+    }
+
+    function toggleBlendLeftDepthInput() {
+        const checkbox = document.getElementById('blend_left_depth_checkbox');
+        const input = document.getElementById('blend_left_depth_input');
+        if (checkbox.checked) {
+            input.classList.remove('is-hidden');
+        } else {
+            input.classList.add('is-hidden');
+        }
+    }
+
+    function toggleBlendRightDepthInput() {
+        const checkbox = document.getElementById('blend_right_depth_checkbox');
+        const input = document.getElementById('blend_right_depth_input');
+        if (checkbox.checked) {
+            input.classList.remove('is-hidden');
+        } else {
+            input.classList.add('is-hidden');
         }
     }
 
@@ -357,9 +431,9 @@ function saveCabinet() {
         const checkbox = document.getElementById('cokol_checkbox');
         const input = document.getElementById('cokol_input');
         if (checkbox.checked) {
-            input.style.display = 'block';
+            input.classList.remove('is-hidden');
         } else {
-            input.style.display = 'none';
+            input.classList.add('is-hidden');
         }
     }
 

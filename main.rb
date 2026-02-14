@@ -37,7 +37,6 @@ end
 
 if Sketchup.version.to_i >= 26
   timestamp = Time.now.strftime('%M_%S')
-  puts "#{PluginConfig::PLUGIN_NAME} loaded for SketchUp 2026 (#{timestamp})"
   KitchenCabinetPlugin.activate
 else
   puts 'This plugin requires SketchUp 2026 or later'
