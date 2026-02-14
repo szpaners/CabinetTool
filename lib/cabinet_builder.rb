@@ -54,22 +54,48 @@ module CabinetBuilder
       draw_panel(panel_klass: BackPanel, points: points, thickness: @back_thickness, extrusion: @back_thickness)
     end
 
-    def draw_front
-      return unless @front_enabled
+def draw_front
+  return unless @front_enabled
 
-      front_width = @width - (2 * @front_technological_gap)
-      front_height = @height - (2 * @front_technological_gap)
-      return if front_width <= 0 || front_height <= 0
+  front_width = @width - (2 * @front_technological_gap)
+  front_height = @height - (2 * @front_technological_gap)
+  return if front_width <= 0 || front_height <= 0
 
-      points = [
-        [@front_technological_gap, -@panel_thickness, @front_technological_gap],
-        [@front_technological_gap + front_width, -@panel_thickness, @front_technological_gap],
-        [@front_technological_gap + front_width, -@panel_thickness, @front_technological_gap + front_height],
-        [@front_technological_gap, -@panel_thickness, @front_technological_gap + front_height]
-      ]
+  if @front_quantity == 1
+    points = [
+      [@front_technological_gap, -@panel_thickness, @front_technological_gap],
+      [@front_technological_gap + front_width, -@panel_thickness, @front_technological_gap],
+      [@front_technological_gap + front_width, -@panel_thickness, @front_technological_gap + front_height],
+      [@front_technological_gap, -@panel_thickness, @front_technological_gap + front_height]
+    ]
 
-      draw_named_panel(name: 'Front', points: points, thickness: @panel_thickness, extrusion: -@panel_thickness)
-    end
+    draw_named_panel(name: 'Front', points: points, thickness: @panel_thickness, extrusion: -@panel_thickness)
+  elsif @front_quantity == 2
+    half_width = (front_width - @front_technological_gap) / 2
+    left_front_width = half_width
+    right_front_width = half_width
+
+    # Lewy front
+    left_points = [
+      [@front_technological_gap, -@panel_thickness, @front_technological_gap],
+      [@front_technological_gap + left_front_width, -@panel_thickness, @front_technological_gap],
+      [@front_technological_gap + left_front_width, -@panel_thickness, @front_technological_gap + front_height],
+      [@front_technological_gap, -@panel_thickness, @front_technological_gap + front_height]
+    ]
+
+    draw_named_panel(name: 'Front Lewy', points: left_points, thickness: @panel_thickness, extrusion: -@panel_thickness)
+
+    # Prawy front
+    right_points = [
+      [@front_technological_gap + left_front_width + @front_technological_gap, -@panel_thickness, @front_technological_gap],
+      [@front_technological_gap + left_front_width + @front_technological_gap + right_front_width, -@panel_thickness, @front_technological_gap],
+      [@front_technological_gap + left_front_width + @front_technological_gap + right_front_width, -@panel_thickness, @front_technological_gap + front_height],
+      [@front_technological_gap + left_front_width + @front_technological_gap, -@panel_thickness, @front_technological_gap + front_height]
+    ]
+
+    draw_named_panel(name: 'Front Prawy', points: right_points, thickness: @panel_thickness, extrusion: -@panel_thickness)
+  end
+end
 
     def draw_shelves
       return if @shelf_count <= 0
