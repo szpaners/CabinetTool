@@ -68,6 +68,7 @@ def cabinet_params(params)
     height: params['height'].to_f.round.mm,
     depth: params['depth'].to_f.round.mm,
     panel_thickness: params['panel_thickness'].to_f.round.mm,
+    front_thickness: params['front_thickness'].to_f.round.mm,
     back_thickness: params['back_thickness'].to_f.round.mm,
     color: params['color'],
     filling: params['filling'],

@@ -62,38 +62,38 @@ def draw_front
   return if front_width <= 0 || front_height <= 0
 
   if @front_quantity == 1
-    points = [
-      [@front_technological_gap, -@panel_thickness, @front_technological_gap],
-      [@front_technological_gap + front_width, -@panel_thickness, @front_technological_gap],
-      [@front_technological_gap + front_width, -@panel_thickness, @front_technological_gap + front_height],
-      [@front_technological_gap, -@panel_thickness, @front_technological_gap + front_height]
-    ]
+points = [
+  [@front_technological_gap, -@front_thickness, @front_technological_gap],
+  [@front_technological_gap + front_width, -@front_thickness, @front_technological_gap],
+  [@front_technological_gap + front_width, -@front_thickness, @front_technological_gap + front_height],
+  [@front_technological_gap, -@front_thickness, @front_technological_gap + front_height]
+]
 
-    draw_named_panel(name: 'Front', points: points, thickness: @panel_thickness, extrusion: -@panel_thickness)
+draw_named_panel(name: 'Front', points: points, thickness: @front_thickness, extrusion: -@front_thickness)
   elsif @front_quantity == 2
     half_width = (front_width - @front_technological_gap) / 2
     left_front_width = half_width
     right_front_width = half_width
 
     # Lewy front
-    left_points = [
-      [@front_technological_gap, -@panel_thickness, @front_technological_gap],
-      [@front_technological_gap + left_front_width, -@panel_thickness, @front_technological_gap],
-      [@front_technological_gap + left_front_width, -@panel_thickness, @front_technological_gap + front_height],
-      [@front_technological_gap, -@panel_thickness, @front_technological_gap + front_height]
-    ]
+left_points = [
+  [@front_technological_gap, -@front_thickness, @front_technological_gap],
+  [@front_technological_gap + left_front_width, -@front_thickness, @front_technological_gap],
+  [@front_technological_gap + left_front_width, -@front_thickness, @front_technological_gap + front_height],
+  [@front_technological_gap, -@front_thickness, @front_technological_gap + front_height]
+]
 
-    draw_named_panel(name: 'Front Lewy', points: left_points, thickness: @panel_thickness, extrusion: -@panel_thickness)
+draw_named_panel(name: 'Front Lewy', points: left_points, thickness: @front_thickness, extrusion: -@front_thickness)
 
     # Prawy front
-    right_points = [
-      [@front_technological_gap + left_front_width + @front_technological_gap, -@panel_thickness, @front_technological_gap],
-      [@front_technological_gap + left_front_width + @front_technological_gap + right_front_width, -@panel_thickness, @front_technological_gap],
-      [@front_technological_gap + left_front_width + @front_technological_gap + right_front_width, -@panel_thickness, @front_technological_gap + front_height],
-      [@front_technological_gap + left_front_width + @front_technological_gap, -@panel_thickness, @front_technological_gap + front_height]
-    ]
+right_points = [
+  [@front_technological_gap + left_front_width + @front_technological_gap, -@front_thickness, @front_technological_gap],
+  [@front_technological_gap + left_front_width + @front_technological_gap + right_front_width, -@front_thickness, @front_technological_gap],
+  [@front_technological_gap + left_front_width + @front_technological_gap + right_front_width, -@front_thickness, @front_technological_gap + front_height],
+  [@front_technological_gap + left_front_width + @front_technological_gap, -@front_thickness, @front_technological_gap + front_height]
+]
 
-    draw_named_panel(name: 'Front Prawy', points: right_points, thickness: @panel_thickness, extrusion: -@panel_thickness)
+draw_named_panel(name: 'Front Prawy', points: right_points, thickness: @front_thickness, extrusion: -@front_thickness)
   end
 end
 

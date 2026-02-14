@@ -17,12 +17,13 @@ module CabinetBuilder
       @back_thickness = read_config_value(config: config, key: :back_thickness, default: CabinetDimensions::PANEL_THICKNESS_BACK).to_f
     end
 
-    def setup_appearance(config)
-      @color = read_config_value(config: config, key: :color, default: CabinetDimensions::DEFAULT_COLOR)
-      @material_color = Sketchup::Color.new(@color)
-      @filling = read_config_value(config: config, key: :filling, default: 'none')
-      @shelf_count = read_config_value(config: config, key: :shelf_count, default: 0).to_i
-    end
+def setup_appearance(config)
+  @color = read_config_value(config: config, key: :color, default: CabinetDimensions::DEFAULT_COLOR)
+  @material_color = Sketchup::Color.new(@color)
+  @filling = read_config_value(config: config, key: :filling, default: 'none')
+  @shelf_count = read_config_value(config: config, key: :shelf_count, default: 0).to_i
+  @front_thickness = read_config_value(config: config, key: :front_thickness, default: CabinetDimensions::FRONT_THICKNESS).to_f
+end
 
 def setup_front(config)
   front_enabled_value = read_config_value(config: config, key: :front_enabled, default: false)
