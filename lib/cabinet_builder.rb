@@ -121,34 +121,36 @@ end
       end
     end
 
-    def draw_blend_left
-      return unless @blend_left_value > 0
+def draw_blend_left
+  return unless @blend_left_value > 0
 
-      max_depth = @blend_left_depth_value > 0 ? @blend_left_depth_value : @depth - @back_thickness
-      points = [
-        [0, 0, 0],
-        [0, 0, @height],
-        [0, max_depth, @height],
-        [0, max_depth, 0]
-      ]
+  max_depth = @blend_left_depth_value > 0 ? @blend_left_depth_value : @depth - @back_thickness + (@front_enabled ? @front_thickness : 0)
+  y_offset = @front_enabled ? -@front_thickness : 0
+  points = [
+    [0, y_offset, 0],
+    [0, y_offset, @height],
+    [0, max_depth + y_offset, @height],
+    [0, max_depth + y_offset, 0]
+  ]
 
-      draw_named_panel(name: 'Blend Left', points: points, thickness: @blend_left_value, extrusion: @blend_left_value)
-    end
+  draw_named_panel(name: 'Blend Left', points: points, thickness: @blend_left_value, extrusion: @blend_left_value)
+end
 
-    def draw_blend_right
-      return unless @blend_right_value > 0
+def draw_blend_right
+  return unless @blend_right_value > 0
 
-      x = @width + @blend_right_value
-      max_depth = @blend_right_depth_value > 0 ? @blend_right_depth_value : @depth - @back_thickness
-      points = [
-        [x, 0, 0],
-        [x, 0, @height],
-        [x, max_depth, @height],
-        [x, max_depth, 0]
-      ]
+  y_offset = @front_enabled ? -@front_thickness : 0
+  x = @width + @blend_right_value
+  max_depth = @blend_right_depth_value > 0 ? @blend_right_depth_value : @depth - @back_thickness + (@front_enabled ? @front_thickness : 0)
+  points = [
+    [x, y_offset, 0],
+    [x, y_offset, @height],
+    [x, max_depth + y_offset, @height],
+    [x, max_depth + y_offset, 0]
+  ]
 
-      draw_named_panel(name: 'Blend Right', points: points, thickness: @blend_right_value, extrusion: @blend_right_value)
-    end
+  draw_named_panel(name: 'Blend Right', points: points, thickness: @blend_right_value, extrusion: @blend_right_value)
+end
 
     def draw_cabinet
       draw_bottom_panel
