@@ -123,16 +123,12 @@ module CabinetBuilder
 
       return draw_named_panel(name: name, points: points, thickness: @front_thickness, extrusion: -@front_thickness) if frame_width <= 0
 
-      frame_parts = [
-        { part: 'Góra', points: [[x_min, y, z_max - frame_width], [x_max, y, z_max - frame_width], [x_max, y, z_max], [x_min, y, z_max]] },
-        { part: 'Dół', points: [[x_min, y, z_min], [x_max, y, z_min], [x_max, y, z_min + frame_width], [x_min, y, z_min + frame_width]] },
-        { part: 'Lewa', points: [[x_min, y, z_min + frame_width], [x_min + frame_width, y, z_min + frame_width], [x_min + frame_width, y, z_max - frame_width], [x_min, y, z_max - frame_width]] },
-        { part: 'Prawa', points: [[x_max - frame_width, y, z_min + frame_width], [x_max, y, z_min + frame_width], [x_max, y, z_max - frame_width], [x_max - frame_width, y, z_max - frame_width]] }
-      ]
-
-      frame_parts.each do |frame_part|
-        draw_named_panel(name: "#{name} Ramka #{frame_part[:part]}", points: frame_part[:points], thickness: @front_thickness, extrusion: -@front_thickness)
-      end
+      draw_frame_with_offset(
+        name: "#{name} Ramka",
+        outer_points: points,
+        frame_width: frame_width,
+        front_thickness: @front_thickness
+      )
 
       inner_x_min = x_min + frame_width
       inner_x_max = x_max - frame_width
@@ -153,6 +149,44 @@ module CabinetBuilder
       # Wnętrze osadzamy od tylnej strony frontu (przy korpusie),
       # dzięki czemu od frontu otrzymujemy efekt wnęki o zadanej głębokości.
       draw_named_panel(name: "#{name} Wnętrze", points: inner_points, thickness: inner_panel_thickness, extrusion: -inner_panel_thickness)
+    end
+
+    def draw_frame_with_offset(name:, outer_points:, frame_width:, front_thickness:)
+      frame_group = @cabinet_entities.add_group
+      frame_group.name = name
+      frame_group.material = @material_color
+      assign_panel_tag(frame_group, name)
+
+      entities = frame_group.entities
+      outer_face = entities.add_face(outer_points)
+      return unless outer_face
+      outer_face.material = @material_color
+      outer_face.back_material = @material_color
+
+      x_min = outer_points.map { |point| point[0] }.min
+      x_max = outer_points.map { |point| point[0] }.max
+      z_min = outer_points.map { |point| point[2] }.min
+      z_max = outer_points.map { |point| point[2] }.max
+      y = outer_points.first[1]
+
+      inner_points = [
+        [x_min + frame_width, y, z_min + frame_width],
+        [x_max - frame_width, y, z_min + frame_width],
+        [x_max - frame_width, y, z_max - frame_width],
+        [x_min + frame_width, y, z_max - frame_width]
+      ]
+
+      inner_face = entities.add_face(inner_points)
+      inner_face.erase! if inner_face&.valid?
+
+      frame_face = entities.grep(Sketchup::Face).max_by(&:area)
+      return unless frame_face
+
+      frame_face.pushpull(-front_thickness)
+      entities.grep(Sketchup::Face).each do |face|
+        face.material = @material_color
+        face.back_material = @material_color
+      end
     end
 
     def draw_front_opening_marker(front_points, opening_direction)
