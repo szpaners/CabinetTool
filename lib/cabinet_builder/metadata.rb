@@ -36,6 +36,7 @@ module CabinetBuilder
           'depth' => group.get_attribute(CABINET_DICT, 'depth_mm', CabinetDimensions::CABINET_DEPTH.to_mm),
           'panel_thickness' => group.get_attribute(CABINET_DICT, 'panel_thickness_mm', CabinetDimensions::PANEL_THICKNESS.to_mm),
           'back_thickness' => group.get_attribute(CABINET_DICT, 'back_thickness_mm', CabinetDimensions::PANEL_THICKNESS_BACK.to_mm),
+          'nazwa_szafki' => group.get_attribute(CABINET_DICT, 'nazwa_szafki', 'szafka'),
           'color' => group.get_attribute(CABINET_DICT, 'color', CabinetDimensions::DEFAULT_COLOR),
           'filling' => group.get_attribute(CABINET_DICT, 'filling', 'none'),
           'shelf_count' => group.get_attribute(CABINET_DICT, 'shelf_count', 0),
@@ -90,6 +91,7 @@ def read_blend_value_mm(group, keys)
     def save_metadata
       @group.set_attribute(CABINET_DICT, 'is_cabinet', true)
       save_mm_attributes
+      @group.set_attribute(CABINET_DICT, 'nazwa_szafki', @nazwa_szafki)
       @group.set_attribute(CABINET_DICT, 'color', @color)
       @group.set_attribute(CABINET_DICT, 'filling', @filling)
       @group.set_attribute(CABINET_DICT, 'shelf_count', @shelf_count)

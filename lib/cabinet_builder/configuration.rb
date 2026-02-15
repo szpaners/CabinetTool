@@ -18,6 +18,8 @@ module CabinetBuilder
     end
 
 def setup_appearance(config)
+  @nazwa_szafki = read_config_value(config: config, key: :nazwa_szafki, default: 'szafka').to_s.strip
+  @nazwa_szafki = 'szafka' if @nazwa_szafki.empty?
   @color = read_config_value(config: config, key: :color, default: CabinetDimensions::DEFAULT_COLOR)
   @material_color = Sketchup::Color.new(@color)
   @filling = read_config_value(config: config, key: :filling, default: 'none')

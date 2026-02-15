@@ -70,6 +70,7 @@ def cabinet_params(params)
     panel_thickness: params['panel_thickness'].to_f.round.mm,
     front_thickness: params['front_thickness'].to_f.round.mm,
     back_thickness: params['back_thickness'].to_f.round.mm,
+    nazwa_szafki: params['nazwa_szafki'],
     color: params['color'],
     filling: params['filling'],
     shelf_count: params['shelf_count'].to_i,
