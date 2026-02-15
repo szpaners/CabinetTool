@@ -44,6 +44,8 @@ end
     def setup_cokols(config)
       @cokol_dolny_value = read_config_value(config: config, key: :cokol_dolny_value, default: 0).to_f
       @cokol_gorny_value = read_config_value(config: config, key: :cokol_gorny_value, default: 0).to_f
+      @cokol_dolny_offset_value = [read_config_value(config: config, key: :cokol_dolny_offset_value, default: 0).to_f, 0].max
+      @cokol_gorny_offset_value = [read_config_value(config: config, key: :cokol_gorny_offset_value, default: 0).to_f, 0].max
     end
 
     def read_config_value(config:, key:, default:)

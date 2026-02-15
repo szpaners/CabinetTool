@@ -156,11 +156,12 @@ end
     def draw_cokol_dolny
       return unless @cokol_dolny_value > 0
 
+      y_offset = @cokol_dolny_offset_value
       points = [
-        [0, 0, -@cokol_dolny_value],
-        [@width, 0, -@cokol_dolny_value],
-        [@width, 0, 0],
-        [0, 0, 0]
+        [0, y_offset, -@cokol_dolny_value],
+        [@width, y_offset, -@cokol_dolny_value],
+        [@width, y_offset, 0],
+        [0, y_offset, 0]
       ]
 
       draw_named_panel(name: 'Cokol Dolny', points: points, thickness: @panel_thickness, extrusion: -@panel_thickness)
@@ -169,11 +170,12 @@ end
     def draw_cokol_gorny
       return unless @cokol_gorny_value > 0
 
+      y_offset = @cokol_gorny_offset_value
       points = [
-        [0, 0, @height],
-        [@width, 0, @height],
-        [@width, 0, @height + @cokol_gorny_value],
-        [0, 0, @height + @cokol_gorny_value]
+        [0, y_offset, @height],
+        [@width, y_offset, @height],
+        [@width, y_offset, @height + @cokol_gorny_value],
+        [0, y_offset, @height + @cokol_gorny_value]
       ]
 
       draw_named_panel(name: 'Cokol Gorny', points: points, thickness: @panel_thickness, extrusion: -@panel_thickness)
