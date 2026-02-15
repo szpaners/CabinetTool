@@ -31,10 +31,13 @@ module CabinetBuilder
 
     def draw_top_panel
       top_z = @height - @panel_thickness
+      x_min = @panel_thickness
+      x_max = @width - @panel_thickness
       y_max = @depth - @back_thickness
+      return if x_max <= x_min
 
       unless @kitchen_base_enabled
-        points = horizontal_rectangle(x_min: 0, x_max: @width, y_min: 0, y_max: y_max, z: top_z)
+        points = horizontal_rectangle(x_min: x_min, x_max: x_max, y_min: 0, y_max: y_max, z: top_z)
         draw_panel(panel_klass: TopPanel, points: points, thickness: @panel_thickness, extrusion: @panel_thickness)
         return
       end
@@ -42,8 +45,8 @@ module CabinetBuilder
       connector_width = [@connector_width, y_max / 2.0].min
       return if connector_width <= 0
 
-      front_connector_points = horizontal_rectangle(x_min: 0, x_max: @width, y_min: 0, y_max: connector_width, z: top_z)
-      back_connector_points = horizontal_rectangle(x_min: 0, x_max: @width, y_min: y_max - connector_width, y_max: y_max, z: top_z)
+      front_connector_points = horizontal_rectangle(x_min: x_min, x_max: x_max, y_min: 0, y_max: connector_width, z: top_z)
+      back_connector_points = horizontal_rectangle(x_min: x_min, x_max: x_max, y_min: y_max - connector_width, y_max: y_max, z: top_z)
 
       draw_named_panel(name: 'Top Connector Front', points: front_connector_points, thickness: @panel_thickness, extrusion: @panel_thickness)
       draw_named_panel(name: 'Top Connector Back', points: back_connector_points, thickness: @panel_thickness, extrusion: @panel_thickness)
@@ -410,11 +413,15 @@ def draw_blend_left
   has_front_surface = @front_enabled || @filling == 'drawers'
   max_depth = @blend_left_depth_value > 0 ? @blend_left_depth_value : @depth - @back_thickness + (has_front_surface ? @front_thickness : 0)
   y_offset = has_front_surface ? -@front_thickness : 0
+  blend_bottom_z = @panel_thickness
+  blend_top_z = @height
+  return if blend_top_z <= blend_bottom_z
+
   points = [
-    [0, y_offset, 0],
-    [0, y_offset, @height],
-    [0, max_depth + y_offset, @height],
-    [0, max_depth + y_offset, 0]
+    [0, y_offset, blend_bottom_z],
+    [0, y_offset, blend_top_z],
+    [0, max_depth + y_offset, blend_top_z],
+    [0, max_depth + y_offset, blend_bottom_z]
   ]
 
   draw_named_panel(name: 'Blend Left', points: points, thickness: @blend_left_value, extrusion: @blend_left_value)
@@ -427,11 +434,15 @@ def draw_blend_right
   y_offset = has_front_surface ? -@front_thickness : 0
   x = @width + @blend_right_value
   max_depth = @blend_right_depth_value > 0 ? @blend_right_depth_value : @depth - @back_thickness + (has_front_surface ? @front_thickness : 0)
+  blend_bottom_z = @panel_thickness
+  blend_top_z = @height
+  return if blend_top_z <= blend_bottom_z
+
   points = [
-    [x, y_offset, 0],
-    [x, y_offset, @height],
-    [x, max_depth + y_offset, @height],
-    [x, max_depth + y_offset, 0]
+    [x, y_offset, blend_bottom_z],
+    [x, y_offset, blend_top_z],
+    [x, max_depth + y_offset, blend_top_z],
+    [x, max_depth + y_offset, blend_bottom_z]
   ]
 
   draw_named_panel(name: 'Blend Right', points: points, thickness: @blend_right_value, extrusion: @blend_right_value)

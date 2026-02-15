@@ -14,8 +14,8 @@ module CabinetBuilder
     def vertical_side_rectangle(x:)
       [
         [x, 0, @panel_thickness],
-        [x, 0, @height - @panel_thickness],
-        [x, @depth - @back_thickness, @height - @panel_thickness],
+        [x, 0, @height],
+        [x, @depth - @back_thickness, @height],
         [x, @depth - @back_thickness, @panel_thickness]
       ]
     end
