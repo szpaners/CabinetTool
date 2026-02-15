@@ -152,7 +152,8 @@ module CabinetBuilder
       when 'wysów'
         [
           [[left_x, y, top_z], [right_x, y, bottom_z]],
-          [[right_x, y, top_z], [left_x, y, bottom_z]]
+          [[right_x, y, top_z], [left_x, y, bottom_z]],
+          [[left_x, y, bottom_z], [right_x, y, bottom_z]]
         ]
       else
         []
@@ -182,9 +183,14 @@ module CabinetBuilder
       return if drawer_heights.any? { |height| height <= 0 }
 
       drawers_tag = opening_direction_tag('szuflady')
+      ordered_heights = if @drawers_asymmetric && @drawer_count > 1
+        drawer_heights.reverse
+      else
+        drawer_heights
+      end
       current_z = drawer_gap
 
-      drawer_heights.each_with_index do |drawer_height, index|
+      ordered_heights.each_with_index do |drawer_height, index|
         z_bottom = current_z
         z_top = z_bottom + drawer_height
 
@@ -195,7 +201,7 @@ module CabinetBuilder
           [drawer_gap, -@front_thickness, z_top]
         ]
 
-        draw_named_panel(name: "Szuflada #{index + 1}", points: points, thickness: @front_thickness, extrusion: -@front_thickness)
+        draw_named_panel(name: "Front Szuflady #{index + 1}", points: points, thickness: @front_thickness, extrusion: -@front_thickness)
 
         marker_segments = front_opening_marker_segments(points, 'wysów')
         next if marker_segments.empty?
@@ -209,44 +215,6 @@ module CabinetBuilder
         end
 
         current_z = z_top + drawer_gap
-      end
-    end
-
-    def draw_drawers
-      return unless @filling == 'drawers'
-      return if @drawer_count <= 0
-
-      drawer_gap = @front_technological_gap
-      available_height = @height - ((@drawer_count + 1) * drawer_gap)
-      drawer_height = available_height / @drawer_count.to_f
-      drawer_width = @width - (2 * drawer_gap)
-      return if drawer_height <= 0 || drawer_width <= 0
-
-      drawers_tag = opening_direction_tag('szuflady')
-
-      @drawer_count.times do |index|
-        z_bottom = drawer_gap + (index * (drawer_height + drawer_gap))
-        z_top = z_bottom + drawer_height
-
-        points = [
-          [drawer_gap, -@front_thickness, z_bottom],
-          [drawer_gap + drawer_width, -@front_thickness, z_bottom],
-          [drawer_gap + drawer_width, -@front_thickness, z_top],
-          [drawer_gap, -@front_thickness, z_top]
-        ]
-
-        draw_named_panel(name: "Szuflada #{index + 1}", points: points, thickness: @front_thickness, extrusion: -@front_thickness)
-
-        marker_segments = front_opening_marker_segments(points, 'wysów')
-        next if marker_segments.empty?
-
-        marker_group = @cabinet_entities.add_group
-        marker_group.name = "[L]#{@nazwa_szafki}_kierunek-otwarcia_szuflada-#{index + 1}"
-        marker_group.layer = drawers_tag
-
-        marker_segments.each do |start_point, end_point|
-          marker_group.entities.add_line(start_point, end_point)
-        end
       end
     end
 
