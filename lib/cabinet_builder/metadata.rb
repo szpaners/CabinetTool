@@ -12,7 +12,9 @@ module CabinetBuilder
       'blend_left_value_mm' => :@blend_left_value,
       'blend_right_value_mm' => :@blend_right_value,
       'blend_left_depth_value_mm' => :@blend_left_depth_value,
-      'blend_right_depth_value_mm' => :@blend_right_depth_value
+      'blend_right_depth_value_mm' => :@blend_right_depth_value,
+      'cokol_dolny_value_mm' => :@cokol_dolny_value,
+      'cokol_gorny_value_mm' => :@cokol_gorny_value
     }.freeze
 
     LEGACY_BLEND_KEYS = {
@@ -46,7 +48,9 @@ module CabinetBuilder
           'blend_left_value' => read_blend_value_mm(group, LEGACY_BLEND_KEYS['blend_left_value']),
           'blend_right_value' => read_blend_value_mm(group, LEGACY_BLEND_KEYS['blend_right_value']),
           'blend_left_depth_value' => read_blend_value_mm(group, LEGACY_BLEND_KEYS['blend_left_depth_value']),
-          'blend_right_depth_value' => read_blend_value_mm(group, LEGACY_BLEND_KEYS['blend_right_depth_value'])
+          'blend_right_depth_value' => read_blend_value_mm(group, LEGACY_BLEND_KEYS['blend_right_depth_value']),
+          'cokol_dolny_value' => group.get_attribute(CABINET_DICT, 'cokol_dolny_value_mm', 0),
+          'cokol_gorny_value' => group.get_attribute(CABINET_DICT, 'cokol_gorny_value_mm', 0)
         }
       end
 

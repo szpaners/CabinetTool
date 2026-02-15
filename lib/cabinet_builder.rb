@@ -21,6 +21,7 @@ module CabinetBuilder
       setup_appearance(config)
       setup_front(config)
       setup_blends(config)
+      setup_cokols(config)
     end
 
     def draw_bottom_panel
@@ -152,9 +153,37 @@ def draw_blend_right
   draw_named_panel(name: 'Blend Right', points: points, thickness: @blend_right_value, extrusion: @blend_right_value)
 end
 
+    def draw_cokol_dolny
+      return unless @cokol_dolny_value > 0
+
+      points = [
+        [0, 0, -@cokol_dolny_value],
+        [@width, 0, -@cokol_dolny_value],
+        [@width, 0, 0],
+        [0, 0, 0]
+      ]
+
+      draw_named_panel(name: 'Cokol Dolny', points: points, thickness: @panel_thickness, extrusion: -@panel_thickness)
+    end
+
+    def draw_cokol_gorny
+      return unless @cokol_gorny_value > 0
+
+      points = [
+        [0, 0, @height],
+        [@width, 0, @height],
+        [@width, 0, @height + @cokol_gorny_value],
+        [0, 0, @height + @cokol_gorny_value]
+      ]
+
+      draw_named_panel(name: 'Cokol Gorny', points: points, thickness: @panel_thickness, extrusion: -@panel_thickness)
+    end
+
     def draw_cabinet
       draw_bottom_panel
+      draw_cokol_dolny
       draw_top_panel
+      draw_cokol_gorny
       draw_left_panel
       draw_right_panel
       draw_back_panel

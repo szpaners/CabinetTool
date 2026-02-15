@@ -41,6 +41,11 @@ end
       @blend_right_depth_value = read_config_value(config: config, key: :blend_right_depth_value, default: 0).to_f
     end
 
+    def setup_cokols(config)
+      @cokol_dolny_value = read_config_value(config: config, key: :cokol_dolny_value, default: 0).to_f
+      @cokol_gorny_value = read_config_value(config: config, key: :cokol_gorny_value, default: 0).to_f
+    end
+
     def read_config_value(config:, key:, default:)
       config.fetch(key.to_s, config.fetch(key, default))
     end
