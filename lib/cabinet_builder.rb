@@ -136,6 +136,19 @@ module CabinetBuilder
       inner_z_max = z_max - frame_width
       return if inner_x_max <= inner_x_min || inner_z_max <= inner_z_min
 
+      bevel_inset = frame_inner_bevel_inset(
+        frame_width: frame_width,
+        recess_depth: inner_recess_depth,
+        inner_width: inner_x_max - inner_x_min,
+        inner_height: inner_z_max - inner_z_min
+      )
+
+      inner_x_min += bevel_inset
+      inner_x_max -= bevel_inset
+      inner_z_min += bevel_inset
+      inner_z_max -= bevel_inset
+      return if inner_x_max <= inner_x_min || inner_z_max <= inner_z_min
+
       inner_front_y = y + inner_recess_depth
       inner_points = [
         [inner_x_min, inner_front_y, inner_z_min],
@@ -144,11 +157,56 @@ module CabinetBuilder
         [inner_x_min, inner_front_y, inner_z_max]
       ]
 
+      draw_frame_inner_transition(
+        name: "#{name} Przejście",
+        front_y: y,
+        inner_y: inner_front_y,
+        front_rect: [
+          [x_min + frame_width, y, z_min + frame_width],
+          [x_max - frame_width, y, z_min + frame_width],
+          [x_max - frame_width, y, z_max - frame_width],
+          [x_min + frame_width, y, z_max - frame_width]
+        ],
+        inner_rect: inner_points
+      )
+
       return if inner_panel_thickness <= 0
 
       # Wnętrze osadzamy od tylnej strony frontu (przy korpusie),
       # dzięki czemu od frontu otrzymujemy efekt wnęki o zadanej głębokości.
       draw_named_panel(name: "#{name} Wnętrze", points: inner_points, thickness: inner_panel_thickness, extrusion: -inner_panel_thickness)
+    end
+
+    def frame_inner_bevel_inset(frame_width:, recess_depth:, inner_width:, inner_height:)
+      return 0 if recess_depth <= 0
+
+      max_inset = [inner_width / 4.0, inner_height / 4.0].min
+      desired = [frame_width * 0.2, recess_depth * 0.6].min
+      [[desired, 0].max, max_inset].min
+    end
+
+    def draw_frame_inner_transition(name:, front_y:, inner_y:, front_rect:, inner_rect:)
+      return if inner_y <= front_y
+
+      transition_group = @cabinet_entities.add_group
+      transition_group.name = name
+      transition_group.material = @material_color
+      assign_panel_tag(transition_group, name)
+
+      entities = transition_group.entities
+
+      4.times do |index|
+        front_start = front_rect[index]
+        front_end = front_rect[(index + 1) % 4]
+        inner_end = inner_rect[(index + 1) % 4]
+        inner_start = inner_rect[index]
+
+        face = entities.add_face(front_start, front_end, inner_end, inner_start)
+        next unless face
+
+        face.material = @material_color
+        face.back_material = @material_color
+      end
     end
 
     def draw_frame_with_offset(name:, outer_points:, frame_width:, front_thickness:)
