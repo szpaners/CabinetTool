@@ -33,6 +33,7 @@ def setup_front(config)
   @front_enabled = front_enabled_value == true || front_enabled_value.to_s == 'true'
   @front_technological_gap = [read_config_value(config: config, key: :front_technological_gap, default: 0).to_f, 0].max
   @front_quantity = read_config_value(config: config, key: :front_quantity, default: 1).to_i
+  @front_opening_direction = read_config_value(config: config, key: :front_opening_direction, default: 'prawo').to_s.downcase
 end
 
     def setup_blends(config)

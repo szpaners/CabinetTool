@@ -51,6 +51,8 @@ module CabinetBuilder
           'front_enabled' => group.get_attribute(CABINET_DICT, 'front_enabled', false),
           'front_thickness' => group.get_attribute(CABINET_DICT, 'front_thickness', CabinetDimensions::FRONT_THICKNESS),
           'front_technological_gap' => group.get_attribute(CABINET_DICT, 'front_technological_gap_mm', 0),
+          'front_quantity' => group.get_attribute(CABINET_DICT, 'front_quantity', 1),
+          'front_opening_direction' => group.get_attribute(CABINET_DICT, 'front_opening_direction', 'prawo'),
           'blend_left_value' => read_blend_value_mm(group, LEGACY_BLEND_KEYS['blend_left_value']),
           'blend_right_value' => read_blend_value_mm(group, LEGACY_BLEND_KEYS['blend_right_value']),
           'blend_left_depth_value' => read_blend_value_mm(group, LEGACY_BLEND_KEYS['blend_left_depth_value']),
@@ -109,6 +111,8 @@ def read_blend_value_mm(group, keys)
       @group.set_attribute(CABINET_DICT, 'filling', @filling)
       @group.set_attribute(CABINET_DICT, 'shelf_count', @shelf_count)
       @group.set_attribute(CABINET_DICT, 'front_enabled', @front_enabled)
+      @group.set_attribute(CABINET_DICT, 'front_quantity', @front_quantity)
+      @group.set_attribute(CABINET_DICT, 'front_opening_direction', @front_opening_direction)
     end
 
 def save_mm_attributes

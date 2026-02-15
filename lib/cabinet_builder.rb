@@ -55,48 +55,107 @@ module CabinetBuilder
       draw_panel(panel_klass: BackPanel, points: points, thickness: @back_thickness, extrusion: @back_thickness)
     end
 
-def draw_front
-  return unless @front_enabled
+    def draw_front
+      return unless @front_enabled
 
-  front_width = @width - (2 * @front_technological_gap)
-  front_height = @height - (2 * @front_technological_gap)
-  return if front_width <= 0 || front_height <= 0
+      front_width = @width - (2 * @front_technological_gap)
+      front_height = @height - (2 * @front_technological_gap)
+      return if front_width <= 0 || front_height <= 0
 
-  if @front_quantity == 1
-points = [
-  [@front_technological_gap, -@front_thickness, @front_technological_gap],
-  [@front_technological_gap + front_width, -@front_thickness, @front_technological_gap],
-  [@front_technological_gap + front_width, -@front_thickness, @front_technological_gap + front_height],
-  [@front_technological_gap, -@front_thickness, @front_technological_gap + front_height]
-]
+      if @front_quantity == 1
+        points = [
+          [@front_technological_gap, -@front_thickness, @front_technological_gap],
+          [@front_technological_gap + front_width, -@front_thickness, @front_technological_gap],
+          [@front_technological_gap + front_width, -@front_thickness, @front_technological_gap + front_height],
+          [@front_technological_gap, -@front_thickness, @front_technological_gap + front_height]
+        ]
 
-draw_named_panel(name: 'Front', points: points, thickness: @front_thickness, extrusion: -@front_thickness)
-  elsif @front_quantity == 2
-    half_width = (front_width - @front_technological_gap) / 2
-    left_front_width = half_width
-    right_front_width = half_width
+        draw_named_panel(name: 'Front', points: points, thickness: @front_thickness, extrusion: -@front_thickness)
+        draw_front_opening_marker(points, @front_opening_direction)
+      elsif @front_quantity == 2
+        half_width = (front_width - @front_technological_gap) / 2
+        left_front_width = half_width
+        right_front_width = half_width
 
-    # Lewy front
-left_points = [
-  [@front_technological_gap, -@front_thickness, @front_technological_gap],
-  [@front_technological_gap + left_front_width, -@front_thickness, @front_technological_gap],
-  [@front_technological_gap + left_front_width, -@front_thickness, @front_technological_gap + front_height],
-  [@front_technological_gap, -@front_thickness, @front_technological_gap + front_height]
-]
+        left_points = [
+          [@front_technological_gap, -@front_thickness, @front_technological_gap],
+          [@front_technological_gap + left_front_width, -@front_thickness, @front_technological_gap],
+          [@front_technological_gap + left_front_width, -@front_thickness, @front_technological_gap + front_height],
+          [@front_technological_gap, -@front_thickness, @front_technological_gap + front_height]
+        ]
 
-draw_named_panel(name: 'Front Lewy', points: left_points, thickness: @front_thickness, extrusion: -@front_thickness)
+        draw_named_panel(name: 'Front Lewy', points: left_points, thickness: @front_thickness, extrusion: -@front_thickness)
+        draw_front_opening_marker(left_points, 'lewo')
 
-    # Prawy front
-right_points = [
-  [@front_technological_gap + left_front_width + @front_technological_gap, -@front_thickness, @front_technological_gap],
-  [@front_technological_gap + left_front_width + @front_technological_gap + right_front_width, -@front_thickness, @front_technological_gap],
-  [@front_technological_gap + left_front_width + @front_technological_gap + right_front_width, -@front_thickness, @front_technological_gap + front_height],
-  [@front_technological_gap + left_front_width + @front_technological_gap, -@front_thickness, @front_technological_gap + front_height]
-]
+        right_points = [
+          [@front_technological_gap + left_front_width + @front_technological_gap, -@front_thickness, @front_technological_gap],
+          [@front_technological_gap + left_front_width + @front_technological_gap + right_front_width, -@front_thickness, @front_technological_gap],
+          [@front_technological_gap + left_front_width + @front_technological_gap + right_front_width, -@front_thickness, @front_technological_gap + front_height],
+          [@front_technological_gap + left_front_width + @front_technological_gap, -@front_thickness, @front_technological_gap + front_height]
+        ]
 
-draw_named_panel(name: 'Front Prawy', points: right_points, thickness: @front_thickness, extrusion: -@front_thickness)
-  end
-end
+        draw_named_panel(name: 'Front Prawy', points: right_points, thickness: @front_thickness, extrusion: -@front_thickness)
+        draw_front_opening_marker(right_points, 'prawo')
+      end
+    end
+
+    def draw_front_opening_marker(front_points, opening_direction)
+      marker_segments = front_opening_marker_segments(front_points, opening_direction)
+      return if marker_segments.empty?
+
+      marker_group = @cabinet_entities.add_group
+      marker_group.name = "[L]#{@nazwa_szafki}_kierunek-otwarcia"
+      marker_group.layer = opening_direction_tag
+
+      marker_segments.each do |start_point, end_point|
+        marker_group.entities.add_line(start_point, end_point)
+      end
+    end
+
+    def opening_direction_tag
+      tag_name = "[L]#{@nazwa_szafki}_kierunek-otwarcia"
+      @model.layers[tag_name] || @model.layers.add(tag_name)
+    end
+
+    def front_opening_marker_segments(front_points, opening_direction)
+      left_x = front_points.map { |point| point[0] }.min
+      right_x = front_points.map { |point| point[0] }.max
+      bottom_z = front_points.map { |point| point[2] }.min
+      top_z = front_points.map { |point| point[2] }.max
+      y = front_points[0][1]
+      middle_x = (left_x + right_x) / 2.0
+      middle_z = (bottom_z + top_z) / 2.0
+
+      case opening_direction
+      when 'prawo'
+        [
+          [[right_x, y, top_z], [left_x, y, middle_z]],
+          [[left_x, y, middle_z], [right_x, y, bottom_z]]
+        ]
+      when 'lewo'
+        [
+          [[left_x, y, top_z], [right_x, y, middle_z]],
+          [[right_x, y, middle_z], [left_x, y, bottom_z]]
+        ]
+      when 'góra'
+        [
+          [[left_x, y, top_z], [middle_x, y, bottom_z]],
+          [[right_x, y, top_z], [middle_x, y, bottom_z]]
+        ]
+      when 'dół'
+        [
+          [[left_x, y, bottom_z], [middle_x, y, top_z]],
+          [[right_x, y, bottom_z], [middle_x, y, top_z]]
+        ]
+      when 'wysów'
+        [
+          [[left_x, y, top_z], [right_x, y, bottom_z]],
+          [[right_x, y, top_z], [left_x, y, bottom_z]]
+        ]
+      else
+        []
+      end
+    end
 
     def draw_shelves
       return if @shelf_count <= 0
