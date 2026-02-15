@@ -11,7 +11,8 @@ module CabinetBuilder
 
     def setup_dimensions(config)
       @width = read_config_value(config: config, key: :width, default: CabinetDimensions::CABINET_WIDTH).to_f
-      @height = read_config_value(config: config, key: :height, default: CabinetDimensions::CABINET_HEIGHT).to_f
+      @height_total = read_config_value(config: config, key: :height, default: CabinetDimensions::CABINET_HEIGHT).to_f
+      @height = @height_total
       @depth = read_config_value(config: config, key: :depth, default: CabinetDimensions::CABINET_DEPTH).to_f
       @panel_thickness = read_config_value(config: config, key: :panel_thickness, default: CabinetDimensions::PANEL_THICKNESS).to_f
       @back_thickness = read_config_value(config: config, key: :back_thickness, default: CabinetDimensions::PANEL_THICKNESS_BACK).to_f
@@ -46,6 +47,10 @@ end
       @cokol_gorny_value = read_config_value(config: config, key: :cokol_gorny_value, default: 0).to_f
       @cokol_dolny_offset_value = [read_config_value(config: config, key: :cokol_dolny_offset_value, default: 0).to_f, 0].max
       @cokol_gorny_offset_value = [read_config_value(config: config, key: :cokol_gorny_offset_value, default: 0).to_f, 0].max
+
+      # Wysokość podawana przez użytkownika to wysokość całkowita szafki,
+      # zawierająca oba cokoły. Pozostałe panele rysujemy dla wysokości korpusu.
+      @height = [@height_total - @cokol_dolny_value - @cokol_gorny_value, 0].max
     end
 
     def read_config_value(config:, key:, default:)

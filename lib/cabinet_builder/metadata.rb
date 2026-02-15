@@ -3,7 +3,7 @@ module CabinetBuilder
     CABINET_DICT = 'cabinet_tool'.freeze
     METADATA_FIELDS = {
       'width_mm' => :@width,
-      'height_mm' => :@height,
+      'height_mm' => :@height_total,
       'depth_mm' => :@depth,
       'panel_thickness_mm' => :@panel_thickness,
       'back_thickness_mm' => :@back_thickness,
@@ -36,7 +36,11 @@ module CabinetBuilder
 
         {
           'width' => group.get_attribute(CABINET_DICT, 'width_mm', CabinetDimensions::CABINET_WIDTH.to_mm),
-          'height' => group.get_attribute(CABINET_DICT, 'height_mm', CabinetDimensions::CABINET_HEIGHT.to_mm),
+          'height' => group.get_attribute(
+            CABINET_DICT,
+            'height_total_mm',
+            group.get_attribute(CABINET_DICT, 'height_mm', CabinetDimensions::CABINET_HEIGHT.to_mm)
+          ),
           'depth' => group.get_attribute(CABINET_DICT, 'depth_mm', CabinetDimensions::CABINET_DEPTH.to_mm),
           'panel_thickness' => group.get_attribute(CABINET_DICT, 'panel_thickness_mm', CabinetDimensions::PANEL_THICKNESS.to_mm),
           'back_thickness' => group.get_attribute(CABINET_DICT, 'back_thickness_mm', CabinetDimensions::PANEL_THICKNESS_BACK.to_mm),
@@ -99,6 +103,7 @@ def read_blend_value_mm(group, keys)
     def save_metadata
       @group.set_attribute(CABINET_DICT, 'is_cabinet', true)
       save_mm_attributes
+      @group.set_attribute(CABINET_DICT, 'height_total_mm', @height_total.to_l.to_mm.round)
       @group.set_attribute(CABINET_DICT, 'nazwa_szafki', @nazwa_szafki)
       @group.set_attribute(CABINET_DICT, 'color', @color)
       @group.set_attribute(CABINET_DICT, 'filling', @filling)
