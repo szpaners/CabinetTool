@@ -170,7 +170,8 @@ end
     def draw_cokol_gorny
       return unless @cokol_gorny_value > 0
 
-      y_offset = @cokol_gorny_offset_value
+      y_offset = (@front_enabled ? -@front_thickness : 0) + @cokol_gorny_offset_value
+      cokol_gorny_thickness = @front_enabled ? @front_thickness : @panel_thickness
       points = [
         [0, y_offset, @height],
         [@width, y_offset, @height],
@@ -178,7 +179,7 @@ end
         [0, y_offset, @height + @cokol_gorny_value]
       ]
 
-      draw_named_panel(name: 'Cokol Gorny', points: points, thickness: @panel_thickness, extrusion: -@panel_thickness)
+      draw_named_panel(name: 'Cokol Gorny', points: points, thickness: cokol_gorny_thickness, extrusion: -cokol_gorny_thickness)
     end
 
     def draw_cabinet
