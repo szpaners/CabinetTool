@@ -6,222 +6,235 @@
     <link rel="stylesheet" href="dialog.css">
 </head>
 <body>
-    <div class="tabs">
-        <div class="tab active" onclick="switchTab(this, 'dimensions')">Dolna</div>
-        <div class="tab" onclick="switchTab(this, 'materials')">Materiały</div>
-        <div class="tab" onclick="switchTab(this, 'advanced')">Zaawansowane</div>
+<div class="tabs">
+    <div class="tab active" onclick="switchTab(this, 'dimensions')">Dolna</div>
+    <div class="tab" onclick="switchTab(this, 'materials')">Materiały</div>
+    <div class="tab" onclick="switchTab(this, 'advanced')">Zaawansowane</div>
+</div>
+
+<div id="dimensions" class="tab-content active">
+    <div class="section">
+        <h3 class="section-title">Wymiary korpusu</h3>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="width">Szerokość (mm):</label>
+                <input type="number" id="width" value="600">
+            </div>
+            <div class="form-group">
+                <label for="height">Wysokość (mm):</label>
+                <input type="number" id="height" value="800">
+            </div>
+            <div class="form-group">
+                <label for="depth">Głębokość (mm):</label>
+                <input type="number" id="depth" value="300">
+            </div>
+        </div>
     </div>
 
-    <div id="dimensions" class="tab-content active">
-        <div class="section">
-            <h3 class="section-title">Wymiary korpusu</h3>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="width">Szerokość (mm):</label>
-                    <input type="number" id="width" value="600">
-                </div>
-                <div class="form-group">
-                    <label for="height">Wysokość (mm):</label>
-                    <input type="number" id="height" value="800">
-                </div>
-                <div class="form-group">
-                    <label for="depth">Głębokość (mm):</label>
-                    <input type="number" id="depth" value="300">
-                </div>
+    <div class="section">
+        <h3 class="section-title">Front</h3>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="front_checkbox" onchange="toggleFrontSection()">
+                    Front
+                </label>
             </div>
         </div>
-
-        <div class="section">
-            <h3 class="section-title">Front</h3>
+        <div id="front_section" class="is-hidden">
             <div class="form-grid">
                 <div class="form-group">
-                    <label>
-                        <input type="checkbox" id="front_checkbox" onchange="toggleFrontSection()">
-                        Front
-                    </label>
-                </div>
-            </div>
-            <div id="front_section" class="is-hidden">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="front_quantity">Ilość:</label>
-                        <select id="front_quantity">
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="front_handle">Uchwyt:</label>
-                        <select id="front_handle" disabled>
-                            <option value="J">J</option>
-                            <option value="45">45</option>
-                            <option value="brak">Brak</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="front_type">Typ frontu:</label>
-                        <select id="front_type" disabled>
-                            <option value="płaski">Płaski</option>
-                            <option value="angielski">Angielski</option>
-                            <option value="rama">Ramka</option>
-                            <option value="szkło">Szkło</option>
-                            <option value="ryflowany">Ryflowany</option>
-                            <option value="lamel">Lamel</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="front_opening_direction">Kierunek Otwarcia:</label>
-                        <select id="front_opening_direction">
-                            <option value="prawo">Prawo</option>
-                            <option value="lewo">Lewo</option>
-                            <option value="góra">Góra</option>
-                            <option value="dół">Dół</option>
-                            <option value="wysów">Wysów</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="front_technological_gap">Przerwa technologiczna:</label>
-                        <input type="number" id="front_technological_gap" value="2">
-                    </div>
-                    <div class="form-group" id="frame_width_group" style="display: none;">
-                        <label for="frame_width">Szerokość Ramki:</label>
-                        <input type="number" id="frame_width" value="0">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-<div class="section">
-            <h3 class="section-title">Grubości paneli</h3>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="panel_thickness">Grubość panelów (mm):</label>
-                    <input type="number" id="panel_thickness" value="18">
-                </div>
-                <div class="form-group">
-                    <label for="front_thickness">Grubość frontu (mm):</label>
-                    <input type="number" id="front_thickness" value="18">
-                </div>
-                <div class="form-group">
-                    <label for="back_thickness">Grubość tylnej ścianki (mm):</label>
-                    <input type="number" id="back_thickness" value="3">
-                </div>
-            </div>
-        </div>
-
-        <div class="section">
-            <h3 class="section-title">Wygląd</h3>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="nazwa_szafki">Nazwa szafki:</label>
-                    <input type="text" id="nazwa_szafki" value="szafka">
-                </div>
-                <div class="form-group">
-                    <label for="color">Kolor:</label>
-                    <input type="color" id="color" value="#8B5A2B">
-                </div>
-            </div>
-        </div>
-
-        <div class="section">
-            <h3 class="section-title">Wypełnienie</h3>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="filling">Wypełnienie:</label>
-                    <select id="filling">
-                        <option value="none">Brak</option>
-                        <option value="shelves">Półki</option>
+                    <label for="front_quantity">Ilość:</label>
+                    <select id="front_quantity">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
                     </select>
                 </div>
-                <div class="form-group" id="shelf-count-group" style="display: none;">
-                    <label for="shelf_count">Ilość półek:</label>
-                    <input type="number" id="shelf_count" value="1" min="1">
+                <div class="form-group">
+                    <label for="front_handle">Uchwyt:</label>
+                    <select id="front_handle" disabled>
+                        <option value="J">J</option>
+                        <option value="45">45</option>
+                        <option value="brak">Brak</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="front_type">Typ frontu:</label>
+                    <select id="front_type" disabled>
+                        <option value="płaski">Płaski</option>
+                        <option value="angielski">Angielski</option>
+                        <option value="rama">Ramka</option>
+                        <option value="szkło">Szkło</option>
+                        <option value="ryflowany">Ryflowany</option>
+                        <option value="lamel">Lamel</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="front_opening_direction">Kierunek Otwarcia:</label>
+                    <select id="front_opening_direction">
+                        <option value="prawo">Prawo</option>
+                        <option value="lewo">Lewo</option>
+                        <option value="góra">Góra</option>
+                        <option value="dół">Dół</option>
+                        <option value="wysów">Wysów</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="front_technological_gap">Przerwa technologiczna:</label>
+                    <input type="number" id="front_technological_gap" value="2">
+                </div>
+                <div class="form-group" id="frame_width_group" style="display: none;">
+                    <label for="frame_width">Szerokość Ramki:</label>
+                    <input type="number" id="frame_width" value="0">
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="section">
-            <h3 class="section-title">-Cokół</h3>
+    <div class="section">
+        <h3 class="section-title">Grubości paneli</h3>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="panel_thickness">Grubość panelów (mm):</label>
+                <input type="number" id="panel_thickness" value="18">
+            </div>
+            <div class="form-group">
+                <label for="front_thickness">Grubość frontu (mm):</label>
+                <input type="number" id="front_thickness" value="18">
+            </div>
+            <div class="form-group">
+                <label for="back_thickness">Grubość tylnej ścianki (mm):</label>
+                <input type="number" id="back_thickness" value="3">
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3 class="section-title">Wygląd</h3>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="nazwa_szafki">Nazwa szafki:</label>
+                <input type="text" id="nazwa_szafki" value="szafka">
+            </div>
+            <div class="form-group">
+                <label for="color">Kolor:</label>
+                <input type="color" id="color" value="#8B5A2B">
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3 class="section-title">Wypełnienie</h3>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="filling">Wypełnienie:</label>
+                <select id="filling">
+                    <option value="none">Brak</option>
+                    <option value="shelves">Półki</option>
+                </select>
+            </div>
+            <div class="form-group" id="shelf-count-group" style="display: none;">
+                <label for="shelf_count">Ilość półek:</label>
+                <input type="number" id="shelf_count" value="1" min="1">
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3 class="section-title">Cokol</h3>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="cokol_dolny_checkbox" onchange="toggleCokolDolnyInput()">
+                    Cokol dolny
+                </label>
+            </div>
+            <div class="form-group" id="cokol_dolny_input" style="display: none;">
+                <label for="cokol_dolny_value">Wartość (mm):</label>
+                <input type="number" id="cokol_dolny_value" value="0">
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="cokol_gorny_checkbox" onchange="toggleCokolGornyInput()">
+                    Cokol górny
+                </label>
+            </div>
+            <div class="form-group" id="cokol_gorny_input" style="display: none;">
+                <label for="cokol_gorny_value">Wartość (mm):</label>
+                <input type="number" id="cokol_gorny_value" value="0">
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3 class="section-title">Blenda</h3>
+        <div class="blend-section">
             <div class="form-grid">
                 <div class="form-group">
                     <label>
-                        <input type="checkbox" id="cokol_checkbox" onchange="toggleCokolInput()" disabled>
-                        Cokół
+                        <input type="checkbox" id="blend_left" onchange="toggleBlendInput('left')">
+                        Lewa
                     </label>
                 </div>
-                <div class="form-group" id="cokol_input" style="display: none;">
-                    <label for="cokol_value">Wartość (mm):</label>
-                    <input type="number" id="cokol_value" value="0">
+                <div class="form-group is-hidden" id="blend_left_input">
+                    <label for="blend_left_value">Wartość (mm):</label>
+                    <input type="number" id="blend_left_value" value="0">
                 </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="blend_left_depth_checkbox" onchange="toggleBlendLeftDepthInput()">
+                        Głębokość lewa
+                    </label>
+                </div>
+                <div class="form-group is-hidden" id="blend_left_depth_input">
+                    <label for="blend_left_depth_value">Głębokość (mm):</label>
+                    <input type="number" id="blend_left_depth_value" value="0">
+                </div>
+
             </div>
-        </div>
-
-        <div class="section">
-            <h3 class="section-title">Blenda</h3>
-            <div class="blend-section">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>
-                            <input type="checkbox" id="blend_left" onchange="toggleBlendInput('left')">
-                            Lewa
-                        </label>
-                    </div>
-                    <div class="form-group is-hidden" id="blend_left_input">
-                        <label for="blend_left_value">Wartość (mm):</label>
-                        <input type="number" id="blend_left_value" value="0">
-                    </div>
-                    <div class="form-group">
-                        <label>
-                            <input type="checkbox" id="blend_left_depth_checkbox" onchange="toggleBlendLeftDepthInput()">
-                            Głębokość lewa
-                        </label>
-                    </div>
-                    <div class="form-group is-hidden" id="blend_left_depth_input">
-                        <label for="blend_left_depth_value">Głębokość (mm):</label>
-                        <input type="number" id="blend_left_depth_value" value="0">
-                    </div>
-
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="blend_right" onchange="toggleBlendInput('right')">
+                        Prawa
+                    </label>
                 </div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>
-                            <input type="checkbox" id="blend_right" onchange="toggleBlendInput('right')">
-                            Prawa
-                        </label>
-                    </div>
-                    <div class="form-group is-hidden" id="blend_right_input">
-                        <label for="blend_right_value">Wartość (mm):</label>
-                        <input type="number" id="blend_right_value" value="0">
-                    </div>
-                    <div class="form-group">
-                        <label>
-                            <input type="checkbox" id="blend_right_depth_checkbox" onchange="toggleBlendRightDepthInput()">
-                            Głębokość prawa
-                        </label>
-                    </div>
-                    <div class="form-group is-hidden" id="blend_right_depth_input">
-                        <label for="blend_right_depth_value">Głębokość (mm):</label>
-                        <input type="number" id="blend_right_depth_value" value="0">
-                    </div>
+                <div class="form-group is-hidden" id="blend_right_input">
+                    <label for="blend_right_value">Wartość (mm):</label>
+                    <input type="number" id="blend_right_value" value="0">
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="blend_right_depth_checkbox" onchange="toggleBlendRightDepthInput()">
+                        Głębokość prawa
+                    </label>
+                </div>
+                <div class="form-group is-hidden" id="blend_right_depth_input">
+                    <label for="blend_right_depth_value">Głębokość (mm):</label>
+                    <input type="number" id="blend_right_depth_value" value="0">
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <div id="materials" class="tab-content">
-        <p class="placeholder">Ta zakładka jest obecnie pusta.</p>
-    </div>
+<div id="materials" class="tab-content">
+    <p class="placeholder">Ta zakładka jest obecnie pusta.</p>
+</div>
 
-    <div id="advanced" class="tab-content">
-    </div>
+<div id="advanced" class="tab-content">
+</div>
 
-    <div class="button-group">
-        <button onclick="saveCabinet()">Zapisz i rysuj</button>
-        <button class="cancel" onclick="closeDialog()">Anuluj</button>
-    </div>
+<div class="button-group">
+    <button onclick="saveCabinet()">Zapisz i rysuj</button>
+    <button class="cancel" onclick="closeDialog()">Anuluj</button>
+</div>
 
-    <script src="dialog.js"></script>
+<script src="dialog.js"></script>
 </body>
 </html>
