@@ -1,39 +1,35 @@
+:root {
+    color-scheme: light;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    font-size: 13px;
     margin: 0;
-    padding: 8px;
-    background: #fafafa;
+    background: #f5f7fa;
+    font-size: 12px;
+}
+
+.compact-dialog {
+    max-width: 980px;
 }
 
 .tabs {
-    display: flex;
-    border-bottom: 1px solid #ccc;
-    gap: 4px;
+    border-bottom: 1px solid #d7dce2;
 }
 
-.tab {
-    padding: 7px 14px;
+.tabs .tab {
     font-size: 12px;
-    cursor: pointer;
-    border: 1px solid #ccc;
-    border-bottom: none;
-    background-color: #f2f2f2;
-    border-radius: 5px 5px 0 0;
+    line-height: 1.2;
+    color: #5d6672;
+    padding: 6px 10px;
 }
 
-.tab.active {
-    background-color: white;
-    border-bottom: 1px solid white;
+.tabs .tab.active {
+    color: #212b36;
+    font-weight: 600;
 }
 
 .tab-content {
     display: none;
-    padding: 14px;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-top: none;
-    min-height: 250px;
 }
 
 .tab-content.active {
@@ -41,179 +37,90 @@ body {
 }
 
 .section {
-    margin-bottom: 16px;
-    padding: 12px;
-    border: 1px solid #e2e2e2;
-    border-radius: 6px;
-    background: #fcfcfc;
+    border: 1px solid #e1e6ed;
+    border-radius: 8px;
+    box-shadow: none;
+    padding: 10px;
 }
 
 .section-title {
-    margin: 0 0 12px;
-    font-size: 12px;
+    margin: 0 0 8px;
+    font-size: 11px;
     font-weight: 700;
-    color: #444;
+    letter-spacing: .04em;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
+    color: #4a5360;
 }
 
 .form-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px;
-    align-content: flex-start;
-}
-
-.form-grid .form-group {
-    flex: 0 0 200px;
-    max-width: 200px;
-    margin: 12px 0;
+    gap: 10px;
 }
 
 .form-group {
-    margin-bottom: 0;
+    flex: 1 1 180px;
+    min-width: 170px;
+}
+
+.form-group.checkbox-group {
+    flex: 1 1 140px;
+    min-width: 140px;
+}
+
+.form-group.checkbox-group label{
+    display: flex;
+    align-items: center;
+    height: 100%;
 }
 
 label {
     display: block;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
+    font-size: 11px;
     font-weight: 600;
-    font-size: 12px;
+    color: #3e4652;
 }
 
-input[type="number"],
-input[type="color"] {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 6px 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+.form-control,
+.form-select {
     font-size: 12px;
-    height: 32px;
+    min-height: 29px;
+    padding: 2px 8px;
+    border-color: #ced5de;
+}
+
+input[type="color"].form-control {
+    padding: 2px;
 }
 
 .placeholder {
-    color: #888;
+    color: #7d8794;
     font-size: 12px;
-    font-style: italic;
-}
-
-.button-group {
-    display: flex;
-    gap: 10px;
-    margin-top: 16px;
-}
-
-button {
-    padding: 10px 14px;
-    font-size: 12px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-button.cancel {
-    background-color: #6c757d;
-}
-
-button.cancel:hover {
-    background-color: #545b62;
+    margin: 8px 0;
 }
 
 .blend-section {
     display: flex;
-    gap: 16px;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .blend-section .form-grid {
-    flex: 1 1 0;
-    max-width: none;
+    flex: 1 1 260px;
+}
+
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.btn.btn-sm {
+    min-width: 102px;
 }
 
 .is-hidden {
     display: none;
     pointer-events: none;
-}
-
-.section-title {
-    margin: 0 0 8px;
-    font-size: 12px;
-    font-weight: 700;
-    color: #444;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-}
-
-.form-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    align-content: flex-start;
-}
-
-.form-grid .form-group {
-    flex: 0 0 200px;
-    max-width: 200px;
-}
-
-.form-group {
-    margin-bottom: 0;
-}
-
-label {
-    display: block;
-    margin-bottom: 3px;
-    font-weight: 600;
-    font-size: 12px;
-}
-
-input[type="number"],
-input[type="color"] {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 5px 6px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 12px;
-    height: 30px;
-}
-
-.placeholder {
-    color: #888;
-    font-size: 12px;
-    font-style: italic;
-}
-
-.button-group {
-    display: flex;
-    gap: 8px;
-    margin-top: 12px;
-}
-
-button {
-    padding: 8px 12px;
-    font-size: 12px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-button.cancel {
-    background-color: #6c757d;
-}
-
-button.cancel:hover {
-    background-color: #545b62;
 }
