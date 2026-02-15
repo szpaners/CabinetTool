@@ -48,6 +48,7 @@ module CabinetBuilder
           'color' => group.get_attribute(CABINET_DICT, 'color', CabinetDimensions::DEFAULT_COLOR),
           'filling' => group.get_attribute(CABINET_DICT, 'filling', 'none'),
           'shelf_count' => group.get_attribute(CABINET_DICT, 'shelf_count', 0),
+          'drawer_count' => group.get_attribute(CABINET_DICT, 'drawer_count', 0),
           'front_enabled' => group.get_attribute(CABINET_DICT, 'front_enabled', false),
           'front_thickness' => group.get_attribute(CABINET_DICT, 'front_thickness', CabinetDimensions::FRONT_THICKNESS),
           'front_technological_gap' => group.get_attribute(CABINET_DICT, 'front_technological_gap_mm', 0),
@@ -110,6 +111,7 @@ def read_blend_value_mm(group, keys)
       @group.set_attribute(CABINET_DICT, 'color', @color)
       @group.set_attribute(CABINET_DICT, 'filling', @filling)
       @group.set_attribute(CABINET_DICT, 'shelf_count', @shelf_count)
+      @group.set_attribute(CABINET_DICT, 'drawer_count', @drawer_count)
       @group.set_attribute(CABINET_DICT, 'front_enabled', @front_enabled)
       @group.set_attribute(CABINET_DICT, 'front_quantity', @front_quantity)
       @group.set_attribute(CABINET_DICT, 'front_opening_direction', @front_opening_direction)

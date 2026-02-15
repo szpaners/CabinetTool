@@ -25,6 +25,7 @@ def setup_appearance(config)
   @material_color = Sketchup::Color.new(@color)
   @filling = read_config_value(config: config, key: :filling, default: 'none')
   @shelf_count = read_config_value(config: config, key: :shelf_count, default: 0).to_i
+  @drawer_count = read_config_value(config: config, key: :drawer_count, default: 0).to_i
   @front_thickness = read_config_value(config: config, key: :front_thickness, default: CabinetDimensions::FRONT_THICKNESS).to_f
 end
 

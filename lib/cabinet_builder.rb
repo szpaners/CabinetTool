@@ -56,6 +56,7 @@ module CabinetBuilder
     end
 
     def draw_front
+      return if @filling == 'drawers'
       return unless @front_enabled
 
       front_width = @width - (2 * @front_technological_gap)
@@ -112,8 +113,9 @@ module CabinetBuilder
       end
     end
 
-    def opening_direction_tag
+    def opening_direction_tag(suffix = nil)
       tag_name = "[L]#{@nazwa_szafki}_kierunek-otwarcia"
+      tag_name = "#{tag_name}_#{suffix}" if suffix
       @model.layers[tag_name] || @model.layers.add(tag_name)
     end
 
@@ -157,7 +159,46 @@ module CabinetBuilder
       end
     end
 
+    def draw_drawers
+      return unless @filling == 'drawers'
+      return if @drawer_count <= 0
+
+      drawer_gap = @front_technological_gap
+      available_height = @height - ((@drawer_count + 1) * drawer_gap)
+      drawer_height = available_height / @drawer_count.to_f
+      drawer_width = @width - (2 * drawer_gap)
+      return if drawer_height <= 0 || drawer_width <= 0
+
+      drawers_tag = opening_direction_tag('szuflady')
+
+      @drawer_count.times do |index|
+        z_bottom = drawer_gap + (index * (drawer_height + drawer_gap))
+        z_top = z_bottom + drawer_height
+
+        points = [
+          [drawer_gap, -@front_thickness, z_bottom],
+          [drawer_gap + drawer_width, -@front_thickness, z_bottom],
+          [drawer_gap + drawer_width, -@front_thickness, z_top],
+          [drawer_gap, -@front_thickness, z_top]
+        ]
+
+        draw_named_panel(name: "Szuflada #{index + 1}", points: points, thickness: @front_thickness, extrusion: -@front_thickness)
+
+        marker_segments = front_opening_marker_segments(points, 'wysów')
+        next if marker_segments.empty?
+
+        marker_group = @cabinet_entities.add_group
+        marker_group.name = "[L]#{@nazwa_szafki}_kierunek-otwarcia_szuflada-#{index + 1}"
+        marker_group.layer = drawers_tag
+
+        marker_segments.each do |start_point, end_point|
+          marker_group.entities.add_line(start_point, end_point)
+        end
+      end
+    end
+
     def draw_shelves
+      return unless @filling == 'shelves'
       return if @shelf_count <= 0
 
       internal_height = @height - (2 * @panel_thickness)
@@ -184,8 +225,9 @@ module CabinetBuilder
 def draw_blend_left
   return unless @blend_left_value > 0
 
-  max_depth = @blend_left_depth_value > 0 ? @blend_left_depth_value : @depth - @back_thickness + (@front_enabled ? @front_thickness : 0)
-  y_offset = @front_enabled ? -@front_thickness : 0
+  has_front_surface = @front_enabled || @filling == 'drawers'
+  max_depth = @blend_left_depth_value > 0 ? @blend_left_depth_value : @depth - @back_thickness + (has_front_surface ? @front_thickness : 0)
+  y_offset = has_front_surface ? -@front_thickness : 0
   points = [
     [0, y_offset, 0],
     [0, y_offset, @height],
@@ -199,9 +241,10 @@ end
 def draw_blend_right
   return unless @blend_right_value > 0
 
-  y_offset = @front_enabled ? -@front_thickness : 0
+  has_front_surface = @front_enabled || @filling == 'drawers'
+  y_offset = has_front_surface ? -@front_thickness : 0
   x = @width + @blend_right_value
-  max_depth = @blend_right_depth_value > 0 ? @blend_right_depth_value : @depth - @back_thickness + (@front_enabled ? @front_thickness : 0)
+  max_depth = @blend_right_depth_value > 0 ? @blend_right_depth_value : @depth - @back_thickness + (has_front_surface ? @front_thickness : 0)
   points = [
     [x, y_offset, 0],
     [x, y_offset, @height],
@@ -229,8 +272,9 @@ end
     def draw_cokol_gorny
       return unless @cokol_gorny_value > 0
 
-      y_offset = (@front_enabled ? -@front_thickness : 0) + @cokol_gorny_offset_value
-      cokol_gorny_thickness = @front_enabled ? @front_thickness : @panel_thickness
+      has_front_surface = @front_enabled || @filling == 'drawers'
+      y_offset = (has_front_surface ? -@front_thickness : 0) + @cokol_gorny_offset_value
+      cokol_gorny_thickness = has_front_surface ? @front_thickness : @panel_thickness
       points = [
         [0, y_offset, @height],
         [@width, y_offset, @height],
@@ -250,6 +294,7 @@ end
       draw_right_panel
       draw_back_panel
       draw_front
+      draw_drawers
       draw_shelves
       draw_blend_left
       draw_blend_right
