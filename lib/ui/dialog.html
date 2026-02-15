@@ -83,12 +83,8 @@
                     <div class="form-group">
                         <label for="front_type">Typ frontu:</label>
                         <select id="front_type" class="form-select form-select-sm">
-                            <option value="płaski">Płaski</option>
-                            <option value="angielski">Angielski</option>
-                            <option value="rama">Ramka</option>
-                            <option value="szkło">Szkło</option>
-                            <option value="ryflowany">Ryflowany</option>
-                            <option value="lamel">Lamel</option>
+                            <option value="flat">Płaski</option>
+                            <option value="frame">Ramka</option>
                         </select>
                     </div>
                 </div>
@@ -109,7 +105,11 @@
                     </div>
                     <div class="form-group" id="frame_width_group" style="display: none;">
                         <label for="frame_width">Szerokość Ramki:</label>
-                        <input type="number" id="frame_width" value="0" class="form-control form-control-sm">
+                        <input type="number" id="frame_width" value="20" min="1" class="form-control form-control-sm">
+                    </div>
+                    <div class="form-group" id="frame_inner_thickness_group" style="display: none;">
+                        <label for="frame_inner_thickness">Grubość wnętrza:</label>
+                        <input type="number" id="frame_inner_thickness" value="2" min="1" class="form-control form-control-sm">
                     </div>
                 </div>
             </div>

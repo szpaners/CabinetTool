@@ -37,6 +37,13 @@ def setup_front(config)
   @front_enabled = front_enabled_value == true || front_enabled_value.to_s == 'true'
   @front_technological_gap = [read_config_value(config: config, key: :front_technological_gap, default: 0).to_f, 0].max
   @front_quantity = read_config_value(config: config, key: :front_quantity, default: 1).to_i
+  @front_type = read_config_value(config: config, key: :front_type, default: 'flat').to_s.downcase
+  @front_type = 'frame' if @front_type == 'rama'
+  @front_type = 'flat' unless %w[flat frame].include?(@front_type)
+  @frame_width = [read_config_value(config: config, key: :frame_width, default: 20).to_f, 0].max
+  frame_inner_thickness = read_config_value(config: config, key: :frame_inner_thickness, default: nil)
+  frame_inner_thickness = read_config_value(config: config, key: :frame_inner_depth, default: 2) if frame_inner_thickness.nil?
+  @frame_inner_thickness = [frame_inner_thickness.to_f, 0].max
   @front_opening_direction = read_config_value(config: config, key: :front_opening_direction, default: 'prawo').to_s.downcase
 end
 

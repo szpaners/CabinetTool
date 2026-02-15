@@ -71,7 +71,7 @@ module CabinetBuilder
           [@front_technological_gap, -@front_thickness, @front_technological_gap + front_height]
         ]
 
-        draw_named_panel(name: 'Front', points: points, thickness: @front_thickness, extrusion: -@front_thickness)
+        draw_front_leaf(name: 'Front', points: points)
         draw_front_opening_marker(points, @front_opening_direction)
       elsif @front_quantity == 2
         half_width = (front_width - @front_technological_gap) / 2
@@ -85,7 +85,7 @@ module CabinetBuilder
           [@front_technological_gap, -@front_thickness, @front_technological_gap + front_height]
         ]
 
-        draw_named_panel(name: 'Front Lewy', points: left_points, thickness: @front_thickness, extrusion: -@front_thickness)
+        draw_front_leaf(name: 'Front Lewy', points: left_points)
         draw_front_opening_marker(left_points, 'lewo')
 
         right_points = [
@@ -95,9 +95,64 @@ module CabinetBuilder
           [@front_technological_gap + left_front_width + @front_technological_gap, -@front_thickness, @front_technological_gap + front_height]
         ]
 
-        draw_named_panel(name: 'Front Prawy', points: right_points, thickness: @front_thickness, extrusion: -@front_thickness)
+        draw_front_leaf(name: 'Front Prawy', points: right_points)
         draw_front_opening_marker(right_points, 'prawo')
       end
+    end
+
+    def draw_front_leaf(name:, points:)
+      if @front_type == 'frame'
+        draw_frame_front_leaf(name: name, points: points)
+      else
+        draw_named_panel(name: name, points: points, thickness: @front_thickness, extrusion: -@front_thickness)
+      end
+    end
+
+    def draw_frame_front_leaf(name:, points:)
+      x_min = points.map { |point| point[0] }.min
+      x_max = points.map { |point| point[0] }.max
+      z_min = points.map { |point| point[2] }.min
+      z_max = points.map { |point| point[2] }.max
+      y = points.first[1]
+
+      front_width = x_max - x_min
+      front_height = z_max - z_min
+      frame_width = [@frame_width, front_width / 2.0, front_height / 2.0].min
+      inner_panel_thickness = [[@frame_inner_thickness, 0].max, @front_thickness].min
+      inner_recess_depth = [@front_thickness - inner_panel_thickness, 0].max
+
+      return draw_named_panel(name: name, points: points, thickness: @front_thickness, extrusion: -@front_thickness) if frame_width <= 0
+
+      frame_parts = [
+        { part: 'Góra', points: [[x_min, y, z_max - frame_width], [x_max, y, z_max - frame_width], [x_max, y, z_max], [x_min, y, z_max]] },
+        { part: 'Dół', points: [[x_min, y, z_min], [x_max, y, z_min], [x_max, y, z_min + frame_width], [x_min, y, z_min + frame_width]] },
+        { part: 'Lewa', points: [[x_min, y, z_min + frame_width], [x_min + frame_width, y, z_min + frame_width], [x_min + frame_width, y, z_max - frame_width], [x_min, y, z_max - frame_width]] },
+        { part: 'Prawa', points: [[x_max - frame_width, y, z_min + frame_width], [x_max, y, z_min + frame_width], [x_max, y, z_max - frame_width], [x_max - frame_width, y, z_max - frame_width]] }
+      ]
+
+      frame_parts.each do |frame_part|
+        draw_named_panel(name: "#{name} Ramka #{frame_part[:part]}", points: frame_part[:points], thickness: @front_thickness, extrusion: -@front_thickness)
+      end
+
+      inner_x_min = x_min + frame_width
+      inner_x_max = x_max - frame_width
+      inner_z_min = z_min + frame_width
+      inner_z_max = z_max - frame_width
+      return if inner_x_max <= inner_x_min || inner_z_max <= inner_z_min
+
+      inner_front_y = y + inner_recess_depth
+      inner_points = [
+        [inner_x_min, inner_front_y, inner_z_min],
+        [inner_x_max, inner_front_y, inner_z_min],
+        [inner_x_max, inner_front_y, inner_z_max],
+        [inner_x_min, inner_front_y, inner_z_max]
+      ]
+
+      return if inner_panel_thickness <= 0
+
+      # Wnętrze osadzamy od tylnej strony frontu (przy korpusie),
+      # dzięki czemu od frontu otrzymujemy efekt wnęki o zadanej głębokości.
+      draw_named_panel(name: "#{name} Wnętrze", points: inner_points, thickness: inner_panel_thickness, extrusion: -inner_panel_thickness)
     end
 
     def draw_front_opening_marker(front_points, opening_direction)
