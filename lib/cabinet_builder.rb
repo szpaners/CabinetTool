@@ -165,6 +165,59 @@ module CabinetBuilder
 
       drawer_gap = @front_technological_gap
       available_height = @height - ((@drawer_count + 1) * drawer_gap)
+      drawer_width = @width - (2 * drawer_gap)
+      return if available_height <= 0 || drawer_width <= 0
+
+      drawer_heights = if @drawers_asymmetric && @drawer_count > 1
+        first_height = @first_drawer_height
+        remaining_height = available_height - first_height
+        other_drawers_count = @drawer_count - 1
+        other_height = remaining_height / other_drawers_count.to_f
+        [first_height] + Array.new(other_drawers_count, other_height)
+      else
+        equal_height = available_height / @drawer_count.to_f
+        Array.new(@drawer_count, equal_height)
+      end
+
+      return if drawer_heights.any? { |height| height <= 0 }
+
+      drawers_tag = opening_direction_tag('szuflady')
+      current_z = drawer_gap
+
+      drawer_heights.each_with_index do |drawer_height, index|
+        z_bottom = current_z
+        z_top = z_bottom + drawer_height
+
+        points = [
+          [drawer_gap, -@front_thickness, z_bottom],
+          [drawer_gap + drawer_width, -@front_thickness, z_bottom],
+          [drawer_gap + drawer_width, -@front_thickness, z_top],
+          [drawer_gap, -@front_thickness, z_top]
+        ]
+
+        draw_named_panel(name: "Szuflada #{index + 1}", points: points, thickness: @front_thickness, extrusion: -@front_thickness)
+
+        marker_segments = front_opening_marker_segments(points, 'wysów')
+        next if marker_segments.empty?
+
+        marker_group = @cabinet_entities.add_group
+        marker_group.name = "[L]#{@nazwa_szafki}_kierunek-otwarcia_szuflada-#{index + 1}"
+        marker_group.layer = drawers_tag
+
+        marker_segments.each do |start_point, end_point|
+          marker_group.entities.add_line(start_point, end_point)
+        end
+
+        current_z = z_top + drawer_gap
+      end
+    end
+
+    def draw_drawers
+      return unless @filling == 'drawers'
+      return if @drawer_count <= 0
+
+      drawer_gap = @front_technological_gap
+      available_height = @height - ((@drawer_count + 1) * drawer_gap)
       drawer_height = available_height / @drawer_count.to_f
       drawer_width = @width - (2 * drawer_gap)
       return if drawer_height <= 0 || drawer_width <= 0

@@ -8,6 +8,7 @@ module CabinetBuilder
       'panel_thickness_mm' => :@panel_thickness,
       'back_thickness_mm' => :@back_thickness,
       'front_technological_gap_mm' => :@front_technological_gap,
+      'first_drawer_height_mm' => :@first_drawer_height,
       'front_thickness' => :@front_thickness,
       'blend_left_value_mm' => :@blend_left_value,
       'blend_right_value_mm' => :@blend_right_value,
@@ -49,6 +50,8 @@ module CabinetBuilder
           'filling' => group.get_attribute(CABINET_DICT, 'filling', 'none'),
           'shelf_count' => group.get_attribute(CABINET_DICT, 'shelf_count', 0),
           'drawer_count' => group.get_attribute(CABINET_DICT, 'drawer_count', 0),
+          'drawers_asymmetric' => group.get_attribute(CABINET_DICT, 'drawers_asymmetric', false),
+          'first_drawer_height' => group.get_attribute(CABINET_DICT, 'first_drawer_height_mm', 0),
           'front_enabled' => group.get_attribute(CABINET_DICT, 'front_enabled', false),
           'front_thickness' => group.get_attribute(CABINET_DICT, 'front_thickness', CabinetDimensions::FRONT_THICKNESS),
           'front_technological_gap' => group.get_attribute(CABINET_DICT, 'front_technological_gap_mm', 0),
@@ -112,6 +115,7 @@ def read_blend_value_mm(group, keys)
       @group.set_attribute(CABINET_DICT, 'filling', @filling)
       @group.set_attribute(CABINET_DICT, 'shelf_count', @shelf_count)
       @group.set_attribute(CABINET_DICT, 'drawer_count', @drawer_count)
+      @group.set_attribute(CABINET_DICT, 'drawers_asymmetric', @drawers_asymmetric)
       @group.set_attribute(CABINET_DICT, 'front_enabled', @front_enabled)
       @group.set_attribute(CABINET_DICT, 'front_quantity', @front_quantity)
       @group.set_attribute(CABINET_DICT, 'front_opening_direction', @front_opening_direction)

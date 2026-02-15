@@ -75,6 +75,8 @@ def cabinet_params(params)
     filling: params['filling'],
     shelf_count: params['shelf_count'].to_i,
     drawer_count: params['drawer_count'].to_i,
+    drawers_asymmetric: params['drawers_asymmetric'],
+    first_drawer_height: params['first_drawer_height'].to_f.mm,
     front_enabled: params['front_enabled'],
     front_technological_gap: params['front_technological_gap'].to_f.mm,
     front_quantity: params['front_quantity'].to_i,

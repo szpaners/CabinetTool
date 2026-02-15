@@ -26,6 +26,9 @@ def setup_appearance(config)
   @filling = read_config_value(config: config, key: :filling, default: 'none')
   @shelf_count = read_config_value(config: config, key: :shelf_count, default: 0).to_i
   @drawer_count = read_config_value(config: config, key: :drawer_count, default: 0).to_i
+  drawers_asymmetric_value = read_config_value(config: config, key: :drawers_asymmetric, default: false)
+  @drawers_asymmetric = drawers_asymmetric_value == true || drawers_asymmetric_value.to_s == 'true'
+  @first_drawer_height = read_config_value(config: config, key: :first_drawer_height, default: 0).to_f
   @front_thickness = read_config_value(config: config, key: :front_thickness, default: CabinetDimensions::FRONT_THICKNESS).to_f
 end
 
