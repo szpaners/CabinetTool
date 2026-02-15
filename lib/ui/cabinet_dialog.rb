@@ -67,6 +67,8 @@ def cabinet_params(params)
     width: params['width'].to_f.round.mm,
     height: params['height'].to_f.round.mm,
     depth: params['depth'].to_f.round.mm,
+    kitchen_base_enabled: params['kitchen_base_enabled'],
+    connector_width: params['connector_width'].to_f.round.mm,
     panel_thickness: params['panel_thickness'].to_f.round.mm,
     front_thickness: params['front_thickness'].to_f.round.mm,
     back_thickness: params['back_thickness'].to_f.round.mm,

@@ -51,6 +51,18 @@
                     <input type="number" id="depth" value="300" class="form-control form-control-sm">
                 </div>
             </div>
+            <div class="form-grid mt-2">
+                <div class="form-group checkbox-group">
+                    <label>
+                        <input type="checkbox" id="kitchen_base_checkbox" onchange="toggleKitchenBaseSection()" class="form-check-input me-1">
+                        Typ szafki: kuchenna dolna
+                    </label>
+                </div>
+                <div class="form-group is-hidden" id="connector_width_group">
+                    <label for="connector_width">Szerokość łącznika (mm):</label>
+                    <input type="number" id="connector_width" value="100" min="1" class="form-control form-control-sm">
+                </div>
+            </div>
         </div>
 
         <div class="section card card-body mb-2">

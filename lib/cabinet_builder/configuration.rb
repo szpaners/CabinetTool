@@ -45,6 +45,10 @@ def setup_front(config)
   frame_inner_thickness = read_config_value(config: config, key: :frame_inner_depth, default: 2) if frame_inner_thickness.nil?
   @frame_inner_thickness = [frame_inner_thickness.to_f, 0].max
   @front_opening_direction = read_config_value(config: config, key: :front_opening_direction, default: 'prawo').to_s.downcase
+
+  kitchen_base_enabled = read_config_value(config: config, key: :kitchen_base_enabled, default: false)
+  @kitchen_base_enabled = kitchen_base_enabled == true || kitchen_base_enabled.to_s == 'true'
+  @connector_width = [read_config_value(config: config, key: :connector_width, default: 100).to_f, 0].max
 end
 
     def setup_blends(config)

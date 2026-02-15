@@ -31,8 +31,22 @@ module CabinetBuilder
 
     def draw_top_panel
       top_z = @height - @panel_thickness
-      points = horizontal_rectangle(x_min: 0, x_max: @width, y_min: 0, y_max: @depth - @back_thickness, z: top_z)
-      draw_panel(panel_klass: TopPanel, points: points, thickness: @panel_thickness, extrusion: @panel_thickness)
+      y_max = @depth - @back_thickness
+
+      unless @kitchen_base_enabled
+        points = horizontal_rectangle(x_min: 0, x_max: @width, y_min: 0, y_max: y_max, z: top_z)
+        draw_panel(panel_klass: TopPanel, points: points, thickness: @panel_thickness, extrusion: @panel_thickness)
+        return
+      end
+
+      connector_width = [@connector_width, y_max / 2.0].min
+      return if connector_width <= 0
+
+      front_connector_points = horizontal_rectangle(x_min: 0, x_max: @width, y_min: 0, y_max: connector_width, z: top_z)
+      back_connector_points = horizontal_rectangle(x_min: 0, x_max: @width, y_min: y_max - connector_width, y_max: y_max, z: top_z)
+
+      draw_named_panel(name: 'Top Connector Front', points: front_connector_points, thickness: @panel_thickness, extrusion: @panel_thickness)
+      draw_named_panel(name: 'Top Connector Back', points: back_connector_points, thickness: @panel_thickness, extrusion: @panel_thickness)
     end
 
     def draw_left_panel

@@ -19,7 +19,8 @@ module CabinetBuilder
       'cokol_dolny_offset_value_mm' => :@cokol_dolny_offset_value,
       'cokol_gorny_offset_value_mm' => :@cokol_gorny_offset_value,
       'frame_width_mm' => :@frame_width,
-      'frame_inner_thickness_mm' => :@frame_inner_thickness
+      'frame_inner_thickness_mm' => :@frame_inner_thickness,
+      'connector_width_mm' => :@connector_width
     }.freeze
 
     LEGACY_BLEND_KEYS = {
@@ -62,6 +63,8 @@ module CabinetBuilder
           'frame_width' => group.get_attribute(CABINET_DICT, 'frame_width_mm', 20),
           'frame_inner_thickness' => group.get_attribute(CABINET_DICT, 'frame_inner_thickness_mm', group.get_attribute(CABINET_DICT, 'frame_inner_depth_mm', 2)),
           'front_opening_direction' => group.get_attribute(CABINET_DICT, 'front_opening_direction', 'prawo'),
+          'kitchen_base_enabled' => group.get_attribute(CABINET_DICT, 'kitchen_base_enabled', false),
+          'connector_width' => group.get_attribute(CABINET_DICT, 'connector_width_mm', 100),
           'blend_left_value' => read_blend_value_mm(group, LEGACY_BLEND_KEYS['blend_left_value']),
           'blend_right_value' => read_blend_value_mm(group, LEGACY_BLEND_KEYS['blend_right_value']),
           'blend_left_depth_value' => read_blend_value_mm(group, LEGACY_BLEND_KEYS['blend_left_depth_value']),
@@ -125,6 +128,7 @@ def read_blend_value_mm(group, keys)
       @group.set_attribute(CABINET_DICT, 'front_quantity', @front_quantity)
       @group.set_attribute(CABINET_DICT, 'front_type', @front_type)
       @group.set_attribute(CABINET_DICT, 'front_opening_direction', @front_opening_direction)
+      @group.set_attribute(CABINET_DICT, 'kitchen_base_enabled', @kitchen_base_enabled)
     end
 
 def save_mm_attributes
