@@ -22,6 +22,20 @@
 
     <div id="dimensions" class="tab-content active">
         <div class="section card card-body mb-2">
+            <h3 class="section-title">Podgląd na żywo</h3>
+            <div class="live-preview">
+                <div class="preview-canvas iso-preview-canvas" id="preview_canvas">
+                    <svg id="preview_iso_svg" viewBox="0 0 340 220" role="img" aria-label="Podgląd izometryczny szafki">
+                        <g id="preview_iso_shadow"></g>
+                        <g id="preview_iso_cabinet"></g>
+                        <g id="preview_iso_details"></g>
+                        <g id="preview_iso_front"></g>
+                    </svg>
+                </div>
+                <div class="preview-summary" id="preview_summary"></div>
+            </div>
+        </div>
+        <div class="section card card-body mb-2">
             <h3 class="section-title">Wymiary korpusu</h3>
             <div class="form-grid">
                 <div class="form-group">
