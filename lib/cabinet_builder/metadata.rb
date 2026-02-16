@@ -186,7 +186,7 @@ module CabinetBuilder
       payload = @interior_sections.map do |section|
         params = section.params.each_with_object({}) do |(key, value), result|
           normalized_key = key.to_s
-          result[normalized_key] = if normalized_key == 'rod_offset'
+          result[normalized_key] = if %w[rod_offset drawer_front_height].include?(normalized_key)
                                      value.to_l.to_mm.round
                                    else
                                      value

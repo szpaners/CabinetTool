@@ -88,7 +88,9 @@ module CabinetBuilder
         drawer_count = params.fetch('drawer_count', 0).to_i
         raise ArgumentError, 'Sekcja typu szuflady wymaga liczby szuflad >= 1.' if drawer_count < 1
 
-        { 'drawer_count' => drawer_count, 'top_panel' => top_panel }
+        drawer_front_height = to_length(params.fetch('drawer_front_height', 0))
+
+        { 'drawer_count' => drawer_count, 'drawer_front_height' => drawer_front_height, 'top_panel' => top_panel }
       when 'shelves'
         shelf_count = params.fetch('shelf_count', 0).to_i
         raise ArgumentError, 'Sekcja typu półki wymaga liczby półek >= 1.' if shelf_count < 1
@@ -143,6 +145,15 @@ module CabinetBuilder
       return if x_max <= x_min
 
       panel_z = section_top - @panel_thickness
+      if section.filling == 'drawers'
+        drawer_count = section.params.fetch('drawer_count', 0)
+        front_height = section.params.fetch('drawer_front_height', 0)
+        max_front_stack = front_height <= 0 ? section.height : drawer_count * front_height
+        effective_front_top = interior_niche_bottom + section.y_bottom
+        effective_front_top += [max_front_stack, section.height].min
+        panel_z = [effective_front_top - @panel_thickness, panel_z].min
+      end
+
       return if panel_z < interior_niche_bottom - SECTION_EPSILON
 
       points = horizontal_rectangle(
@@ -166,18 +177,22 @@ module CabinetBuilder
       drawer_count = section.params.fetch('drawer_count', 0)
       return if drawer_count < 1
 
-      drawer_height = section.height / drawer_count.to_f
-      return if drawer_height <= 0
+      compartment_height = section.height / drawer_count.to_f
+      return if compartment_height <= 0
+
+      drawer_front_height = section.params.fetch('drawer_front_height', 0)
+      drawer_front_height = compartment_height if drawer_front_height <= 0
 
       drawer_width = @width - (2 * @panel_thickness)
       return if drawer_width <= 0
 
       x_min = @panel_thickness
-      y = -@front_thickness
+      y = 0
+      front_height = [drawer_front_height, compartment_height].min
 
       drawer_count.times do |index|
-        z_bottom = section_bottom + (index * drawer_height)
-        z_top = z_bottom + drawer_height
+        z_bottom = section_bottom + (index * compartment_height)
+        z_top = z_bottom + front_height
 
         points = [
           [x_min, y, z_bottom],
@@ -190,7 +205,7 @@ module CabinetBuilder
           name: "Section #{section.id} Drawer #{index + 1}",
           points: points,
           thickness: @front_thickness,
-          extrusion: -@front_thickness,
+          extrusion: @front_thickness,
           entities: section_entities
         )
       end
@@ -204,11 +219,13 @@ module CabinetBuilder
       x_max = @width - @panel_thickness
       return if x_max <= x_min
 
+      clear_space = section.height - (shelf_count * @panel_thickness)
+      return if clear_space < 0
+
+      niche_segment = clear_space / (shelf_count + 1).to_f
+
       shelf_count.times do |index|
-        shelf_mid = section_bottom + ((index + 1) * section.height / (shelf_count + 1).to_f)
-        shelf_z = shelf_mid - (@panel_thickness / 2.0)
-        shelf_z = [shelf_z, section_bottom].max
-        shelf_z = [shelf_z, section_top - @panel_thickness].min
+        shelf_z = section_bottom + (niche_segment * (index + 1)) + (@panel_thickness * index)
 
         next if shelf_z < section_bottom - SECTION_EPSILON
         next if shelf_z + @panel_thickness > section_top + SECTION_EPSILON
@@ -258,10 +275,12 @@ module CabinetBuilder
       assign_panel_tag(rod_group, 'Section Rod')
 
       rod_face = rod_group.entities.add_face(
-        [x_min, rod_y_min, rod_z_min],
-        [x_min, rod_y_max, rod_z_min],
-        [x_min, rod_y_max, rod_z_max],
-        [x_min, rod_y_min, rod_z_max]
+        rod_group.entities.add_circle(
+          [x_min, y_center, rod_center_z],
+          [1, 0, 0],
+          rod_radius,
+          24
+        )
       )
       return unless rod_face
 

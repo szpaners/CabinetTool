@@ -417,9 +417,13 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Parametr</label>
+                            <label data-field="param_label">Parametr</label>
                             <input type="number" class="form-control form-control-sm" data-field="param" min="0" value="0">
                             <small data-field="param_hint" class="text-muted">Brak parametru</small>
+                        </div>
+                        <div class="form-group is-hidden" data-field="drawer_front_height_group">
+                            <label>Wysokość frontu szuflady (mm)</label>
+                            <input type="number" class="form-control form-control-sm" data-field="drawer_front_height" min="1" value="80">
                         </div>
                         <div class="form-group checkbox-group">
                             <label><input type="checkbox" class="form-check-input me-1" data-field="top_panel">Płyta na górze</label>
