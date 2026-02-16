@@ -114,12 +114,13 @@ def cabinet_params(params)
 
         result << {
           id: section['id'].to_i,
-          height: section['height'].to_f.round.mm,
+          height: section['height'].to_f.round,
           filling: section['filling'].to_s,
           params: {
             drawer_count: params['drawer_count'].to_i,
             shelf_count: params['shelf_count'].to_i,
-            rod_offset: params['rod_offset'].to_f.round.mm
+            rod_offset: params['rod_offset'].to_f.round,
+            top_panel: params['top_panel'] == true || params['top_panel'].to_s == 'true'
           }
         }
       end

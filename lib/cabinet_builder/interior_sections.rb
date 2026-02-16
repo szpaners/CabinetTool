@@ -81,25 +81,26 @@ module CabinetBuilder
 
     def normalize_section_params(filling:, raw_params:)
       params = raw_params.is_a?(Hash) ? raw_params.transform_keys(&:to_s) : {}
+      top_panel = truthy?(params['top_panel'])
 
       case filling
       when 'drawers'
         drawer_count = params.fetch('drawer_count', 0).to_i
         raise ArgumentError, 'Sekcja typu szuflady wymaga liczby szuflad >= 1.' if drawer_count < 1
 
-        { 'drawer_count' => drawer_count }
+        { 'drawer_count' => drawer_count, 'top_panel' => top_panel }
       when 'shelves'
         shelf_count = params.fetch('shelf_count', 0).to_i
         raise ArgumentError, 'Sekcja typu półki wymaga liczby półek >= 1.' if shelf_count < 1
 
-        { 'shelf_count' => shelf_count }
+        { 'shelf_count' => shelf_count, 'top_panel' => top_panel }
       when 'rod'
         rod_offset = to_length(params.fetch('rod_offset', 0))
         raise ArgumentError, 'Sekcja typu drążek wymaga offsetu >= 0.' if rod_offset.negative?
 
-        { 'rod_offset' => rod_offset }
+        { 'rod_offset' => rod_offset, 'top_panel' => top_panel }
       else
-        {}
+        { 'top_panel' => top_panel }
       end
     end
 
@@ -132,6 +133,33 @@ module CabinetBuilder
       when 'rod'
         draw_section_rod(section_entities, section, section_bottom, section_top)
       end
+
+      draw_section_top_panel(section_entities, section, section_top) if truthy?(section.params['top_panel'])
+    end
+
+    def draw_section_top_panel(section_entities, section, section_top)
+      x_min = @panel_thickness
+      x_max = @width - @panel_thickness
+      return if x_max <= x_min
+
+      panel_z = section_top - @panel_thickness
+      return if panel_z < interior_niche_bottom - SECTION_EPSILON
+
+      points = horizontal_rectangle(
+        x_min: x_min,
+        x_max: x_max,
+        y_min: 0,
+        y_max: @internal_depth,
+        z: panel_z
+      )
+
+      draw_named_panel(
+        name: "Section #{section.id} Top Panel",
+        points: points,
+        thickness: @panel_thickness,
+        extrusion: @panel_thickness,
+        entities: section_entities
+      )
     end
 
     def draw_section_drawers(section_entities, section, section_bottom)

@@ -393,11 +393,13 @@
         <div class="section card card-body mb-2" id="wardrobe_sections_card">
             <h3 class="section-title">Sekcje wnętrza</h3>
             <div class="d-flex gap-2 align-items-center mb-2">
-                <button id="wardrobe_add_section" type="button" class="btn btn-sm btn-outline-primary">Dodaj sekcję</button>
                 <label class="mb-0"><input type="checkbox" id="wardrobe_sections_fill_remaining" class="form-check-input me-1" checked>Dodaj ostatnią sekcję jako resztę</label>
             </div>
             <div id="wardrobe_sections_list" class="sections-list"></div>
             <div id="wardrobe_sections_remaining" class="sections-remaining mt-2">Pozostała wysokość: 0 mm</div>
+            <div class="d-flex justify-content-end mt-2">
+                <button id="wardrobe_add_section" type="button" class="btn btn-sm btn-outline-primary">Dodaj sekcję</button>
+            </div>
             <template id="wardrobe_section_template">
                 <div class="section-row" data-section-row>
                     <div class="form-grid">
@@ -418,6 +420,9 @@
                             <label>Parametr</label>
                             <input type="number" class="form-control form-control-sm" data-field="param" min="0" value="0">
                             <small data-field="param_hint" class="text-muted">Brak parametru</small>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <label><input type="checkbox" class="form-check-input me-1" data-field="top_panel">Płyta na górze</label>
                         </div>
                         <div class="form-group section-row-actions">
                             <button type="button" class="btn btn-sm btn-outline-danger" data-action="remove">Usuń</button>

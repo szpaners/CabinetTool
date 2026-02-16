@@ -116,9 +116,38 @@ module CabinetBuilder
 
       def read_interior_sections(group)
         raw_json = group.get_attribute(CABINET_DICT, 'interior_sections_json', '[]')
-        JSON.parse(raw_json)
+        sections = JSON.parse(raw_json)
+        normalize_legacy_section_params(sections)
       rescue JSON::ParserError
         []
+      end
+
+      def normalize_legacy_section_params(sections)
+        return [] unless sections.is_a?(Array)
+
+        sections.each do |section|
+          next unless section.is_a?(Hash)
+
+          filling = section['filling'].to_s
+          params = section['params']
+          next unless params.is_a?(Hash)
+
+          if filling == 'drawers'
+            params['drawer_count'] = normalize_legacy_count(params['drawer_count'])
+          elsif filling == 'shelves'
+            params['shelf_count'] = normalize_legacy_count(params['shelf_count'])
+          end
+        end
+
+        sections
+      end
+
+      def normalize_legacy_count(raw_count)
+        count = raw_count.to_i
+        return count if count <= 20
+
+        recovered = (count / 25.4).round
+        recovered > 0 ? recovered : count
       end
 
       def read_blend_value_mm(group, keys)
@@ -155,8 +184,13 @@ module CabinetBuilder
 
     def serialized_interior_sections
       payload = @interior_sections.map do |section|
-        params = section.params.transform_values do |value|
-          value.respond_to?(:to_l) ? value.to_l.to_mm.round : value
+        params = section.params.each_with_object({}) do |(key, value), result|
+          normalized_key = key.to_s
+          result[normalized_key] = if normalized_key == 'rod_offset'
+                                     value.to_l.to_mm.round
+                                   else
+                                     value
+                                   end
         end
 
         {
