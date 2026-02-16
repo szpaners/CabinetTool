@@ -145,15 +145,6 @@ module CabinetBuilder
       return if x_max <= x_min
 
       panel_z = section_top - @panel_thickness
-      if section.filling == 'drawers'
-        drawer_count = section.params.fetch('drawer_count', 0)
-        front_height = section.params.fetch('drawer_front_height', 0)
-        max_front_stack = front_height <= 0 ? section.height : drawer_count * front_height
-        effective_front_top = interior_niche_bottom + section.y_bottom
-        effective_front_top += [max_front_stack, section.height].min
-        panel_z = [effective_front_top - @panel_thickness, panel_z].min
-      end
-
       return if panel_z < interior_niche_bottom - SECTION_EPSILON
 
       points = horizontal_rectangle(
@@ -187,8 +178,12 @@ module CabinetBuilder
       return if drawer_width <= 0
 
       x_min = @panel_thickness
-      y = 0
+      y = @panel_thickness
       front_height = [drawer_front_height, compartment_height].min
+      return if front_height <= 0
+
+      drawer_box_front_y = y + @front_thickness
+      drawer_box_back_y = @internal_depth - @panel_thickness
 
       drawer_count.times do |index|
         z_bottom = section_bottom + (index * compartment_height)
@@ -208,7 +203,93 @@ module CabinetBuilder
           extrusion: @front_thickness,
           entities: section_entities
         )
+
+        draw_section_drawer_box(
+          section_entities: section_entities,
+          section_id: section.id,
+          drawer_index: index,
+          x_min: x_min,
+          drawer_width: drawer_width,
+          z_bottom: z_bottom,
+          z_top: z_top,
+          front_y: drawer_box_front_y,
+          back_y: drawer_box_back_y
+        )
       end
+    end
+
+    def draw_section_drawer_box(section_entities:, section_id:, drawer_index:, x_min:, drawer_width:, z_bottom:, z_top:, front_y:, back_y:)
+      return if back_y <= front_y
+
+      left_side_points = [
+        [x_min, front_y, z_bottom],
+        [x_min, back_y, z_bottom],
+        [x_min, back_y, z_top],
+        [x_min, front_y, z_top]
+      ]
+
+      draw_named_panel(
+        name: "Section #{section_id} Drawer #{drawer_index + 1} Side Left",
+        points: left_side_points,
+        thickness: @panel_thickness,
+        extrusion: @panel_thickness,
+        entities: section_entities
+      )
+
+      right_x = x_min + drawer_width
+      right_side_points = [
+        [right_x, front_y, z_bottom],
+        [right_x, back_y, z_bottom],
+        [right_x, back_y, z_top],
+        [right_x, front_y, z_top]
+      ]
+
+      draw_named_panel(
+        name: "Section #{section_id} Drawer #{drawer_index + 1} Side Right",
+        points: right_side_points,
+        thickness: @panel_thickness,
+        extrusion: -@panel_thickness,
+        entities: section_entities
+      )
+
+      back_x_min = x_min + @panel_thickness
+      back_x_max = x_min + drawer_width - @panel_thickness
+      return if back_x_max <= back_x_min
+
+      back_points = [
+        [back_x_min, back_y, z_bottom],
+        [back_x_max, back_y, z_bottom],
+        [back_x_max, back_y, z_top],
+        [back_x_min, back_y, z_top]
+      ]
+
+      draw_named_panel(
+        name: "Section #{section_id} Drawer #{drawer_index + 1} Back",
+        points: back_points,
+        thickness: @panel_thickness,
+        extrusion: -@panel_thickness,
+        entities: section_entities
+      )
+
+      bottom_x_min = x_min + @panel_thickness
+      bottom_x_max = x_min + drawer_width - @panel_thickness
+      return if bottom_x_max <= bottom_x_min
+
+      bottom_points = horizontal_rectangle(
+        x_min: bottom_x_min,
+        x_max: bottom_x_max,
+        y_min: front_y,
+        y_max: back_y,
+        z: z_bottom
+      )
+
+      draw_named_panel(
+        name: "Section #{section_id} Drawer #{drawer_index + 1} Bottom",
+        points: bottom_points,
+        thickness: @panel_thickness,
+        extrusion: @panel_thickness,
+        entities: section_entities
+      )
     end
 
     def draw_section_shelves(section_entities, section, section_bottom, section_top)
