@@ -97,8 +97,32 @@ def cabinet_params(params)
     cokol_dolny_value: params['cokol_dolny_value'].to_f.round.mm,
     cokol_gorny_value: params['cokol_gorny_value'].to_f.round.mm,
     cokol_dolny_offset_value: params['cokol_dolny_offset_value'].to_f.round.mm,
-    cokol_gorny_offset_value: params['cokol_gorny_offset_value'].to_f.round.mm
+    cokol_gorny_offset_value: params['cokol_gorny_offset_value'].to_f.round.mm,
+    interior_sections_fill_remaining: params['interior_sections_fill_remaining'],
+    interior_sections: parse_interior_sections(params['interior_sections']),
   }
+    end
+
+
+    def parse_interior_sections(raw_sections)
+      return [] unless raw_sections.is_a?(Array)
+
+      raw_sections.each_with_object([]) do |section, result|
+        next unless section.is_a?(Hash)
+
+        params = section['params'].is_a?(Hash) ? section['params'] : {}
+
+        result << {
+          id: section['id'].to_i,
+          height: section['height'].to_f.round.mm,
+          filling: section['filling'].to_s,
+          params: {
+            drawer_count: params['drawer_count'].to_i,
+            shelf_count: params['shelf_count'].to_i,
+            rod_offset: params['rod_offset'].to_f.round.mm
+          }
+        }
+      end
     end
   end
 end

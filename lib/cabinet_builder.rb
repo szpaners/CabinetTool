@@ -3,6 +3,7 @@ require_relative 'cabinet_builder/geometry'
 require_relative 'cabinet_builder/panel_drawing'
 require_relative 'cabinet_builder/spatial_profile'
 require_relative 'cabinet_builder/metadata'
+require_relative 'cabinet_builder/interior_sections'
 
 # Klasa do budowania szafki
 module CabinetBuilder
@@ -12,6 +13,7 @@ module CabinetBuilder
     include CabinetPanelDrawing
     include CabinetSpatialProfile
     include CabinetMetadata
+    include CabinetInteriorSections
 
     CABINET_DICT = 'cabinet_tool'.freeze
 
@@ -25,6 +27,7 @@ module CabinetBuilder
       refresh_spatial_profile
       setup_blends(config)
       setup_cokols(config)
+      setup_interior_sections(config)
     end
 
     def draw_bottom_panel
@@ -560,6 +563,7 @@ end
       draw_front
       draw_drawers
       draw_shelves
+      draw_interior_sections
       draw_blend_left
       draw_blend_right
       save_metadata

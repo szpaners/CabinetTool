@@ -2,28 +2,30 @@ module CabinetBuilder
   module CabinetPanelDrawing
     private
 
-    def draw_panel(panel_klass:, points:, thickness:, extrusion:)
+    def draw_panel(panel_klass:, points:, thickness:, extrusion:, entities: @cabinet_entities)
       create_panel(
         panel_klass: panel_klass,
         points: points,
         thickness: thickness,
-        extrusion: extrusion
+        extrusion: extrusion,
+        entities: entities
       )
     end
 
-    def draw_named_panel(name:, points:, thickness:, extrusion:)
+    def draw_named_panel(name:, points:, thickness:, extrusion:, entities: @cabinet_entities)
       create_panel(
         panel_klass: Panel,
         points: points,
         thickness: thickness,
         extrusion: extrusion,
-        name: name
+        name: name,
+        entities: entities
       )
     end
 
-    def create_panel(panel_klass:, points:, thickness:, extrusion:, name: nil)
+    def create_panel(panel_klass:, points:, thickness:, extrusion:, name: nil, entities: @cabinet_entities)
       panel = panel_klass.new(
-        entities: @cabinet_entities,
+        entities: entities,
         material: @material_color,
         thickness: thickness,
         name: name

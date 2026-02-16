@@ -213,3 +213,31 @@ input[type="color"].form-control {
     padding: 2px 8px;
     white-space: nowrap;
 }
+
+.sections-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.section-row {
+    border: 1px solid #dce3ed;
+    border-radius: 6px;
+    padding: 8px;
+    background: #fff;
+}
+
+.section-row-actions {
+    display: flex;
+    align-items: end;
+    justify-content: flex-end;
+}
+
+.sections-remaining {
+    font-weight: 600;
+    color: #3e4652;
+}
+
+.sections-remaining.is-error {
+    color: #ba1b1b;
+}

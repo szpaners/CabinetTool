@@ -1,3 +1,5 @@
+require 'json'
+
 module CabinetBuilder
   module CabinetMetadata
     CABINET_DICT = 'cabinet_tool'.freeze
@@ -79,7 +81,9 @@ module CabinetBuilder
           'cokol_dolny_value' => group.get_attribute(CABINET_DICT, 'cokol_dolny_value_mm', 0),
           'cokol_gorny_value' => group.get_attribute(CABINET_DICT, 'cokol_gorny_value_mm', 0),
           'cokol_dolny_offset_value' => group.get_attribute(CABINET_DICT, 'cokol_dolny_offset_value_mm', 0),
-          'cokol_gorny_offset_value' => group.get_attribute(CABINET_DICT, 'cokol_gorny_offset_value_mm', 0)
+          'cokol_gorny_offset_value' => group.get_attribute(CABINET_DICT, 'cokol_gorny_offset_value_mm', 0),
+          'interior_sections_fill_remaining' => group.get_attribute(CABINET_DICT, 'interior_sections_fill_remaining', true),
+          'interior_sections' => read_interior_sections(group)
         }
       end
 
@@ -110,12 +114,19 @@ module CabinetBuilder
 
       private
 
-def read_blend_value_mm(group, keys)
-  mm_value = group.get_attribute(CABINET_DICT, keys[:mm], nil)
-  return mm_value if mm_value
+      def read_interior_sections(group)
+        raw_json = group.get_attribute(CABINET_DICT, 'interior_sections_json', '[]')
+        JSON.parse(raw_json)
+      rescue JSON::ParserError
+        []
+      end
 
-  legacy_value = group.get_attribute(CABINET_DICT, keys[:legacy], 0)
-  legacy_value.to_l.to_mm.round(2)
+      def read_blend_value_mm(group, keys)
+        mm_value = group.get_attribute(CABINET_DICT, keys[:mm], nil)
+        return mm_value if mm_value
+
+        legacy_value = group.get_attribute(CABINET_DICT, keys[:legacy], 0)
+        legacy_value.to_l.to_mm.round(2)
       end
     end
 
@@ -137,13 +148,34 @@ def read_blend_value_mm(group, keys)
       @group.set_attribute(CABINET_DICT, 'front_type', @front_type)
       @group.set_attribute(CABINET_DICT, 'front_opening_direction', @front_opening_direction)
       @group.set_attribute(CABINET_DICT, 'kitchen_base_enabled', @kitchen_base_enabled)
+      @group.set_attribute(CABINET_DICT, 'interior_sections_fill_remaining', @interior_sections_fill_remaining)
+      @group.set_attribute(CABINET_DICT, 'interior_sections_json', serialized_interior_sections)
     end
 
-def save_mm_attributes
-  METADATA_FIELDS.each do |attribute_key, instance_var|
-    length_value = instance_variable_get(instance_var)
-    @group.set_attribute(CABINET_DICT, attribute_key, length_value.to_l.to_mm.round)
-  end
+
+    def serialized_interior_sections
+      payload = @interior_sections.map do |section|
+        params = section.params.transform_values do |value|
+          value.respond_to?(:to_l) ? value.to_l.to_mm.round : value
+        end
+
+        {
+          id: section.id,
+          height: section.height.to_l.to_mm.round,
+          y_bottom: section.y_bottom.to_l.to_mm.round,
+          filling: section.filling,
+          params: params
+        }
+      end
+
+      JSON.generate(payload)
+    end
+
+    def save_mm_attributes
+      METADATA_FIELDS.each do |attribute_key, instance_var|
+        length_value = instance_variable_get(instance_var)
+        @group.set_attribute(CABINET_DICT, attribute_key, length_value.to_l.to_mm.round)
+      end
     end
   end
 end
