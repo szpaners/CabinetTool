@@ -89,8 +89,19 @@ module CabinetBuilder
         raise ArgumentError, 'Sekcja typu szuflady wymaga liczby szuflad >= 1.' if drawer_count < 1
 
         drawer_front_height = to_length(params.fetch('drawer_front_height', 0))
+        drawer_width_reduction = to_length(params.fetch('drawer_width_reduction', 40))
+        raise ArgumentError, 'Zwężenie szuflady musi być >= 0.' if drawer_width_reduction.negative?
 
-        { 'drawer_count' => drawer_count, 'drawer_front_height' => drawer_front_height, 'top_panel' => top_panel }
+        drawer_box_height_offset = to_length(params.fetch('drawer_box_height_offset', 40))
+        raise ArgumentError, 'Obniżenie boków szuflady musi być >= 0.' if drawer_box_height_offset.negative?
+
+        {
+          'drawer_count' => drawer_count,
+          'drawer_front_height' => drawer_front_height,
+          'drawer_width_reduction' => drawer_width_reduction,
+          'drawer_box_height_offset' => drawer_box_height_offset,
+          'top_panel' => top_panel
+        }
       when 'shelves'
         shelf_count = params.fetch('shelf_count', 0).to_i
         raise ArgumentError, 'Sekcja typu półki wymaga liczby półek >= 1.' if shelf_count < 1
@@ -174,15 +185,22 @@ module CabinetBuilder
       drawer_front_height = section.params.fetch('drawer_front_height', 0)
       drawer_front_height = compartment_height if drawer_front_height <= 0
 
-      drawer_width = @width - (2 * @panel_thickness)
+      drawer_width_reduction = section.params.fetch('drawer_width_reduction', 40.mm)
+
+      section_clear_width = @width - (2 * @panel_thickness)
+      drawer_width = section_clear_width - drawer_width_reduction
       return if drawer_width <= 0
 
-      x_min = @panel_thickness
+      x_min = @panel_thickness + ((section_clear_width - drawer_width) / 2.0)
+
       y = @panel_thickness
       front_height = [drawer_front_height, compartment_height].min
       return if front_height <= 0
 
-      drawer_box_front_y = y + @front_thickness
+      drawer_box_height_offset = section.params.fetch('drawer_box_height_offset', 40.mm)
+      drawer_box_height = [front_height - drawer_box_height_offset, 0].max
+
+      drawer_box_front_y = y
       drawer_box_back_y = @internal_depth - @panel_thickness
 
       drawer_count.times do |index|
@@ -211,7 +229,7 @@ module CabinetBuilder
           x_min: x_min,
           drawer_width: drawer_width,
           z_bottom: z_bottom,
-          z_top: z_top,
+          z_top: z_bottom + drawer_box_height,
           front_y: drawer_box_front_y,
           back_y: drawer_box_back_y
         )
@@ -220,6 +238,7 @@ module CabinetBuilder
 
     def draw_section_drawer_box(section_entities:, section_id:, drawer_index:, x_min:, drawer_width:, z_bottom:, z_top:, front_y:, back_y:)
       return if back_y <= front_y
+      return if z_top <= z_bottom
 
       left_side_points = [
         [x_min, front_y, z_bottom],
@@ -300,7 +319,8 @@ module CabinetBuilder
       x_max = @width - @panel_thickness
       return if x_max <= x_min
 
-      clear_space = section.height - (shelf_count * @panel_thickness)
+      top_panel_thickness = truthy?(section.params['top_panel']) ? @panel_thickness : 0
+      clear_space = section.height - (shelf_count * @panel_thickness) - top_panel_thickness
       return if clear_space < 0
 
       niche_segment = clear_space / (shelf_count + 1).to_f
