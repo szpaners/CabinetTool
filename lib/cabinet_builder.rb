@@ -121,10 +121,78 @@ module CabinetBuilder
     end
 
     def draw_front_leaf(name:, points:)
-      if @front_type == 'frame'
+      case @front_type
+      when 'frame'
         draw_frame_front_leaf(name: name, points: points)
+      when 'lamella'
+        draw_lamella_front_leaf(name: name, points: points)
       else
         draw_named_panel(name: name, points: points, thickness: @front_thickness, extrusion: -@front_thickness)
+      end
+    end
+
+    def draw_lamella_front_leaf(name:, points:)
+      front_group = @cabinet_entities.add_group
+      front_group.name = name
+      front_group.material = @material_color
+      assign_panel_tag(front_group, name)
+
+      front_face = front_group.entities.add_face(points)
+      return unless front_face
+
+      front_face.material = @material_color
+      front_face.back_material = @material_color
+      front_face.pushpull(-@front_thickness)
+
+      x_min = points.map { |point| point[0] }.min
+      x_max = points.map { |point| point[0] }.max
+      z_min = points.map { |point| point[2] }.min
+      z_max = points.map { |point| point[2] }.max
+      front_width = x_max - x_min
+      return if front_width <= 0 || @groove_width <= 0 || @groove_spacing <= 0 || @groove_depth <= 0
+
+      front_surface = front_group.entities.grep(Sketchup::Face).find do |face|
+        y_values = face.vertices.map { |vertex| vertex.position.y }
+        y_values.uniq.length == 1 && (y_values.first - points.first[1]).abs < 0.001
+      end
+      return unless front_surface
+
+      lamella_step = @groove_width + @groove_spacing
+      return if lamella_step <= 0
+
+      side_margin = [@groove_spacing / 2.0, front_width / 4.0].min
+      start_x = x_min + side_margin
+      end_x = x_max - side_margin
+      return if end_x <= start_x
+
+      groove_depth = [[@groove_depth, 0].max, @front_thickness * 0.95].min
+      return if groove_depth <= 0
+
+      y = points.first[1]
+      pushpull_distance = front_surface.normal.y > 0 ? groove_depth : -groove_depth
+
+      x_position = start_x
+      while x_position < end_x
+        lamella_right = [x_position + @groove_width, end_x].min
+        gap_left = lamella_right
+        gap_right = [gap_left + @groove_spacing, end_x].min
+
+        if gap_right > gap_left
+          groove_face = front_group.entities.add_face(
+            [gap_left, y, z_min],
+            [gap_right, y, z_min],
+            [gap_right, y, z_max],
+            [gap_left, y, z_max]
+          )
+
+          if groove_face
+            groove_face.material = @material_color
+            groove_face.back_material = @material_color
+            groove_face.pushpull(pushpull_distance)
+          end
+        end
+
+        x_position += lamella_step
       end
     end
 

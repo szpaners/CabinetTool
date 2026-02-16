@@ -40,11 +40,15 @@ def setup_front(config)
   @front_quantity = read_config_value(config: config, key: :front_quantity, default: 1).to_i
   @front_type = read_config_value(config: config, key: :front_type, default: 'flat').to_s.downcase
   @front_type = 'frame' if @front_type == 'rama'
-  @front_type = 'flat' unless %w[flat frame].include?(@front_type)
+  @front_type = 'lamella' if %w[ryflowany grooved lamelowany].include?(@front_type)
+  @front_type = 'flat' unless %w[flat frame lamella].include?(@front_type)
   @frame_width = [read_config_value(config: config, key: :frame_width, default: 20).to_f, 0].max
   frame_inner_thickness = read_config_value(config: config, key: :frame_inner_thickness, default: nil)
   frame_inner_thickness = read_config_value(config: config, key: :frame_inner_depth, default: 2) if frame_inner_thickness.nil?
   @frame_inner_thickness = [frame_inner_thickness.to_f, 0].max
+  @groove_width = [read_config_value(config: config, key: :groove_width, default: 12).to_f, 1].max
+  @groove_spacing = [read_config_value(config: config, key: :groove_spacing, default: 8).to_f, 0].max
+  @groove_depth = [read_config_value(config: config, key: :groove_depth, default: 3).to_f, 0].max
   @front_opening_direction = read_config_value(config: config, key: :front_opening_direction, default: 'prawo').to_s.downcase
 
   kitchen_base_enabled = read_config_value(config: config, key: :kitchen_base_enabled, default: false)

@@ -20,6 +20,9 @@ module CabinetBuilder
       'cokol_gorny_offset_value_mm' => :@cokol_gorny_offset_value,
       'frame_width_mm' => :@frame_width,
       'frame_inner_thickness_mm' => :@frame_inner_thickness,
+      'groove_width_mm' => :@groove_width,
+      'groove_spacing_mm' => :@groove_spacing,
+      'groove_depth_mm' => :@groove_depth,
       'connector_width_mm' => :@connector_width
     }.freeze
 
@@ -62,6 +65,9 @@ module CabinetBuilder
           'front_type' => group.get_attribute(CABINET_DICT, 'front_type', 'flat'),
           'frame_width' => group.get_attribute(CABINET_DICT, 'frame_width_mm', 20),
           'frame_inner_thickness' => group.get_attribute(CABINET_DICT, 'frame_inner_thickness_mm', group.get_attribute(CABINET_DICT, 'frame_inner_depth_mm', 2)),
+          'groove_width' => group.get_attribute(CABINET_DICT, 'groove_width_mm', 12),
+          'groove_spacing' => group.get_attribute(CABINET_DICT, 'groove_spacing_mm', 8),
+          'groove_depth' => group.get_attribute(CABINET_DICT, 'groove_depth_mm', 3),
           'front_opening_direction' => group.get_attribute(CABINET_DICT, 'front_opening_direction', 'prawo'),
           'kitchen_base_enabled' => group.get_attribute(CABINET_DICT, 'kitchen_base_enabled', false),
           'connector_width' => group.get_attribute(CABINET_DICT, 'connector_width_mm', 100),
