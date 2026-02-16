@@ -15,8 +15,8 @@ module CabinetBuilder
       [
         [x, 0, @panel_thickness],
         [x, 0, @height],
-        [x, @depth - @back_thickness, @height],
-        [x, @depth - @back_thickness, @panel_thickness]
+        [x, @internal_depth, @height],
+        [x, @internal_depth, @panel_thickness]
       ]
     end
   end

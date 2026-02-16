@@ -1,6 +1,7 @@
 require_relative 'cabinet_builder/configuration'
 require_relative 'cabinet_builder/geometry'
 require_relative 'cabinet_builder/panel_drawing'
+require_relative 'cabinet_builder/spatial_profile'
 require_relative 'cabinet_builder/metadata'
 
 # Klasa do budowania szafki
@@ -9,6 +10,7 @@ module CabinetBuilder
     include CabinetConfiguration
     include CabinetGeometry
     include CabinetPanelDrawing
+    include CabinetSpatialProfile
     include CabinetMetadata
 
     CABINET_DICT = 'cabinet_tool'.freeze
@@ -20,12 +22,13 @@ module CabinetBuilder
       setup_dimensions(config)
       setup_appearance(config)
       setup_front(config)
+      refresh_spatial_profile
       setup_blends(config)
       setup_cokols(config)
     end
 
     def draw_bottom_panel
-      points = horizontal_rectangle(x_min: 0, x_max: @width, y_min: 0, y_max: @depth - @back_thickness, z: 0)
+      points = horizontal_rectangle(x_min: 0, x_max: @width, y_min: 0, y_max: @internal_depth, z: 0)
       draw_panel(panel_klass: BottomPanel, points: points, thickness: @panel_thickness, extrusion: -@panel_thickness)
     end
 
@@ -33,7 +36,7 @@ module CabinetBuilder
       top_z = @height - @panel_thickness
       x_min = @panel_thickness
       x_max = @width - @panel_thickness
-      y_max = @depth - @back_thickness
+      y_max = @internal_depth
       return if x_max <= x_min
 
       unless @kitchen_base_enabled
@@ -64,10 +67,10 @@ module CabinetBuilder
 
     def draw_back_panel
       points = [
-        [0, @depth, 0],
-        [@width, @depth, 0],
-        [@width, @depth, @height],
-        [0, @depth, @height]
+        [0, @corpus_depth, 0],
+        [@width, @corpus_depth, 0],
+        [@width, @corpus_depth, @height],
+        [0, @corpus_depth, @height]
       ]
       draw_panel(panel_klass: BackPanel, points: points, thickness: @back_thickness, extrusion: @back_thickness)
     end
@@ -399,7 +402,7 @@ module CabinetBuilder
           x_min: @panel_thickness,
           x_max: @width - @panel_thickness,
           y_min: 0,
-          y_max: @depth - @back_thickness,
+          y_max: @internal_depth,
           z: shelf_z
         )
 
@@ -410,8 +413,8 @@ module CabinetBuilder
 def draw_blend_left
   return unless @blend_left_value > 0
 
-  has_front_surface = @front_enabled || @filling == 'drawers'
-  max_depth = @blend_left_depth_value > 0 ? @blend_left_depth_value : @depth - @back_thickness + (has_front_surface ? @front_thickness : 0)
+  has_front_surface = front_surface_enabled?
+  max_depth = @blend_left_depth_value > 0 ? @blend_left_depth_value : @internal_depth + (has_front_surface ? @front_thickness : 0)
   y_offset = has_front_surface ? -@front_thickness : 0
   blend_bottom_z = @panel_thickness
   blend_top_z = @height
@@ -430,10 +433,10 @@ end
 def draw_blend_right
   return unless @blend_right_value > 0
 
-  has_front_surface = @front_enabled || @filling == 'drawers'
+  has_front_surface = front_surface_enabled?
   y_offset = has_front_surface ? -@front_thickness : 0
   x = @width + @blend_right_value
-  max_depth = @blend_right_depth_value > 0 ? @blend_right_depth_value : @depth - @back_thickness + (has_front_surface ? @front_thickness : 0)
+  max_depth = @blend_right_depth_value > 0 ? @blend_right_depth_value : @internal_depth + (has_front_surface ? @front_thickness : 0)
   blend_bottom_z = @panel_thickness
   blend_top_z = @height
   return if blend_top_z <= blend_bottom_z
@@ -465,7 +468,7 @@ end
     def draw_cokol_gorny
       return unless @cokol_gorny_value > 0
 
-      has_front_surface = @front_enabled || @filling == 'drawers'
+      has_front_surface = front_surface_enabled?
       y_offset = (has_front_surface ? -@front_thickness : 0) + @cokol_gorny_offset_value
       cokol_gorny_thickness = has_front_surface ? @front_thickness : @panel_thickness
       points = [

@@ -13,7 +13,8 @@ module CabinetBuilder
       @width = read_config_value(config: config, key: :width, default: CabinetDimensions::CABINET_WIDTH).to_f
       @height_total = read_config_value(config: config, key: :height, default: CabinetDimensions::CABINET_HEIGHT).to_f
       @height = @height_total
-      @depth = read_config_value(config: config, key: :depth, default: CabinetDimensions::CABINET_DEPTH).to_f
+      @depth_total = read_config_value(config: config, key: :depth, default: CabinetDimensions::CABINET_DEPTH).to_f
+      @depth = @depth_total
       @panel_thickness = read_config_value(config: config, key: :panel_thickness, default: CabinetDimensions::PANEL_THICKNESS).to_f
       @back_thickness = read_config_value(config: config, key: :back_thickness, default: CabinetDimensions::PANEL_THICKNESS_BACK).to_f
     end
