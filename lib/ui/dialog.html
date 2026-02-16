@@ -16,7 +16,7 @@
 <div class="container-fluid compact-dialog py-2 px-2">
     <div class="tabs nav nav-tabs nav-justified mb-2">
         <button class="tab nav-link active" onclick="switchTab(this, 'dimensions')" type="button">Dolna</button>
-        <button class="tab nav-link" onclick="switchTab(this, 'materials')" type="button">Materiały</button>
+        <button class="tab nav-link" onclick="switchTab(this, 'materials')" type="button">Szafa</button>
         <button class="tab nav-link" onclick="switchTab(this, 'advanced')" type="button">Zaawansowane</button>
     </div>
 
@@ -172,7 +172,7 @@
             </div>
         </div>
 
-        <div class="section card card-body mb-2">
+        <div class="section card card-body mb-2" id="filling_section">
             <h3 class="section-title">Wypełnienie</h3>
             <div class="form-grid">
                 <div class="form-group">
@@ -292,9 +292,159 @@
             </div>
         </div>
     </div>
-
     <div id="materials" class="tab-content">
-        <p class="placeholder">Ta zakładka jest obecnie pusta.</p>
+        <div class="section card card-body mb-2">
+            <h3 class="section-title">Szafa — wymiary i wygląd</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="wardrobe_width">Szerokość (mm):</label>
+                    <input type="number" id="wardrobe_width" value="1000" class="form-control form-control-sm">
+                </div>
+                <div class="form-group">
+                    <label for="wardrobe_height">Wysokość całkowita (mm, z cokołami):</label>
+                    <input type="number" id="wardrobe_height" value="2200" class="form-control form-control-sm">
+                </div>
+                <div class="form-group">
+                    <label for="wardrobe_depth">Głębokość (mm):</label>
+                    <input type="number" id="wardrobe_depth" value="600" class="form-control form-control-sm">
+                </div>
+            </div>
+            <div class="form-grid mt-2">
+                <div class="form-group">
+                    <label for="wardrobe_panel_thickness">Grubość płyty (mm):</label>
+                    <input type="number" id="wardrobe_panel_thickness" value="18" class="form-control form-control-sm">
+                </div>
+                <div class="form-group">
+                    <label for="wardrobe_back_thickness">Grubość płyty na plecy (mm):</label>
+                    <input type="number" id="wardrobe_back_thickness" value="3" class="form-control form-control-sm">
+                </div>
+                <div class="form-group">
+                    <label for="wardrobe_front_thickness">Grubość frontu (mm):</label>
+                    <input type="number" id="wardrobe_front_thickness" value="18" class="form-control form-control-sm">
+                </div>
+            </div>
+            <div class="form-grid mt-2">
+                <div class="form-group">
+                    <label for="wardrobe_nazwa_szafki">Nazwa:</label>
+                    <input type="text" id="wardrobe_nazwa_szafki" value="szafa" class="form-control form-control-sm">
+                </div>
+                <div class="form-group">
+                    <label for="wardrobe_color">Kolor:</label>
+                    <input type="color" id="wardrobe_color" value="#8B5A2B" class="form-control form-control-sm">
+                </div>
+            </div>
+        </div>
+
+        <div class="section card card-body mb-2">
+            <h3 class="section-title">Front</h3>
+            <div class="form-grid">
+                <div class="form-group checkbox-group">
+                    <label><input type="checkbox" id="wardrobe_front_enabled" class="form-check-input me-1"> Front</label>
+                </div>
+            </div>
+            <div id="wardrobe_front_options" class="is-hidden">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="wardrobe_front_quantity">Ilość:</label>
+                        <select id="wardrobe_front_quantity" class="form-select form-select-sm"><option value="1">1</option><option value="2">2</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="wardrobe_front_opening_direction">Kierunek:</label>
+                        <select id="wardrobe_front_opening_direction" class="form-select form-select-sm">
+                            <option value="prawo">Prawo</option><option value="lewo">Lewo</option><option value="góra">Góra</option><option value="dół">Dół</option><option value="wysów">Wysów</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="wardrobe_front_technological_gap">Luz technologiczny (mm):</label>
+                        <input type="number" id="wardrobe_front_technological_gap" value="2" class="form-control form-control-sm">
+                    </div>
+                </div>
+                <div class="form-grid mt-2">
+                    <div class="form-group">
+                        <label for="wardrobe_front_type">Typ frontu:</label>
+                        <select id="wardrobe_front_type" class="form-select form-select-sm"><option value="flat">Płaski</option><option value="frame">Ramka</option><option value="lamella">Lamelowany</option></select>
+                    </div>
+                    <div class="form-group" id="wardrobe_frame_width_group">
+                        <label for="wardrobe_frame_width">Szerokość ramki (mm):</label>
+                        <input type="number" id="wardrobe_frame_width" value="20" class="form-control form-control-sm">
+                    </div>
+                    <div class="form-group" id="wardrobe_frame_inner_thickness_group">
+                        <label for="wardrobe_frame_inner_thickness">Grubość wnętrza ramki (mm):</label>
+                        <input type="number" id="wardrobe_frame_inner_thickness" value="2" class="form-control form-control-sm">
+                    </div>
+                </div>
+                <div class="form-grid mt-2">
+                    <div class="form-group" id="wardrobe_groove_width_group">
+                        <label for="wardrobe_groove_width">Szerokość lameli (mm):</label>
+                        <input type="number" id="wardrobe_groove_width" value="12" class="form-control form-control-sm">
+                    </div>
+                    <div class="form-group" id="wardrobe_groove_spacing_group">
+                        <label for="wardrobe_groove_spacing">Przerwa lameli (mm):</label>
+                        <input type="number" id="wardrobe_groove_spacing" value="8" class="form-control form-control-sm">
+                    </div>
+                    <div class="form-group" id="wardrobe_groove_depth_group">
+                        <label for="wardrobe_groove_depth">Głębokość lameli (mm):</label>
+                        <input type="number" id="wardrobe_groove_depth" value="3" class="form-control form-control-sm">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section card card-body mb-2">
+            <h3 class="section-title">Cokół i blenda</h3>
+            <div class="form-grid">
+                <div class="form-group checkbox-group">
+                    <label><input type="checkbox" id="wardrobe_cokol_dolny_checkbox" class="form-check-input me-1"> Cokół dolny</label>
+                </div>
+                <div class="form-group is-hidden" id="wardrobe_cokol_dolny_group">
+                    <label for="wardrobe_cokol_dolny_value">Wysokość cokołu dolnego (mm):</label>
+                    <input type="number" id="wardrobe_cokol_dolny_value" value="0" class="form-control form-control-sm">
+                </div>
+                <div class="form-group is-hidden" id="wardrobe_cokol_dolny_offset_group">
+                    <label for="wardrobe_cokol_dolny_offset_value">Cokół dolny odsunięcie (mm):</label>
+                    <input type="number" id="wardrobe_cokol_dolny_offset_value" value="0" min="0" class="form-control form-control-sm">
+                </div>
+            </div>
+            <div class="form-grid mt-2">
+                <div class="form-group checkbox-group">
+                    <label><input type="checkbox" id="wardrobe_cokol_gorny_checkbox" class="form-check-input me-1"> Cokół górny</label>
+                </div>
+                <div class="form-group is-hidden" id="wardrobe_cokol_gorny_group">
+                    <label for="wardrobe_cokol_gorny_value">Wysokość cokołu górnego (mm):</label>
+                    <input type="number" id="wardrobe_cokol_gorny_value" value="0" class="form-control form-control-sm">
+                </div>
+                <div class="form-group is-hidden" id="wardrobe_cokol_gorny_offset_group">
+                    <label for="wardrobe_cokol_gorny_offset_value">Cokół górny odsunięcie (mm):</label>
+                    <input type="number" id="wardrobe_cokol_gorny_offset_value" value="0" min="0" class="form-control form-control-sm">
+                </div>
+            </div>
+            <div class="form-grid mt-2">
+                <div class="form-group checkbox-group">
+                    <label><input type="checkbox" id="wardrobe_blend_left_checkbox" class="form-check-input me-1"> Blenda lewa</label>
+                </div>
+                <div class="form-group is-hidden" id="wardrobe_blend_left_group">
+                    <label for="wardrobe_blend_left_value">Blenda lewa (mm):</label>
+                    <input type="number" id="wardrobe_blend_left_value" value="0" class="form-control form-control-sm">
+                </div>
+                <div class="form-group is-hidden" id="wardrobe_blend_left_depth_group">
+                    <label for="wardrobe_blend_left_depth_value">Blenda lewa głębokość (mm):</label>
+                    <input type="number" id="wardrobe_blend_left_depth_value" value="0" class="form-control form-control-sm">
+                </div>
+            </div>
+            <div class="form-grid mt-2">
+                <div class="form-group checkbox-group">
+                    <label><input type="checkbox" id="wardrobe_blend_right_checkbox" class="form-check-input me-1"> Blenda prawa</label>
+                </div>
+                <div class="form-group is-hidden" id="wardrobe_blend_right_group">
+                    <label for="wardrobe_blend_right_value">Blenda prawa (mm):</label>
+                    <input type="number" id="wardrobe_blend_right_value" value="0" class="form-control form-control-sm">
+                </div>
+                <div class="form-group is-hidden" id="wardrobe_blend_right_depth_group">
+                    <label for="wardrobe_blend_right_depth_value">Blenda prawa głębokość (mm):</label>
+                    <input type="number" id="wardrobe_blend_right_depth_value" value="0" class="form-control form-control-sm">
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="advanced" class="tab-content"></div>
@@ -305,6 +455,7 @@
     </div>
 </div>
 
+<script src="dialog_wardrobe.js"></script>
 <script src="dialog.js"></script>
 </body>
 </html>

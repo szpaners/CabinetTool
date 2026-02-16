@@ -53,6 +53,7 @@ module CabinetBuilder
           'back_thickness' => group.get_attribute(CABINET_DICT, 'back_thickness_mm', CabinetDimensions::PANEL_THICKNESS_BACK.to_mm),
           'nazwa_szafki' => group.get_attribute(CABINET_DICT, 'nazwa_szafki', 'szafka'),
           'color' => group.get_attribute(CABINET_DICT, 'color', CabinetDimensions::DEFAULT_COLOR),
+          'cabinet_type' => group.get_attribute(CABINET_DICT, 'cabinet_type', 'kitchen'),
           'filling' => group.get_attribute(CABINET_DICT, 'filling', 'none'),
           'shelf_count' => group.get_attribute(CABINET_DICT, 'shelf_count', 0),
           'drawer_count' => group.get_attribute(CABINET_DICT, 'drawer_count', 0),
@@ -126,6 +127,7 @@ def read_blend_value_mm(group, keys)
       @group.set_attribute(CABINET_DICT, 'height_total_mm', @height_total.to_l.to_mm.round)
       @group.set_attribute(CABINET_DICT, 'nazwa_szafki', @nazwa_szafki)
       @group.set_attribute(CABINET_DICT, 'color', @color)
+      @group.set_attribute(CABINET_DICT, 'cabinet_type', @cabinet_type)
       @group.set_attribute(CABINET_DICT, 'filling', @filling)
       @group.set_attribute(CABINET_DICT, 'shelf_count', @shelf_count)
       @group.set_attribute(CABINET_DICT, 'drawer_count', @drawer_count)
