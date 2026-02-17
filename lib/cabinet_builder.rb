@@ -94,8 +94,8 @@ module CabinetBuilder
           [@front_technological_gap, -@front_thickness, @front_technological_gap + front_height]
         ]
 
-        draw_front_leaf(name: 'Front', points: points)
-        draw_front_handle(points)
+        front_group = draw_front_leaf(name: 'Front', points: points)
+        draw_front_handle(points, front_group: front_group)
         draw_front_opening_marker(points, @front_opening_direction)
       elsif @front_quantity == 2
         half_width = (front_width - @front_technological_gap) / 2
@@ -109,8 +109,8 @@ module CabinetBuilder
           [@front_technological_gap, -@front_thickness, @front_technological_gap + front_height]
         ]
 
-        draw_front_leaf(name: 'Front Lewy', points: left_points)
-        draw_front_handle(left_points)
+        left_front_group = draw_front_leaf(name: 'Front Lewy', points: left_points)
+        draw_front_handle(left_points, front_group: left_front_group)
         draw_front_opening_marker(left_points, 'lewo')
 
         right_points = [
@@ -120,8 +120,8 @@ module CabinetBuilder
           [@front_technological_gap + left_front_width + @front_technological_gap, -@front_thickness, @front_technological_gap + front_height]
         ]
 
-        draw_front_leaf(name: 'Front Prawy', points: right_points)
-        draw_front_handle(right_points)
+        right_front_group = draw_front_leaf(name: 'Front Prawy', points: right_points)
+        draw_front_handle(right_points, front_group: right_front_group)
         draw_front_opening_marker(right_points, 'prawo')
       end
     end
@@ -155,24 +155,24 @@ module CabinetBuilder
       z_min = points.map { |point| point[2] }.min
       z_max = points.map { |point| point[2] }.max
       front_width = x_max - x_min
-      return if front_width <= 0 || @groove_width <= 0 || @groove_spacing <= 0 || @groove_depth <= 0
+      return front_group if front_width <= 0 || @groove_width <= 0 || @groove_spacing <= 0 || @groove_depth <= 0
 
       front_surface = front_group.entities.grep(Sketchup::Face).find do |face|
         y_values = face.vertices.map { |vertex| vertex.position.y }
         y_values.uniq.length == 1 && (y_values.first - points.first[1]).abs < 0.001
       end
-      return unless front_surface
+      return front_group unless front_surface
 
       lamella_step = @groove_width + @groove_spacing
-      return if lamella_step <= 0
+      return front_group if lamella_step <= 0
 
       side_margin = [@groove_spacing / 2.0, front_width / 4.0].min
       start_x = x_min + side_margin
       end_x = x_max - side_margin
-      return if end_x <= start_x
+      return front_group if end_x <= start_x
 
       groove_depth = [[@groove_depth, 0].max, @front_thickness * 0.95].min
-      return if groove_depth <= 0
+      return front_group if groove_depth <= 0
 
       y = points.first[1]
       pushpull_distance = front_surface.normal.y > 0 ? groove_depth : -groove_depth
@@ -200,6 +200,8 @@ module CabinetBuilder
 
         x_position += lamella_step
       end
+
+      front_group
     end
 
     def draw_frame_front_leaf(name:, points:)
@@ -217,7 +219,7 @@ module CabinetBuilder
 
       return draw_named_panel(name: name, points: points, thickness: @front_thickness, extrusion: -@front_thickness) if frame_width <= 0
 
-      draw_frame_with_offset(
+      frame_group = draw_frame_with_offset(
         name: "#{name} Ramka",
         outer_points: points,
         frame_width: frame_width,
@@ -228,7 +230,7 @@ module CabinetBuilder
       inner_x_max = x_max - frame_width
       inner_z_min = z_min + frame_width
       inner_z_max = z_max - frame_width
-      return if inner_x_max <= inner_x_min || inner_z_max <= inner_z_min
+      return frame_group if inner_x_max <= inner_x_min || inner_z_max <= inner_z_min
 
       bevel_inset = frame_inner_bevel_inset(
         frame_width: frame_width,
@@ -241,7 +243,7 @@ module CabinetBuilder
       inner_x_max -= bevel_inset
       inner_z_min += bevel_inset
       inner_z_max -= bevel_inset
-      return if inner_x_max <= inner_x_min || inner_z_max <= inner_z_min
+      return frame_group if inner_x_max <= inner_x_min || inner_z_max <= inner_z_min
 
       inner_front_y = y + inner_recess_depth
       inner_points = [
@@ -264,11 +266,13 @@ module CabinetBuilder
         inner_rect: inner_points
       )
 
-      return if inner_panel_thickness <= 0
+      unless inner_panel_thickness <= 0
+        # Wnętrze osadzamy od tylnej strony frontu (przy korpusie),
+        # dzięki czemu od frontu otrzymujemy efekt wnęki o zadanej głębokości.
+        draw_named_panel(name: "#{name} Wnętrze", points: inner_points, thickness: inner_panel_thickness, extrusion: -inner_panel_thickness)
+      end
 
-      # Wnętrze osadzamy od tylnej strony frontu (przy korpusie),
-      # dzięki czemu od frontu otrzymujemy efekt wnęki o zadanej głębokości.
-      draw_named_panel(name: "#{name} Wnętrze", points: inner_points, thickness: inner_panel_thickness, extrusion: -inner_panel_thickness)
+      frame_group
     end
 
     def frame_inner_bevel_inset(frame_width:, recess_depth:, inner_width:, inner_height:)
@@ -339,10 +343,12 @@ module CabinetBuilder
         face.material = @material_color
         face.back_material = @material_color
       end
+
+      frame_group
     end
 
 
-    def draw_front_handle(front_points)
+    def draw_front_handle(front_points, front_group: nil)
       return unless @front_handle.to_s.casecmp('j').zero?
 
       handle_definition = front_handle_definition
@@ -355,7 +361,9 @@ module CabinetBuilder
       insertion_point = Geom::Point3d.new(right_x, y, bottom_z)
       rotation_y = Geom::Transformation.rotation(ORIGIN, Y_AXIS, 0.degrees)
       transform = Geom::Transformation.translation(insertion_point) * rotation_y
-      @cabinet_entities.add_instance(handle_definition, transform)
+      target_entities = front_group ? front_group.entities : @cabinet_entities
+      handle_instance = target_entities.add_instance(handle_definition, transform)
+      handle_instance.explode
     end
 
     def front_handle_definition

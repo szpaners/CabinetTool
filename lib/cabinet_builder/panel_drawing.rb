@@ -34,6 +34,7 @@ module CabinetBuilder
       assign_panel_tag(panel.group, name)
       panel.create_face(points)
       panel.pushpull(extrusion)
+      panel.group
     end
 
     def assign_panel_tag(panel_group, panel_name)
