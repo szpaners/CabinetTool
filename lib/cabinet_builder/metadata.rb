@@ -137,9 +137,24 @@ module CabinetBuilder
           elsif filling == 'shelves'
             params['shelf_count'] = normalize_legacy_count(params['shelf_count'])
           end
+
+          normalize_split_side_legacy!(params, 'split_left')
+          normalize_split_side_legacy!(params, 'split_right')
         end
 
         sections
+      end
+
+      def normalize_split_side_legacy!(params, key)
+        side = params[key]
+        return unless side.is_a?(Hash)
+
+        filling = side['filling'].to_s
+        param = side['param']
+
+        if filling == 'drawers' || filling == 'shelves'
+          side['param'] = normalize_legacy_count(param)
+        end
       end
 
       def normalize_legacy_count(raw_count)
@@ -184,14 +199,7 @@ module CabinetBuilder
 
     def serialized_interior_sections
       payload = @interior_sections.map do |section|
-        params = section.params.each_with_object({}) do |(key, value), result|
-          normalized_key = key.to_s
-          result[normalized_key] = if %w[rod_offset drawer_front_height].include?(normalized_key)
-                                     value.to_l.to_mm.round
-                                   else
-                                     value
-                                   end
-        end
+        params = serialize_section_params(section.params)
 
         {
           id: section.id,
@@ -203,6 +211,36 @@ module CabinetBuilder
       end
 
       JSON.generate(payload)
+    end
+
+    def serialize_section_params(params)
+      params.each_with_object({}) do |(key, value), result|
+        normalized_key = key.to_s
+
+        result[normalized_key] = case normalized_key
+                                 when 'rod_offset', 'drawer_front_height', 'split_first_width', 'split_left_width', 'split_right_width'
+                                   value.nil? ? nil : value.to_l.to_mm.round
+                                 when 'split_left', 'split_right'
+                                   serialize_split_side(value)
+                                 else
+                                   value
+                                 end
+      end
+    end
+
+    def serialize_split_side(value)
+      return nil unless value.is_a?(Hash)
+
+      value.each_with_object({}) do |(key, raw), result|
+        normalized_key = key.to_s
+        result[normalized_key] = if normalized_key == 'param' && value['filling'].to_s == 'rod'
+                                   raw.nil? ? nil : raw.to_l.to_mm.round
+                                 elsif %w[drawer_front_height drawer_width_reduction drawer_box_height_offset].include?(normalized_key)
+                                   raw.nil? ? nil : raw.to_l.to_mm.round
+                                 else
+                                   raw
+                                 end
+      end
     end
 
     def save_mm_attributes

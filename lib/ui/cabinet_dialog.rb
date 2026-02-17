@@ -111,6 +111,8 @@ def cabinet_params(params)
         next unless section.is_a?(Hash)
 
         params = section['params'].is_a?(Hash) ? section['params'] : {}
+        split_left = parse_split_side(params['split_left'])
+        split_right = parse_split_side(params['split_right'])
 
         result << {
           id: section['id'].to_i,
@@ -119,12 +121,47 @@ def cabinet_params(params)
           params: {
             drawer_count: params['drawer_count'].to_i,
             drawer_front_height: params['drawer_front_height'].to_f.round,
+            drawer_width_reduction: params['drawer_width_reduction'].to_f.round,
+            drawer_box_height_offset: params['drawer_box_height_offset'].to_f.round,
             shelf_count: params['shelf_count'].to_i,
             rod_offset: params['rod_offset'].to_f.round,
-            top_panel: params['top_panel'] == true || params['top_panel'].to_s == 'true'
+            top_panel: params['top_panel'] == true || params['top_panel'].to_s == 'true',
+            split_enabled: params['split_enabled'] == true || params['split_enabled'].to_s == 'true',
+            split_first_width: params['split_first_width'].nil? || params['split_first_width'].to_s.strip.empty? ? nil : params['split_first_width'].to_f.round,
+            split_left_width: params['split_left_width'].nil? || params['split_left_width'].to_s.strip.empty? ? nil : params['split_left_width'].to_f.round,
+            split_right_width: params['split_right_width'].nil? || params['split_right_width'].to_s.strip.empty? ? nil : params['split_right_width'].to_f.round,
+            split_left: split_left,
+            split_right: split_right
           }
         }
       end
+    end
+
+    def parse_split_side(raw_side)
+      return nil unless raw_side.is_a?(Hash)
+
+      filling = raw_side['filling'].to_s
+      raw_param = raw_side['param']
+      param = if %w[drawers shelves].include?(filling)
+                raw_param.to_i
+              elsif filling == 'rod'
+                raw_param.to_f.round
+              else
+                0
+              end
+
+      result = {
+        filling: filling,
+        param: param
+      }
+
+      if filling == 'drawers'
+        result[:drawer_front_height] = raw_side['drawer_front_height'].nil? ? nil : raw_side['drawer_front_height'].to_f.round
+        result[:drawer_width_reduction] = raw_side['drawer_width_reduction'].nil? ? nil : raw_side['drawer_width_reduction'].to_f.round
+        result[:drawer_box_height_offset] = raw_side['drawer_box_height_offset'].nil? ? nil : raw_side['drawer_box_height_offset'].to_f.round
+      end
+
+      result
     end
   end
 end

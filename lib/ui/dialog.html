@@ -407,7 +407,7 @@
                             <label>Wysokość sekcji (mm)</label>
                             <input type="number" class="form-control form-control-sm" data-field="height" min="1" value="400">
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" data-field="main_filling_group">
                             <label>Wypełnienie</label>
                             <select class="form-select form-select-sm" data-field="filling">
                                 <option value="none">Brak</option>
@@ -416,7 +416,7 @@
                                 <option value="rod">Drążek</option>
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" data-field="main_param_group">
                             <label data-field="param_label">Parametr</label>
                             <input type="number" class="form-control form-control-sm" data-field="param" min="0" value="0">
                             <small data-field="param_hint" class="text-muted">Brak parametru</small>
@@ -435,6 +435,78 @@
                         </div>
                         <div class="form-group checkbox-group">
                             <label><input type="checkbox" class="form-check-input me-1" data-field="top_panel">Płyta na górze</label>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <label><input type="checkbox" class="form-check-input me-1" data-field="split_enabled">Dziel sekcję na pół</label>
+                        </div>
+                        <div class="split-halves is-hidden" data-field="split_halves_group">
+                            <div class="split-half-card" data-field="split_left_container">
+                                <div class="split-half-title">Lewa połówka</div>
+                                <div class="form-group" data-field="split_left_width_group">
+                                    <label>Szerokość lewej (mm)</label>
+                                    <input type="number" class="form-control form-control-sm" data-field="split_left_width" min="1" value="">
+                                </div>
+                                <div class="form-group" data-field="split_left_filling_group">
+                                    <label>Lewa połówka - wypełnienie</label>
+                                    <select class="form-select form-select-sm" data-field="split_left_filling">
+                                        <option value="none">Brak</option>
+                                        <option value="drawers">Szuflady</option>
+                                        <option value="shelves">Półki</option>
+                                        <option value="rod">Drążek</option>
+                                    </select>
+                                </div>
+                                <div class="form-group mb-0" data-field="split_left_param_group">
+                                    <label data-field="split_left_param_label">Lewa połówka - parametr</label>
+                                    <input type="number" class="form-control form-control-sm" data-field="split_left_param" min="0" value="0">
+                                    <small data-field="split_left_param_hint" class="text-muted">Brak parametru</small>
+                                </div>
+                                <div class="form-group is-hidden" data-field="split_left_drawer_front_height_group">
+                                    <label>Wysokość frontu szuflady (mm)</label>
+                                    <input type="number" class="form-control form-control-sm" data-field="split_left_drawer_front_height" min="1" value="80">
+                                </div>
+                                <div class="form-group is-hidden" data-field="split_left_drawer_width_reduction_group">
+                                    <label>Zwężenie szuflady względem podsekcji (mm)</label>
+                                    <input type="number" class="form-control form-control-sm" data-field="split_left_drawer_width_reduction" min="0" value="40">
+                                </div>
+                                <div class="form-group is-hidden mb-0" data-field="split_left_drawer_box_height_offset_group">
+                                    <label>Obniżenie boków szuflady (mm)</label>
+                                    <input type="number" class="form-control form-control-sm" data-field="split_left_drawer_box_height_offset" min="0" value="40">
+                                </div>
+                            </div>
+                            <div class="split-half-card" data-field="split_right_container">
+                                <div class="split-half-title">Prawa połówka</div>
+                                <div class="form-group" data-field="split_right_width_group">
+                                    <label>Szerokość prawej (mm)</label>
+                                    <input type="number" class="form-control form-control-sm" data-field="split_right_width" min="1" value="">
+                                    <small data-field="split_hint" class="text-muted">Wpisz jedną szerokość - druga uzupełni się automatycznie.</small>
+                                </div>
+                                <div class="form-group" data-field="split_right_filling_group">
+                                    <label>Prawa połówka - wypełnienie</label>
+                                    <select class="form-select form-select-sm" data-field="split_right_filling">
+                                        <option value="none">Brak</option>
+                                        <option value="drawers">Szuflady</option>
+                                        <option value="shelves">Półki</option>
+                                        <option value="rod">Drążek</option>
+                                    </select>
+                                </div>
+                                <div class="form-group mb-0" data-field="split_right_param_group">
+                                    <label data-field="split_right_param_label">Prawa połówka - parametr</label>
+                                    <input type="number" class="form-control form-control-sm" data-field="split_right_param" min="0" value="0">
+                                    <small data-field="split_right_param_hint" class="text-muted">Brak parametru</small>
+                                </div>
+                                <div class="form-group is-hidden" data-field="split_right_drawer_front_height_group">
+                                    <label>Wysokość frontu szuflady (mm)</label>
+                                    <input type="number" class="form-control form-control-sm" data-field="split_right_drawer_front_height" min="1" value="80">
+                                </div>
+                                <div class="form-group is-hidden" data-field="split_right_drawer_width_reduction_group">
+                                    <label>Zwężenie szuflady względem podsekcji (mm)</label>
+                                    <input type="number" class="form-control form-control-sm" data-field="split_right_drawer_width_reduction" min="0" value="40">
+                                </div>
+                                <div class="form-group is-hidden mb-0" data-field="split_right_drawer_box_height_offset_group">
+                                    <label>Obniżenie boków szuflady (mm)</label>
+                                    <input type="number" class="form-control form-control-sm" data-field="split_right_drawer_box_height_offset" min="0" value="40">
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group section-row-actions">
                             <button type="button" class="btn btn-sm btn-outline-danger" data-action="remove">Usuń</button>

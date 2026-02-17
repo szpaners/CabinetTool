@@ -241,3 +241,27 @@ input[type="color"].form-control {
 .sections-remaining.is-error {
     color: #ba1b1b;
 }
+
+.split-halves {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.split-half-card {
+    flex: 1 1 50%;
+    max-width: calc(50% - 5px);
+    border: 1px solid #d1dbe8;
+    border-radius: 6px;
+    padding: 8px;
+    background: #f7faff;
+}
+
+.split-half-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #324255;
+    margin-bottom: 6px;
+    padding-bottom: 4px;
+    border-bottom: 1px dashed #c1cedf;
+}

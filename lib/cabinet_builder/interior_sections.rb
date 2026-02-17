@@ -36,6 +36,22 @@ module CabinetBuilder
         section_id = normalized_section_id(section_hash['id'], index + 1)
         filling = normalize_section_filling(section_hash['filling'])
         params = normalize_section_params(filling: filling, raw_params: section_hash['params'] || {})
+        if truthy?(params['split_enabled'])
+          params['split_left'] = normalize_split_side_config(
+            side_name: "#{index + 1} lewa",
+            section_height: section_height,
+            raw_config: params['split_left'],
+            fallback_filling: filling,
+            fallback_params: params
+          )
+          params['split_right'] = normalize_split_side_config(
+            side_name: "#{index + 1} prawa",
+            section_height: section_height,
+            raw_config: params['split_right'],
+            fallback_filling: filling,
+            fallback_params: params
+          )
+        end
 
         sections << InteriorSection.new(
           id: section_id,
@@ -83,37 +99,129 @@ module CabinetBuilder
       params = raw_params.is_a?(Hash) ? raw_params.transform_keys(&:to_s) : {}
       top_panel = truthy?(params['top_panel'])
 
+      split_enabled = truthy?(params['split_enabled'])
+      split_first_width = params['split_first_width']
+      split_first_width = nil if split_first_width.nil? || split_first_width.to_s.strip.empty?
+      split_first_width = to_length(split_first_width) unless split_first_width.nil?
+
+      split_left_width = params['split_left_width']
+      split_left_width = nil if split_left_width.nil? || split_left_width.to_s.strip.empty?
+      split_left_width = to_length(split_left_width) unless split_left_width.nil?
+
+      split_right_width = params['split_right_width']
+      split_right_width = nil if split_right_width.nil? || split_right_width.to_s.strip.empty?
+      split_right_width = to_length(split_right_width) unless split_right_width.nil?
+
+      common_params = {
+        'top_panel' => top_panel,
+        'split_enabled' => split_enabled,
+        'split_first_width' => split_first_width,
+        'split_left_width' => split_left_width,
+        'split_right_width' => split_right_width
+      }
+
+      merged_params = case filling
+                      when 'drawers'
+                        drawer_count = params.fetch('drawer_count', 0).to_i
+                        raise ArgumentError, 'Sekcja typu szuflady wymaga liczby szuflad >= 1.' if drawer_count < 1
+
+                        drawer_front_height = to_length(params.fetch('drawer_front_height', 0))
+                        drawer_width_reduction = to_length(params.fetch('drawer_width_reduction', 40))
+                        raise ArgumentError, 'Zwężenie szuflady musi być >= 0.' if drawer_width_reduction.negative?
+
+                        drawer_box_height_offset = to_length(params.fetch('drawer_box_height_offset', 40))
+                        raise ArgumentError, 'Obniżenie boków szuflady musi być >= 0.' if drawer_box_height_offset.negative?
+
+                        common_params.merge(
+                          'drawer_count' => drawer_count,
+                          'drawer_front_height' => drawer_front_height,
+                          'drawer_width_reduction' => drawer_width_reduction,
+                          'drawer_box_height_offset' => drawer_box_height_offset
+                        )
+                      when 'shelves'
+                        shelf_count = params.fetch('shelf_count', 0).to_i
+                        raise ArgumentError, 'Sekcja typu półki wymaga liczby półek >= 1.' if shelf_count < 1
+
+                        common_params.merge('shelf_count' => shelf_count)
+                      when 'rod'
+                        rod_offset = to_length(params.fetch('rod_offset', 0))
+                        raise ArgumentError, 'Sekcja typu drążek wymaga offsetu >= 0.' if rod_offset.negative?
+
+                        common_params.merge('rod_offset' => rod_offset)
+                      else
+                        common_params
+                      end
+
+      return merged_params unless split_enabled
+
+      merged_params.merge(
+        'split_left' => normalize_split_side_config(
+          side_name: 'lewa',
+          section_height: nil,
+          raw_config: params['split_left'],
+          fallback_filling: filling,
+          fallback_params: merged_params
+        ),
+        'split_right' => normalize_split_side_config(
+          side_name: 'prawa',
+          section_height: nil,
+          raw_config: params['split_right'],
+          fallback_filling: filling,
+          fallback_params: merged_params
+        )
+      )
+    end
+
+    def normalize_split_side_config(side_name:, section_height:, raw_config:, fallback_filling:, fallback_params:)
+      config = raw_config.is_a?(Hash) ? raw_config.transform_keys(&:to_s) : {}
+      filling = normalize_section_filling(config['filling'] || fallback_filling)
+      param_value = config['param']
+
       case filling
       when 'drawers'
-        drawer_count = params.fetch('drawer_count', 0).to_i
-        raise ArgumentError, 'Sekcja typu szuflady wymaga liczby szuflad >= 1.' if drawer_count < 1
+        drawer_count = param_value.nil? ? fallback_params.fetch('drawer_count', 3) : param_value.to_i
+        raise ArgumentError, "Sekcja #{side_name}: liczba szuflad musi być >= 1." if drawer_count < 1
 
-        drawer_front_height = to_length(params.fetch('drawer_front_height', 0))
-        drawer_width_reduction = to_length(params.fetch('drawer_width_reduction', 40))
-        raise ArgumentError, 'Zwężenie szuflady musi być >= 0.' if drawer_width_reduction.negative?
+        drawer_front_height = to_length(config.fetch('drawer_front_height', fallback_params.fetch('drawer_front_height', 80.mm)))
+        raise ArgumentError, "Sekcja #{side_name}: wysokość frontu szuflady musi być > 0." if drawer_front_height <= 0
 
-        drawer_box_height_offset = to_length(params.fetch('drawer_box_height_offset', 40))
-        raise ArgumentError, 'Obniżenie boków szuflady musi być >= 0.' if drawer_box_height_offset.negative?
+        drawer_width_reduction = to_length(config.fetch('drawer_width_reduction', fallback_params.fetch('drawer_width_reduction', 40.mm)))
+        raise ArgumentError, "Sekcja #{side_name}: zwężenie szuflady musi być >= 0." if drawer_width_reduction.negative?
+
+        drawer_box_height_offset = to_length(config.fetch('drawer_box_height_offset', fallback_params.fetch('drawer_box_height_offset', 40.mm)))
+        raise ArgumentError, "Sekcja #{side_name}: obniżenie boków szuflady musi być >= 0." if drawer_box_height_offset.negative?
 
         {
-          'drawer_count' => drawer_count,
+          'filling' => 'drawers',
+          'param' => drawer_count,
           'drawer_front_height' => drawer_front_height,
           'drawer_width_reduction' => drawer_width_reduction,
-          'drawer_box_height_offset' => drawer_box_height_offset,
-          'top_panel' => top_panel
+          'drawer_box_height_offset' => drawer_box_height_offset
         }
       when 'shelves'
-        shelf_count = params.fetch('shelf_count', 0).to_i
-        raise ArgumentError, 'Sekcja typu półki wymaga liczby półek >= 1.' if shelf_count < 1
+        shelf_count = param_value.nil? ? fallback_params.fetch('shelf_count', 4) : param_value.to_i
+        raise ArgumentError, "Sekcja #{side_name}: liczba półek musi być >= 1." if shelf_count < 1
 
-        { 'shelf_count' => shelf_count, 'top_panel' => top_panel }
+        {
+          'filling' => 'shelves',
+          'param' => shelf_count
+        }
       when 'rod'
-        rod_offset = to_length(params.fetch('rod_offset', 0))
-        raise ArgumentError, 'Sekcja typu drążek wymaga offsetu >= 0.' if rod_offset.negative?
+        rod_offset = param_value.nil? ? fallback_params.fetch('rod_offset', 200.mm) : to_length(param_value)
+        if section_height && rod_offset > section_height + SECTION_EPSILON
+          raise ArgumentError, "Sekcja #{side_name}: drążek poza granicą sekcji."
+        end
+        raise ArgumentError, "Sekcja #{side_name}: offset drążka musi być >= 0." if rod_offset.negative?
 
-        { 'rod_offset' => rod_offset, 'top_panel' => top_panel }
+        {
+          'filling' => 'rod',
+          'param' => rod_offset
+        }
       else
-        { 'top_panel' => top_panel }
+        {
+          'filling' => 'none',
+          'param' => 0
+        }
       end
     end
 
@@ -138,16 +246,101 @@ module CabinetBuilder
       section_bottom = interior_niche_bottom + section.y_bottom
       section_top = section_bottom + section.height
 
-      case section.filling
-      when 'drawers'
-        draw_section_drawers(section_entities, section, section_bottom)
-      when 'shelves'
-        draw_section_shelves(section_entities, section, section_bottom, section_top)
-      when 'rod'
-        draw_section_rod(section_entities, section, section_bottom, section_top)
+      sub_sections = section_width_ranges(section)
+      if sub_sections.length == 2
+        draw_section_divider(section_entities, section, section_bottom, section_top, sub_sections.first[:x_max])
+      end
+
+      split_configs = section_split_configs(section)
+
+      sub_sections.each_with_index do |sub_section, sub_index|
+        sub_name = sub_section[:label]
+        sub_config = split_configs[sub_index] || { 'filling' => section.filling, 'param' => nil }
+
+        case sub_config['filling']
+        when 'drawers'
+          draw_section_drawers(section_entities, section, section_bottom, sub_section[:x_min], sub_section[:x_max], sub_name, sub_config)
+        when 'shelves'
+          draw_section_shelves(section_entities, section, section_bottom, section_top, sub_section[:x_min], sub_section[:x_max], sub_name, sub_config['param'])
+        when 'rod'
+          draw_section_rod(section_entities, section, section_bottom, section_top, sub_section[:x_min], sub_section[:x_max], sub_name, sub_config['param'])
+        end
       end
 
       draw_section_top_panel(section_entities, section, section_top) if truthy?(section.params['top_panel'])
+    end
+
+    def section_split_configs(section)
+      return [{ 'filling' => section.filling, 'param' => nil }] unless truthy?(section.params['split_enabled'])
+
+      left = section.params['split_left']
+      right = section.params['split_right']
+      return [{ 'filling' => section.filling, 'param' => nil }, { 'filling' => section.filling, 'param' => nil }] if left.nil? || right.nil?
+
+      [left, right]
+    end
+
+    def section_width_ranges(section)
+      x_min = @panel_thickness
+      x_max = @width - @panel_thickness
+      return [] if x_max <= x_min
+
+      split_enabled = truthy?(section.params['split_enabled'])
+      return [{ label: nil, x_min: x_min, x_max: x_max }] unless split_enabled
+
+      clear_width = x_max - x_min
+      inner_available = clear_width - @panel_thickness
+      raise ArgumentError, "Sekcja #{section.id}: za mało miejsca na podział sekcji." if inner_available <= 0
+
+      left_width_external = section.params['split_left_width']
+      right_width_external = section.params['split_right_width']
+      first_width_external = section.params['split_first_width']
+
+      left_ratio = if !left_width_external.nil?
+                     raise ArgumentError, "Sekcja #{section.id}: szerokość lewej sekcji musi być > 0." if left_width_external <= 0
+                     raise ArgumentError, "Sekcja #{section.id}: szerokość lewej sekcji musi być < szerokości szafy." if left_width_external >= @width
+                     left_width_external / @width.to_f
+                   elsif !right_width_external.nil?
+                     raise ArgumentError, "Sekcja #{section.id}: szerokość prawej sekcji musi być > 0." if right_width_external <= 0
+                     raise ArgumentError, "Sekcja #{section.id}: szerokość prawej sekcji musi być < szerokości szafy." if right_width_external >= @width
+                     (@width - right_width_external) / @width.to_f
+                   elsif !first_width_external.nil?
+                     raise ArgumentError, "Sekcja #{section.id}: szerokość pierwszej sekcji musi być > 0." if first_width_external <= 0
+                     raise ArgumentError, "Sekcja #{section.id}: szerokość pierwszej sekcji musi być < szerokości szafy." if first_width_external >= @width
+                     first_width_external / @width.to_f
+                   else
+                     0.5
+                   end
+
+      left_clear_width = inner_available * left_ratio
+      right_clear_width = inner_available - left_clear_width
+      raise ArgumentError, "Sekcja #{section.id}: podział sekcji daje niedodatnią szerokość." if left_clear_width <= SECTION_EPSILON || right_clear_width <= SECTION_EPSILON
+
+      divider_center_x = x_min + left_clear_width
+      [
+        { label: 'L', x_min: x_min, x_max: divider_center_x },
+        { label: 'P', x_min: divider_center_x + @panel_thickness, x_max: x_max }
+      ]
+    end
+
+    def draw_section_divider(section_entities, section, section_bottom, section_top, divider_x)
+      divider_top = truthy?(section.params['top_panel']) ? section_top - @panel_thickness : section_top
+      return if divider_top <= section_bottom + SECTION_EPSILON
+
+      points = [
+        [divider_x, 0, section_bottom],
+        [divider_x, @internal_depth, section_bottom],
+        [divider_x, @internal_depth, divider_top],
+        [divider_x, 0, divider_top]
+      ]
+
+      draw_named_panel(
+        name: "Section #{section.id} Divider",
+        points: points,
+        thickness: @panel_thickness,
+        extrusion: @panel_thickness,
+        entities: section_entities
+      )
     end
 
     def draw_section_top_panel(section_entities, section, section_top)
@@ -175,29 +368,29 @@ module CabinetBuilder
       )
     end
 
-    def draw_section_drawers(section_entities, section, section_bottom)
-      drawer_count = section.params.fetch('drawer_count', 0)
+    def draw_section_drawers(section_entities, section, section_bottom, x_min, x_max, sub_name = nil, side_config = nil)
+      drawer_count = (side_config && side_config['param']) ? side_config['param'].to_i : section.params.fetch('drawer_count', 0).to_i
       return if drawer_count < 1
 
       compartment_height = section.height / drawer_count.to_f
       return if compartment_height <= 0
 
-      drawer_front_height = section.params.fetch('drawer_front_height', 0)
+      drawer_front_height = side_config && side_config['drawer_front_height'] ? side_config['drawer_front_height'] : section.params.fetch('drawer_front_height', 0)
       drawer_front_height = compartment_height if drawer_front_height <= 0
 
-      drawer_width_reduction = section.params.fetch('drawer_width_reduction', 40.mm)
+      drawer_width_reduction = side_config && side_config['drawer_width_reduction'] ? side_config['drawer_width_reduction'] : section.params.fetch('drawer_width_reduction', 40.mm)
 
-      section_clear_width = @width - (2 * @panel_thickness)
+      section_clear_width = x_max - x_min
       drawer_width = section_clear_width - drawer_width_reduction
       return if drawer_width <= 0
 
-      x_min = @panel_thickness + ((section_clear_width - drawer_width) / 2.0)
+      drawer_x_min = x_min + ((section_clear_width - drawer_width) / 2.0)
 
       y = @panel_thickness
       front_height = [drawer_front_height, compartment_height].min
       return if front_height <= 0
 
-      drawer_box_height_offset = section.params.fetch('drawer_box_height_offset', 40.mm)
+      drawer_box_height_offset = side_config && side_config['drawer_box_height_offset'] ? side_config['drawer_box_height_offset'] : section.params.fetch('drawer_box_height_offset', 40.mm)
       drawer_box_height = [front_height - drawer_box_height_offset, 0].max
 
       drawer_box_front_y = y
@@ -208,14 +401,14 @@ module CabinetBuilder
         z_top = z_bottom + front_height
 
         points = [
-          [x_min, y, z_bottom],
-          [x_min + drawer_width, y, z_bottom],
-          [x_min + drawer_width, y, z_top],
-          [x_min, y, z_top]
+          [drawer_x_min, y, z_bottom],
+          [drawer_x_min + drawer_width, y, z_bottom],
+          [drawer_x_min + drawer_width, y, z_top],
+          [drawer_x_min, y, z_top]
         ]
 
         draw_named_panel(
-          name: "Section #{section.id} Drawer #{index + 1}",
+          name: "Section #{section.id} #{sub_section_name(sub_name)}Drawer #{index + 1}",
           points: points,
           thickness: @front_thickness,
           extrusion: @front_thickness,
@@ -225,8 +418,9 @@ module CabinetBuilder
         draw_section_drawer_box(
           section_entities: section_entities,
           section_id: section.id,
+          sub_name: sub_name,
           drawer_index: index,
-          x_min: x_min,
+          x_min: drawer_x_min,
           drawer_width: drawer_width,
           z_bottom: z_bottom,
           z_top: z_bottom + drawer_box_height,
@@ -236,7 +430,7 @@ module CabinetBuilder
       end
     end
 
-    def draw_section_drawer_box(section_entities:, section_id:, drawer_index:, x_min:, drawer_width:, z_bottom:, z_top:, front_y:, back_y:)
+    def draw_section_drawer_box(section_entities:, section_id:, sub_name:, drawer_index:, x_min:, drawer_width:, z_bottom:, z_top:, front_y:, back_y:)
       return if back_y <= front_y
       return if z_top <= z_bottom
 
@@ -248,7 +442,7 @@ module CabinetBuilder
       ]
 
       draw_named_panel(
-        name: "Section #{section_id} Drawer #{drawer_index + 1} Side Left",
+        name: "Section #{section_id} #{sub_section_name(sub_name)}Drawer #{drawer_index + 1} Side Left",
         points: left_side_points,
         thickness: @panel_thickness,
         extrusion: @panel_thickness,
@@ -264,7 +458,7 @@ module CabinetBuilder
       ]
 
       draw_named_panel(
-        name: "Section #{section_id} Drawer #{drawer_index + 1} Side Right",
+        name: "Section #{section_id} #{sub_section_name(sub_name)}Drawer #{drawer_index + 1} Side Right",
         points: right_side_points,
         thickness: @panel_thickness,
         extrusion: -@panel_thickness,
@@ -283,7 +477,7 @@ module CabinetBuilder
       ]
 
       draw_named_panel(
-        name: "Section #{section_id} Drawer #{drawer_index + 1} Back",
+        name: "Section #{section_id} #{sub_section_name(sub_name)}Drawer #{drawer_index + 1} Back",
         points: back_points,
         thickness: @panel_thickness,
         extrusion: -@panel_thickness,
@@ -303,7 +497,7 @@ module CabinetBuilder
       )
 
       draw_named_panel(
-        name: "Section #{section_id} Drawer #{drawer_index + 1} Bottom",
+        name: "Section #{section_id} #{sub_section_name(sub_name)}Drawer #{drawer_index + 1} Bottom",
         points: bottom_points,
         thickness: @panel_thickness,
         extrusion: @panel_thickness,
@@ -311,12 +505,10 @@ module CabinetBuilder
       )
     end
 
-    def draw_section_shelves(section_entities, section, section_bottom, section_top)
-      shelf_count = section.params.fetch('shelf_count', 0)
+    def draw_section_shelves(section_entities, section, section_bottom, section_top, x_min, x_max, sub_name = nil, shelf_count_override = nil)
+      shelf_count = (shelf_count_override || section.params.fetch('shelf_count', 0)).to_i
       return if shelf_count < 1
 
-      x_min = @panel_thickness
-      x_max = @width - @panel_thickness
       return if x_max <= x_min
 
       top_panel_thickness = truthy?(section.params['top_panel']) ? @panel_thickness : 0
@@ -340,7 +532,7 @@ module CabinetBuilder
         )
 
         draw_named_panel(
-          name: "Section #{section.id} Shelf #{index + 1}",
+          name: "Section #{section.id} #{sub_section_name(sub_name)}Shelf #{index + 1}",
           points: points,
           thickness: @panel_thickness,
           extrusion: @panel_thickness,
@@ -349,9 +541,7 @@ module CabinetBuilder
       end
     end
 
-    def draw_section_rod(section_entities, section, section_bottom, section_top)
-      x_min = @panel_thickness
-      x_max = @width - @panel_thickness
+    def draw_section_rod(section_entities, section, section_bottom, section_top, x_min, x_max, sub_name = nil, rod_offset_override = nil)
       return if x_max <= x_min
 
       y_center = @internal_depth / 2.0
@@ -360,7 +550,7 @@ module CabinetBuilder
       rod_y_max = [y_center + rod_radius, @internal_depth].min
       return if rod_y_max <= rod_y_min
 
-      rod_offset = section.params.fetch('rod_offset', section.height / 2.0)
+      rod_offset = rod_offset_override.nil? ? section.params.fetch('rod_offset', section.height / 2.0) : to_length(rod_offset_override)
       raise ArgumentError, "Sekcja #{section.id}: drążek poza granicą sekcji." if rod_offset > section.height + SECTION_EPSILON
 
       rod_center_z = section_bottom + rod_offset
@@ -372,7 +562,7 @@ module CabinetBuilder
       end
 
       rod_group = section_entities.add_group
-      rod_group.name = "Section #{section.id} Rod"
+      rod_group.name = "Section #{section.id} #{sub_section_name(sub_name)}Rod"
       assign_panel_tag(rod_group, 'Section Rod')
 
       rod_face = rod_group.entities.add_face(
@@ -399,11 +589,21 @@ module CabinetBuilder
     end
 
     def to_length(raw_value)
-      raw_value.to_f.round.mm
+      if defined?(Length) && raw_value.is_a?(Length)
+        raw_value
+      elsif raw_value.respond_to?(:to_l) && raw_value.class.to_s == 'Length'
+        raw_value.to_l
+      else
+        raw_value.to_f.round.mm
+      end
     end
 
     def truthy?(value)
       value == true || value.to_s == 'true'
+    end
+
+    def sub_section_name(name)
+      name ? "#{name} " : ''
     end
   end
 end
