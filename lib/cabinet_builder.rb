@@ -95,6 +95,7 @@ module CabinetBuilder
         ]
 
         draw_front_leaf(name: 'Front', points: points)
+        draw_front_handle(points)
         draw_front_opening_marker(points, @front_opening_direction)
       elsif @front_quantity == 2
         half_width = (front_width - @front_technological_gap) / 2
@@ -109,6 +110,7 @@ module CabinetBuilder
         ]
 
         draw_front_leaf(name: 'Front Lewy', points: left_points)
+        draw_front_handle(left_points)
         draw_front_opening_marker(left_points, 'lewo')
 
         right_points = [
@@ -119,6 +121,7 @@ module CabinetBuilder
         ]
 
         draw_front_leaf(name: 'Front Prawy', points: right_points)
+        draw_front_handle(right_points)
         draw_front_opening_marker(right_points, 'prawo')
       end
     end
@@ -336,6 +339,35 @@ module CabinetBuilder
         face.material = @material_color
         face.back_material = @material_color
       end
+    end
+
+
+    def draw_front_handle(front_points)
+      return unless @front_handle.to_s.casecmp('j').zero?
+
+      handle_definition = front_handle_definition
+      return unless handle_definition
+
+      right_x = front_points.map { |point| point[0] }.max
+      bottom_z = front_points.map { |point| point[2] }.min
+      y = front_points[0][1]
+
+      insertion_point = Geom::Point3d.new(right_x, y, bottom_z)
+      rotation_y = Geom::Transformation.rotation(ORIGIN, Y_AXIS, 0.degrees)
+      transform = Geom::Transformation.translation(insertion_point) * rotation_y
+      @cabinet_entities.add_instance(handle_definition, transform)
+    end
+
+    def front_handle_definition
+      return @front_handle_definition if defined?(@front_handle_definition)
+
+      handle_path = File.expand_path('../assets/handles/uchwyt-j.skp', __dir__)
+      @front_handle_definition = if File.exist?(handle_path)
+                                   @model.definitions.load(handle_path)
+                                 end
+    rescue StandardError => e
+      puts "Nie udało się wczytać uchwytu J: #{e.message}"
+      @front_handle_definition = nil
     end
 
     def draw_front_opening_marker(front_points, opening_direction)

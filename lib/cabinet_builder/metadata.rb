@@ -66,6 +66,7 @@ module CabinetBuilder
           'front_technological_gap' => group.get_attribute(CABINET_DICT, 'front_technological_gap_mm', 0),
           'front_quantity' => group.get_attribute(CABINET_DICT, 'front_quantity', 1),
           'front_type' => group.get_attribute(CABINET_DICT, 'front_type', 'flat'),
+          'front_handle' => group.get_attribute(CABINET_DICT, 'front_handle', 'J'),
           'frame_width' => group.get_attribute(CABINET_DICT, 'frame_width_mm', 20),
           'frame_inner_thickness' => group.get_attribute(CABINET_DICT, 'frame_inner_thickness_mm', group.get_attribute(CABINET_DICT, 'frame_inner_depth_mm', 2)),
           'groove_width' => group.get_attribute(CABINET_DICT, 'groove_width_mm', 12),
@@ -190,6 +191,7 @@ module CabinetBuilder
       @group.set_attribute(CABINET_DICT, 'front_enabled', @front_enabled)
       @group.set_attribute(CABINET_DICT, 'front_quantity', @front_quantity)
       @group.set_attribute(CABINET_DICT, 'front_type', @front_type)
+      @group.set_attribute(CABINET_DICT, 'front_handle', @front_handle)
       @group.set_attribute(CABINET_DICT, 'front_opening_direction', @front_opening_direction)
       @group.set_attribute(CABINET_DICT, 'kitchen_base_enabled', @kitchen_base_enabled)
       @group.set_attribute(CABINET_DICT, 'interior_sections_fill_remaining', @interior_sections_fill_remaining)

@@ -60,6 +60,7 @@ def setup_front(config)
   @groove_spacing = [read_config_value(config: config, key: :groove_spacing, default: 8).to_f, 0].max
   @groove_depth = [read_config_value(config: config, key: :groove_depth, default: 3).to_f, 0].max
   @front_opening_direction = read_config_value(config: config, key: :front_opening_direction, default: 'prawo').to_s.downcase
+  @front_handle = read_config_value(config: config, key: :front_handle, default: 'J').to_s
 
   kitchen_base_enabled = read_config_value(config: config, key: :kitchen_base_enabled, default: false)
   @kitchen_base_enabled = kitchen_base_enabled == true || kitchen_base_enabled.to_s == 'true'
