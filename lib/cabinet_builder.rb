@@ -354,6 +354,7 @@ module CabinetBuilder
       handle_definition = front_handle_definition
       return unless handle_definition
 
+      left_x = front_points.map { |point| point[0] }.min
       right_x = front_points.map { |point| point[0] }.max
       bottom_z = front_points.map { |point| point[2] }.min
       y = front_points[0][1]
@@ -362,8 +363,55 @@ module CabinetBuilder
       rotation_y = Geom::Transformation.rotation(ORIGIN, Y_AXIS, 0.degrees)
       transform = Geom::Transformation.translation(insertion_point) * rotation_y
       target_entities = front_group ? front_group.entities : @cabinet_entities
+      existing_entities = target_entities.to_a
+
       handle_instance = target_entities.add_instance(handle_definition, transform)
       handle_instance.explode
+
+      handle_entities = target_entities.to_a - existing_entities
+      stretch_handle_with_pushpull(handle_entities: handle_entities, left_x: left_x, right_x: right_x)
+      apply_handle_material(handle_entities)
+    end
+
+    def stretch_handle_with_pushpull(handle_entities:, left_x:, right_x:)
+      return if handle_entities.empty?
+
+      handle_faces = handle_entities.grep(Sketchup::Face)
+      return if handle_faces.empty?
+
+      handle_bounds = handle_faces.map(&:bounds)
+      handle_min_x = handle_bounds.map { |bounds| bounds.min.x }.min
+      handle_max_x = handle_bounds.map { |bounds| bounds.max.x }.max
+      return if handle_min_x.nil? || handle_max_x.nil?
+
+      align_right = right_x - handle_max_x
+      if align_right.abs > 0.001
+        move_right = Geom::Transformation.translation([align_right, 0, 0])
+        handle_entities.each { |entity| entity.transform!(move_right) if entity.respond_to?(:transform!) && entity.valid? }
+      end
+
+      aligned_min_x = handle_min_x + align_right
+      extension = aligned_min_x - left_x
+      return if extension <= 0.001
+
+      left_cap = handle_faces
+                 .select(&:valid?)
+                 .select { |face| face.normal.x.abs > 0.9 }
+                 .select { |face| (face.bounds.min.x - aligned_min_x).abs < 0.5 }
+                 .max_by(&:area)
+      return unless left_cap
+
+      pushpull_distance = left_cap.normal.x < 0 ? extension : -extension
+      left_cap.pushpull(pushpull_distance)
+    end
+
+    def apply_handle_material(handle_entities)
+      handle_entities.grep(Sketchup::Face).each do |face|
+        next unless face.valid?
+
+        face.material = @material_color
+        face.back_material = @material_color
+      end
     end
 
     def front_handle_definition
