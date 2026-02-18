@@ -84,6 +84,7 @@ def cabinet_params(params)
     front_technological_gap: params['front_technological_gap'].to_f.mm,
     front_quantity: params['front_quantity'].to_i,
     front_type: params['front_type'],
+    front_handle: params['front_handle'],
     frame_width: params['frame_width'].to_f.mm,
     frame_inner_thickness: params['frame_inner_thickness'].to_f.mm,
     groove_width: params['groove_width'].to_f.mm,
