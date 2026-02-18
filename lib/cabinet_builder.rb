@@ -126,19 +126,19 @@ module CabinetBuilder
       end
     end
 
-    def draw_front_leaf(name:, points:)
+    def draw_front_leaf(name:, points:, entities: @cabinet_entities, extrusion: -@front_thickness)
       case @front_type
       when 'frame'
-        draw_frame_front_leaf(name: name, points: points)
+        draw_frame_front_leaf(name: name, points: points, entities: entities, extrusion: extrusion)
       when 'lamella'
-        draw_lamella_front_leaf(name: name, points: points)
+        draw_lamella_front_leaf(name: name, points: points, entities: entities, extrusion: extrusion)
       else
-        draw_named_panel(name: name, points: points, thickness: @front_thickness, extrusion: -@front_thickness)
+        draw_named_panel(name: name, points: points, thickness: @front_thickness, extrusion: extrusion, entities: entities)
       end
     end
 
-    def draw_lamella_front_leaf(name:, points:)
-      front_group = @cabinet_entities.add_group
+    def draw_lamella_front_leaf(name:, points:, entities: @cabinet_entities, extrusion: -@front_thickness)
+      front_group = entities.add_group
       front_group.name = name
       front_group.material = @material_color
       assign_panel_tag(front_group, name)
@@ -148,7 +148,7 @@ module CabinetBuilder
 
       front_face.material = @material_color
       front_face.back_material = @material_color
-      front_face.pushpull(-@front_thickness)
+      front_face.pushpull(extrusion)
 
       x_min = points.map { |point| point[0] }.min
       x_max = points.map { |point| point[0] }.max
@@ -204,7 +204,7 @@ module CabinetBuilder
       front_group
     end
 
-    def draw_frame_front_leaf(name:, points:)
+    def draw_frame_front_leaf(name:, points:, entities: @cabinet_entities, extrusion: -@front_thickness)
       x_min = points.map { |point| point[0] }.min
       x_max = points.map { |point| point[0] }.max
       z_min = points.map { |point| point[2] }.min
@@ -217,13 +217,14 @@ module CabinetBuilder
       inner_panel_thickness = [[@frame_inner_thickness, 0].max, @front_thickness].min
       inner_recess_depth = [@front_thickness - inner_panel_thickness, 0].max
 
-      return draw_named_panel(name: name, points: points, thickness: @front_thickness, extrusion: -@front_thickness) if frame_width <= 0
+      return draw_named_panel(name: name, points: points, thickness: @front_thickness, extrusion: extrusion, entities: entities) if frame_width <= 0
 
       frame_group = draw_frame_with_offset(
         name: "#{name} Ramka",
         outer_points: points,
         frame_width: frame_width,
-        front_thickness: @front_thickness
+        extrusion: extrusion,
+        entities: entities
       )
 
       inner_x_min = x_min + frame_width
@@ -307,8 +308,8 @@ module CabinetBuilder
       end
     end
 
-    def draw_frame_with_offset(name:, outer_points:, frame_width:, front_thickness:)
-      frame_group = @cabinet_entities.add_group
+    def draw_frame_with_offset(name:, outer_points:, frame_width:, extrusion:, entities: @cabinet_entities)
+      frame_group = entities.add_group
       frame_group.name = name
       frame_group.material = @material_color
       assign_panel_tag(frame_group, name)
@@ -338,7 +339,7 @@ module CabinetBuilder
       frame_face = entities.grep(Sketchup::Face).max_by(&:area)
       return unless frame_face
 
-      frame_face.pushpull(-front_thickness)
+      frame_face.pushpull(extrusion)
       entities.grep(Sketchup::Face).each do |face|
         face.material = @material_color
         face.back_material = @material_color

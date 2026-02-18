@@ -407,12 +407,11 @@ module CabinetBuilder
           [drawer_x_min, y, z_top]
         ]
 
-        draw_named_panel(
+        draw_front_leaf(
           name: "Section #{section.id} #{sub_section_name(sub_name)}Drawer #{index + 1}",
           points: points,
-          thickness: @front_thickness,
-          extrusion: @front_thickness,
-          entities: section_entities
+          entities: section_entities,
+          extrusion: @front_thickness
         )
 
         draw_section_drawer_box(
