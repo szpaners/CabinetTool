@@ -21,7 +21,7 @@ module CabinetBuilder
 
 def setup_appearance(config)
   @cabinet_type = read_config_value(config: config, key: :cabinet_type, default: 'kitchen').to_s.downcase
-  @cabinet_type = 'kitchen' unless %w[kitchen wardrobe].include?(@cabinet_type)
+  @cabinet_type = 'kitchen' unless %w[kitchen wardrobe tall_unit].include?(@cabinet_type)
   @nazwa_szafki = read_config_value(config: config, key: :nazwa_szafki, default: 'szafka').to_s.strip
   @nazwa_szafki = 'szafka' if @nazwa_szafki.empty?
   @color = read_config_value(config: config, key: :color, default: CabinetDimensions::DEFAULT_COLOR)
@@ -34,7 +34,7 @@ def setup_appearance(config)
   @first_drawer_height = read_config_value(config: config, key: :first_drawer_height, default: 0).to_f
   @front_thickness = read_config_value(config: config, key: :front_thickness, default: CabinetDimensions::FRONT_THICKNESS).to_f
 
-  return unless @cabinet_type == 'wardrobe'
+  return unless %w[wardrobe tall_unit].include?(@cabinet_type)
 
   @filling = 'none'
   @shelf_count = 0
@@ -65,7 +65,7 @@ def setup_front(config)
   kitchen_base_enabled = read_config_value(config: config, key: :kitchen_base_enabled, default: false)
   @kitchen_base_enabled = kitchen_base_enabled == true || kitchen_base_enabled.to_s == 'true'
   @connector_width = [read_config_value(config: config, key: :connector_width, default: 100).to_f, 0].max
-  @kitchen_base_enabled = false if @cabinet_type == 'wardrobe'
+  @kitchen_base_enabled = false if %w[wardrobe tall_unit].include?(@cabinet_type)
 end
 
     def setup_blends(config)

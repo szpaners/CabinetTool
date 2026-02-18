@@ -11,7 +11,7 @@ module CabinetBuilder
     def setup_interior_sections(config)
       @interior_sections = []
       @interior_sections_fill_remaining = truthy?(read_config_value(config: config, key: :interior_sections_fill_remaining, default: true))
-      return unless @cabinet_type == 'wardrobe'
+      return unless %w[wardrobe tall_unit].include?(@cabinet_type)
 
       raw_sections = read_config_value(config: config, key: :interior_sections, default: [])
       @interior_sections = build_interior_sections(raw_sections)
