@@ -61,6 +61,11 @@ def setup_front(config)
   @groove_depth = [read_config_value(config: config, key: :groove_depth, default: 3).to_f, 0].max
   @front_opening_direction = read_config_value(config: config, key: :front_opening_direction, default: 'prawo').to_s.downcase
   @front_handle = read_config_value(config: config, key: :front_handle, default: 'J').to_s
+  @front_handle_position = read_config_value(config: config, key: :front_handle_position, default: 'dół').to_s.downcase
+  @front_handle_position = 'srodek' if @front_handle_position == 'środek'
+  @front_handle_position = 'dol' if @front_handle_position == 'dół'
+  @front_handle_position = 'gora' if @front_handle_position == 'góra'
+  @front_handle_position = 'dol' unless %w[dol gora srodek].include?(@front_handle_position)
 
   kitchen_base_enabled = read_config_value(config: config, key: :kitchen_base_enabled, default: false)
   @kitchen_base_enabled = kitchen_base_enabled == true || kitchen_base_enabled.to_s == 'true'

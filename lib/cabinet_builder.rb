@@ -358,9 +358,10 @@ module CabinetBuilder
       left_x = front_points.map { |point| point[0] }.min
       right_x = front_points.map { |point| point[0] }.max
       bottom_z = front_points.map { |point| point[2] }.min
+      top_z = front_points.map { |point| point[2] }.max
       y = front_points[0][1]
 
-      insertion_point = Geom::Point3d.new(right_x, y, bottom_z)
+      insertion_point = Geom::Point3d.new(right_x, y, handle_insertion_z(bottom_z: bottom_z, top_z: top_z))
       rotation_y = Geom::Transformation.rotation(ORIGIN, Y_AXIS, 0.degrees)
       transform = Geom::Transformation.translation(insertion_point) * rotation_y
       target_entities = front_group ? front_group.entities : @cabinet_entities
@@ -372,6 +373,17 @@ module CabinetBuilder
       handle_entities = target_entities.to_a - existing_entities
       stretch_handle_with_pushpull(handle_entities: handle_entities, left_x: left_x, right_x: right_x)
       apply_handle_material(handle_entities)
+    end
+
+    def handle_insertion_z(bottom_z:, top_z:)
+      case @front_handle_position
+      when 'gora'
+        top_z
+      when 'srodek'
+        (bottom_z + top_z) / 2.0
+      else
+        bottom_z
+      end
     end
 
     def stretch_handle_with_pushpull(handle_entities:, left_x:, right_x:)
