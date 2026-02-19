@@ -614,19 +614,6 @@
 
             <div class="form-grid mt-2">
                 <div class="form-group">
-                    <label for="corner_front_width">Front - Szerokość (mm):</label>
-                    <input type="number" id="corner_front_width" value="0" min="0" class="form-control form-control-sm">
-                </div>
-                <div class="form-group">
-                    <label for="corner_front_panel_side">Strona płyty:</label>
-                    <select id="corner_front_panel_side" class="form-select form-select-sm">
-                        <option value="left">Lewa</option>
-                        <option value="right">Prawa</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-grid mt-2">
-                <div class="form-group">
                     <label for="corner_nazwa_szafki">Nazwa:</label>
                     <input type="text" id="corner_nazwa_szafki" value="szafka narożna" class="form-control form-control-sm">
                 </div>
@@ -650,6 +637,81 @@
                 <div class="form-group is-hidden" id="corner_shelf_count_group">
                     <label for="corner_shelf_count">Ilość półek:</label>
                     <input type="number" id="corner_shelf_count" value="1" min="1" class="form-control form-control-sm">
+                </div>
+            </div>
+        </div>
+
+        <div class="section card card-body mb-2">
+            <h3 class="section-title">Front</h3>
+            <div class="form-grid">
+                <div class="form-group checkbox-group">
+                    <label><input type="checkbox" id="corner_front_checkbox" onchange="toggleCornerFrontSection()" class="form-check-input me-1"> Front</label>
+                </div>
+                <div class="form-group">
+                    <label for="corner_front_technological_gap">Luz technologiczny (mm):</label>
+                    <input type="number" id="corner_front_technological_gap" value="2" min="0" step="0.1" class="form-control form-control-sm">
+                </div>
+                <div class="form-group">
+                    <label for="corner_front_quantity">Ilość frontów:</label>
+                    <select id="corner_front_quantity" class="form-select form-select-sm">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="corner_front_opening_direction">Kierunek otwierania:</label>
+                    <select id="corner_front_opening_direction" class="form-select form-select-sm">
+                        <option value="lewo">Lewo</option>
+                        <option value="prawo" selected>Prawo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="corner_front_handle">Uchwyt:</label>
+                    <select id="corner_front_handle" class="form-select form-select-sm">
+                        <option value="brak">Brak</option>
+                        <option value="J" selected>J</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="corner_front_type">Typ frontu:</label>
+                    <select id="corner_front_type" class="form-select form-select-sm">
+                        <option value="flat" selected>Płaski</option>
+                        <option value="frame">Ramka</option>
+                        <option value="lamella">Lamelowany</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="corner_front_width">Front - Szerokość (mm):</label>
+                    <input type="number" id="corner_front_width" value="0" min="0" class="form-control form-control-sm">
+                </div>
+                <div class="form-group">
+                    <label for="corner_front_panel_side">Strona płyty:</label>
+                    <select id="corner_front_panel_side" class="form-select form-select-sm">
+                        <option value="left">Lewa</option>
+                        <option value="right">Prawa</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-grid is-hidden mt-2" id="corner_front_details">
+                <div class="form-group is-hidden" id="corner_frame_width_group">
+                    <label for="corner_frame_width">Szerokość Ramki:</label>
+                    <input type="number" id="corner_frame_width" value="20" min="1" class="form-control form-control-sm">
+                </div>
+                <div class="form-group is-hidden" id="corner_frame_inner_thickness_group">
+                    <label for="corner_frame_inner_thickness">Grubość wnętrza:</label>
+                    <input type="number" id="corner_frame_inner_thickness" value="2" min="1" class="form-control form-control-sm">
+                </div>
+                <div class="form-group is-hidden" id="corner_groove_width_group">
+                    <label for="corner_groove_width">Szerokość lameli (mm):</label>
+                    <input type="number" id="corner_groove_width" value="12" min="1" class="form-control form-control-sm">
+                </div>
+                <div class="form-group is-hidden" id="corner_groove_spacing_group">
+                    <label for="corner_groove_spacing">Odstęp między lamelami (mm):</label>
+                    <input type="number" id="corner_groove_spacing" value="8" min="0" class="form-control form-control-sm">
+                </div>
+                <div class="form-group is-hidden" id="corner_groove_depth_group">
+                    <label for="corner_groove_depth">Głębokość między lamelami (mm):</label>
+                    <input type="number" id="corner_groove_depth" value="3" min="0.1" step="0.1" class="form-control form-control-sm">
                 </div>
             </div>
         </div>

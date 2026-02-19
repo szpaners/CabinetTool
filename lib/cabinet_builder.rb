@@ -79,6 +79,7 @@ module CabinetBuilder
     end
 
     def draw_front
+      return if @cabinet_type == 'corner'
       return if @filling == 'drawers'
       return unless @front_enabled
 
@@ -631,19 +632,61 @@ end
         draw_named_panel(name: 'Corner Front Panel', points: panel_points, thickness: @panel_thickness, extrusion: @panel_thickness)
       end
 
+      return unless @front_enabled
       return unless front_width > 0
 
       front_x_start = @corner_front_panel_side == 'right' ? 0 : panel_width
-      front_x_end = front_x_start + front_width
+      front_available_width = front_width - (2 * @front_technological_gap)
+      front_available_height = @height - (2 * @front_technological_gap)
+      return if front_available_width <= 0 || front_available_height <= 0
+
+      leaf_y = -@front_thickness
+      leaf_z_min = @front_technological_gap
+      leaf_z_max = @front_technological_gap + front_available_height
+
+      if @front_quantity == 2
+        leaf_width = (front_available_width - @front_technological_gap) / 2.0
+        return if leaf_width <= 0
+
+        left_x_min = front_x_start + @front_technological_gap
+        left_x_max = left_x_min + leaf_width
+        right_x_min = left_x_max + @front_technological_gap
+        right_x_max = right_x_min + leaf_width
+
+        left_points = [
+          [left_x_min, leaf_y, leaf_z_min],
+          [left_x_max, leaf_y, leaf_z_min],
+          [left_x_max, leaf_y, leaf_z_max],
+          [left_x_min, leaf_y, leaf_z_max]
+        ]
+        right_points = [
+          [right_x_min, leaf_y, leaf_z_min],
+          [right_x_max, leaf_y, leaf_z_min],
+          [right_x_max, leaf_y, leaf_z_max],
+          [right_x_min, leaf_y, leaf_z_max]
+        ]
+
+        left_front_group = draw_front_leaf(name: 'Corner Front Left', points: left_points)
+        draw_front_handle(left_points, front_group: left_front_group)
+        draw_front_opening_marker(left_points, 'lewo')
+
+        right_front_group = draw_front_leaf(name: 'Corner Front Right', points: right_points)
+        draw_front_handle(right_points, front_group: right_front_group)
+        draw_front_opening_marker(right_points, 'prawo')
+        return
+      end
+
+      front_x_min = front_x_start + @front_technological_gap
+      front_x_max = front_x_min + front_available_width
       front_points = [
-        [front_x_start, -@front_thickness, 0],
-        [front_x_end, -@front_thickness, 0],
-        [front_x_end, -@front_thickness, @height],
-        [front_x_start, -@front_thickness, @height]
+        [front_x_min, leaf_y, leaf_z_min],
+        [front_x_max, leaf_y, leaf_z_min],
+        [front_x_max, leaf_y, leaf_z_max],
+        [front_x_min, leaf_y, leaf_z_max]
       ]
 
-      draw_front_leaf(name: 'Corner Front', points: front_points)
-      draw_front_handle(front_points)
+      front_group = draw_front_leaf(name: 'Corner Front', points: front_points)
+      draw_front_handle(front_points, front_group: front_group)
       draw_front_opening_marker(front_points, @front_opening_direction)
     end
 
