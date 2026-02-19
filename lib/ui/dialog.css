@@ -248,6 +248,10 @@ input[type="color"].form-control {
     width: 100%;
 }
 
+.split-halves.is-hidden {
+    display: none;
+}
+
 .split-half-card {
     flex: 1 1 50%;
     max-width: calc(50% - 5px);

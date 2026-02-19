@@ -125,7 +125,9 @@ module CabinetBuilder
                         drawer_count = params.fetch('drawer_count', 0).to_i
                         raise ArgumentError, 'Sekcja typu szuflady wymaga liczby szuflad >= 1.' if drawer_count < 1
 
-                        drawer_front_height = to_length(params.fetch('drawer_front_height', 0))
+                        drawer_front_reduction = to_length(params.fetch('drawer_front_reduction', params.fetch('drawer_front_height', 0)))
+                        raise ArgumentError, 'Pomniejszenie frontu musi być >= 0.' if drawer_front_reduction.negative?
+
                         drawer_width_reduction = to_length(params.fetch('drawer_width_reduction', 40))
                         raise ArgumentError, 'Zwężenie szuflady musi być >= 0.' if drawer_width_reduction.negative?
 
@@ -134,7 +136,7 @@ module CabinetBuilder
 
                         common_params.merge(
                           'drawer_count' => drawer_count,
-                          'drawer_front_height' => drawer_front_height,
+                          'drawer_front_reduction' => drawer_front_reduction,
                           'drawer_width_reduction' => drawer_width_reduction,
                           'drawer_box_height_offset' => drawer_box_height_offset
                         )
@@ -182,8 +184,8 @@ module CabinetBuilder
         drawer_count = param_value.nil? ? fallback_params.fetch('drawer_count', 3) : param_value.to_i
         raise ArgumentError, "Sekcja #{side_name}: liczba szuflad musi być >= 1." if drawer_count < 1
 
-        drawer_front_height = to_length(config.fetch('drawer_front_height', fallback_params.fetch('drawer_front_height', 80.mm)))
-        raise ArgumentError, "Sekcja #{side_name}: wysokość frontu szuflady musi być > 0." if drawer_front_height <= 0
+        drawer_front_reduction = to_length(config.fetch('drawer_front_reduction', config.fetch('drawer_front_height', fallback_params.fetch('drawer_front_reduction', fallback_params.fetch('drawer_front_height', 0.mm)))))
+        raise ArgumentError, "Sekcja #{side_name}: pomniejszenie frontu musi być >= 0." if drawer_front_reduction.negative?
 
         drawer_width_reduction = to_length(config.fetch('drawer_width_reduction', fallback_params.fetch('drawer_width_reduction', 40.mm)))
         raise ArgumentError, "Sekcja #{side_name}: zwężenie szuflady musi być >= 0." if drawer_width_reduction.negative?
@@ -194,7 +196,7 @@ module CabinetBuilder
         {
           'filling' => 'drawers',
           'param' => drawer_count,
-          'drawer_front_height' => drawer_front_height,
+          'drawer_front_reduction' => drawer_front_reduction,
           'drawer_width_reduction' => drawer_width_reduction,
           'drawer_box_height_offset' => drawer_box_height_offset
         }
@@ -348,7 +350,7 @@ module CabinetBuilder
       x_max = @width - @panel_thickness
       return if x_max <= x_min
 
-      panel_z = section_top - @panel_thickness
+      panel_z = section_top
       return if panel_z < interior_niche_bottom - SECTION_EPSILON
 
       points = horizontal_rectangle(
@@ -371,12 +373,15 @@ module CabinetBuilder
     def draw_section_drawers(section_entities, section, section_bottom, x_min, x_max, sub_name = nil, side_config = nil)
       drawer_count = (side_config && side_config['param']) ? side_config['param'].to_i : section.params.fetch('drawer_count', 0).to_i
       return if drawer_count < 1
+      has_top_panel = truthy?(section.params['top_panel'])
 
-      compartment_height = section.height / drawer_count.to_f
+      section_front_height = section.height
+      puts section_front_height.to_i.to_mm
+      compartment_height = section_front_height / drawer_count.to_f
       return if compartment_height <= 0
 
-      drawer_front_height = side_config && side_config['drawer_front_height'] ? side_config['drawer_front_height'] : section.params.fetch('drawer_front_height', 0)
-      drawer_front_height = compartment_height if drawer_front_height <= 0
+      drawer_front_reduction = side_config && (side_config['drawer_front_reduction'] || side_config['drawer_front_height']) ? (side_config['drawer_front_reduction'] || side_config['drawer_front_height']) : (section.params['drawer_front_reduction'] || section.params.fetch('drawer_front_height', 0))
+      drawer_front_reduction = 0 if drawer_front_reduction.negative?
 
       drawer_width_reduction = side_config && side_config['drawer_width_reduction'] ? side_config['drawer_width_reduction'] : section.params.fetch('drawer_width_reduction', 40.mm)
 
@@ -387,7 +392,7 @@ module CabinetBuilder
       drawer_x_min = x_min + ((section_clear_width - drawer_width) / 2.0)
 
       y = @panel_thickness
-      front_height = [drawer_front_height, compartment_height].min
+      front_height = [compartment_height - drawer_front_reduction, compartment_height].min
       return if front_height <= 0
 
       drawer_box_height_offset = side_config && side_config['drawer_box_height_offset'] ? side_config['drawer_box_height_offset'] : section.params.fetch('drawer_box_height_offset', 40.mm)
@@ -460,7 +465,7 @@ module CabinetBuilder
         name: "Section #{section_id} #{sub_section_name(sub_name)}Drawer #{drawer_index + 1} Side Right",
         points: right_side_points,
         thickness: @panel_thickness,
-        extrusion: -@panel_thickness,
+        extrusion: @panel_thickness,
         entities: section_entities
       )
 
@@ -479,7 +484,7 @@ module CabinetBuilder
         name: "Section #{section_id} #{sub_section_name(sub_name)}Drawer #{drawer_index + 1} Back",
         points: back_points,
         thickness: @panel_thickness,
-        extrusion: -@panel_thickness,
+        extrusion: @panel_thickness,
         entities: section_entities
       )
 
@@ -580,7 +585,7 @@ module CabinetBuilder
     end
 
     def interior_niche_height
-      [@height - (2 * @panel_thickness), 0].max
+      [@height, 0].max
     end
 
     def interior_niche_bottom

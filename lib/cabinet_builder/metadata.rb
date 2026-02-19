@@ -220,7 +220,7 @@ module CabinetBuilder
         normalized_key = key.to_s
 
         result[normalized_key] = case normalized_key
-                                 when 'rod_offset', 'drawer_front_height', 'split_first_width', 'split_left_width', 'split_right_width'
+                                 when 'rod_offset', 'drawer_front_height', 'drawer_front_reduction', 'split_first_width', 'split_left_width', 'split_right_width'
                                    value.nil? ? nil : value.to_l.to_mm.round
                                  when 'split_left', 'split_right'
                                    serialize_split_side(value)
@@ -237,7 +237,7 @@ module CabinetBuilder
         normalized_key = key.to_s
         result[normalized_key] = if normalized_key == 'param' && value['filling'].to_s == 'rod'
                                    raw.nil? ? nil : raw.to_l.to_mm.round
-                                 elsif %w[drawer_front_height drawer_width_reduction drawer_box_height_offset].include?(normalized_key)
+                                 elsif %w[drawer_front_height drawer_front_reduction drawer_width_reduction drawer_box_height_offset].include?(normalized_key)
                                    raw.nil? ? nil : raw.to_l.to_mm.round
                                  else
                                    raw

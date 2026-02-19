@@ -576,8 +576,8 @@ def draw_blend_left
   has_front_surface = front_surface_enabled?
   max_depth = @blend_left_depth_value > 0 ? @blend_left_depth_value : @internal_depth + (has_front_surface ? @front_thickness : 0)
   y_offset = has_front_surface ? -@front_thickness : 0
-  blend_bottom_z = @panel_thickness
-  blend_top_z = @height
+  blend_bottom_z = -@cokol_dolny_value
+  blend_top_z = @height + @cokol_gorny_value
   return if blend_top_z <= blend_bottom_z
 
   points = [
@@ -597,8 +597,8 @@ def draw_blend_right
   y_offset = has_front_surface ? -@front_thickness : 0
   x = @width + @blend_right_value
   max_depth = @blend_right_depth_value > 0 ? @blend_right_depth_value : @internal_depth + (has_front_surface ? @front_thickness : 0)
-  blend_bottom_z = @panel_thickness
-  blend_top_z = @height
+  blend_bottom_z = -@cokol_dolny_value
+  blend_top_z = @height + @cokol_gorny_value
   return if blend_top_z <= blend_bottom_z
 
   points = [

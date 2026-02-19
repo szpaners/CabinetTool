@@ -121,7 +121,7 @@ def cabinet_params(params)
           filling: section['filling'].to_s,
           params: {
             drawer_count: params['drawer_count'].to_i,
-            drawer_front_height: params['drawer_front_height'].to_f.round,
+            drawer_front_reduction: (params['drawer_front_reduction'] || params['drawer_front_height']).to_f.round,
             drawer_width_reduction: params['drawer_width_reduction'].to_f.round,
             drawer_box_height_offset: params['drawer_box_height_offset'].to_f.round,
             shelf_count: params['shelf_count'].to_i,
@@ -157,7 +157,9 @@ def cabinet_params(params)
       }
 
       if filling == 'drawers'
-        result[:drawer_front_height] = raw_side['drawer_front_height'].nil? ? nil : raw_side['drawer_front_height'].to_f.round
+        raw_front_reduction = raw_side['drawer_front_reduction']
+        raw_front_reduction = raw_side['drawer_front_height'] if raw_front_reduction.nil?
+        result[:drawer_front_reduction] = raw_front_reduction.nil? ? nil : raw_front_reduction.to_f.round
         result[:drawer_width_reduction] = raw_side['drawer_width_reduction'].nil? ? nil : raw_side['drawer_width_reduction'].to_f.round
         result[:drawer_box_height_offset] = raw_side['drawer_box_height_offset'].nil? ? nil : raw_side['drawer_box_height_offset'].to_f.round
       end
