@@ -25,7 +25,8 @@ module CabinetBuilder
       'groove_width_mm' => :@groove_width,
       'groove_spacing_mm' => :@groove_spacing,
       'groove_depth_mm' => :@groove_depth,
-      'connector_width_mm' => :@connector_width
+      'connector_width_mm' => :@connector_width,
+      'corner_front_panel_width_mm' => :@corner_front_panel_width
     }.freeze
 
     LEGACY_BLEND_KEYS = {
@@ -75,6 +76,8 @@ module CabinetBuilder
           'front_opening_direction' => group.get_attribute(CABINET_DICT, 'front_opening_direction', 'prawo'),
           'kitchen_base_enabled' => group.get_attribute(CABINET_DICT, 'kitchen_base_enabled', false),
           'connector_width' => group.get_attribute(CABINET_DICT, 'connector_width_mm', 100),
+          'corner_front_panel_width' => group.get_attribute(CABINET_DICT, 'corner_front_panel_width_mm', 0),
+          'corner_front_panel_side' => group.get_attribute(CABINET_DICT, 'corner_front_panel_side', 'left'),
           'blend_left_value' => read_blend_value_mm(group, LEGACY_BLEND_KEYS['blend_left_value']),
           'blend_right_value' => read_blend_value_mm(group, LEGACY_BLEND_KEYS['blend_right_value']),
           'blend_left_depth_value' => read_blend_value_mm(group, LEGACY_BLEND_KEYS['blend_left_depth_value']),
@@ -194,6 +197,7 @@ module CabinetBuilder
       @group.set_attribute(CABINET_DICT, 'front_handle', @front_handle)
       @group.set_attribute(CABINET_DICT, 'front_opening_direction', @front_opening_direction)
       @group.set_attribute(CABINET_DICT, 'kitchen_base_enabled', @kitchen_base_enabled)
+      @group.set_attribute(CABINET_DICT, 'corner_front_panel_side', @corner_front_panel_side)
       @group.set_attribute(CABINET_DICT, 'interior_sections_fill_remaining', @interior_sections_fill_remaining)
       @group.set_attribute(CABINET_DICT, 'interior_sections_json', serialized_interior_sections)
     end

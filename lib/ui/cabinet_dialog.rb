@@ -70,6 +70,8 @@ def cabinet_params(params)
     cabinet_type: params['cabinet_type'],
     kitchen_base_enabled: params['kitchen_base_enabled'],
     connector_width: params['connector_width'].to_f.round.mm,
+    corner_front_panel_width: params['corner_front_panel_width'].to_f.round.mm,
+    corner_front_panel_side: params['corner_front_panel_side'],
     panel_thickness: params['panel_thickness'].to_f.round.mm,
     front_thickness: params['front_thickness'].to_f.round.mm,
     back_thickness: params['back_thickness'].to_f.round.mm,

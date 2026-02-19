@@ -611,6 +611,27 @@ def draw_blend_right
   draw_named_panel(name: 'Blend Right', points: points, thickness: @blend_right_value, extrusion: @blend_right_value)
 end
 
+    def draw_corner_front_panel
+      return unless @cabinet_type == 'corner'
+      return unless @corner_front_panel_width > 0
+      return if @height <= 0
+
+      panel_width = [@corner_front_panel_width, @width].min
+      return if panel_width <= 0
+
+      x_start = @corner_front_panel_side == 'right' ? @width - panel_width : 0
+      x_end = x_start + panel_width
+
+      points = [
+        [x_start, 0, 0],
+        [x_end, 0, 0],
+        [x_end, 0, @height],
+        [x_start, 0, @height]
+      ]
+
+      draw_named_panel(name: 'Corner Front Panel', points: points, thickness: @panel_thickness, extrusion: @panel_thickness)
+    end
+
     def draw_cokol_dolny
       return unless @cokol_dolny_value > 0
 
@@ -653,6 +674,7 @@ end
       draw_drawers
       draw_shelves
       draw_interior_sections
+      draw_corner_front_panel
       draw_blend_left
       draw_blend_right
       save_metadata
