@@ -611,25 +611,40 @@ def draw_blend_right
   draw_named_panel(name: 'Blend Right', points: points, thickness: @blend_right_value, extrusion: @blend_right_value)
 end
 
-    def draw_corner_front_panel
+    def draw_corner_front_layout
       return unless @cabinet_type == 'corner'
-      return unless @corner_front_panel_width > 0
       return if @height <= 0
 
-      panel_width = [@corner_front_panel_width, @width].min
-      return if panel_width <= 0
+      front_width = [[@corner_front_width, 0].max, @width].min
+      panel_width = [@width - front_width, 0].max
 
-      x_start = @corner_front_panel_side == 'right' ? @width - panel_width : 0
-      x_end = x_start + panel_width
+      if panel_width > 0
+        panel_x_start = @corner_front_panel_side == 'right' ? @width - panel_width : 0
+        panel_x_end = panel_x_start + panel_width
+        panel_points = [
+          [panel_x_start, 0, 0],
+          [panel_x_end, 0, 0],
+          [panel_x_end, 0, @height],
+          [panel_x_start, 0, @height]
+        ]
 
-      points = [
-        [x_start, 0, 0],
-        [x_end, 0, 0],
-        [x_end, 0, @height],
-        [x_start, 0, @height]
+        draw_named_panel(name: 'Corner Front Panel', points: panel_points, thickness: @panel_thickness, extrusion: @panel_thickness)
+      end
+
+      return unless front_width > 0
+
+      front_x_start = @corner_front_panel_side == 'right' ? 0 : panel_width
+      front_x_end = front_x_start + front_width
+      front_points = [
+        [front_x_start, -@front_thickness, 0],
+        [front_x_end, -@front_thickness, 0],
+        [front_x_end, -@front_thickness, @height],
+        [front_x_start, -@front_thickness, @height]
       ]
 
-      draw_named_panel(name: 'Corner Front Panel', points: points, thickness: @panel_thickness, extrusion: @panel_thickness)
+      draw_front_leaf(name: 'Corner Front', points: front_points)
+      draw_front_handle(front_points)
+      draw_front_opening_marker(front_points, @front_opening_direction)
     end
 
     def draw_cokol_dolny
@@ -674,7 +689,7 @@ end
       draw_drawers
       draw_shelves
       draw_interior_sections
-      draw_corner_front_panel
+      draw_corner_front_layout
       draw_blend_left
       draw_blend_right
       save_metadata

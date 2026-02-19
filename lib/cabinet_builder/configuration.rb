@@ -33,7 +33,7 @@ def setup_appearance(config)
   @drawers_asymmetric = drawers_asymmetric_value == true || drawers_asymmetric_value.to_s == 'true'
   @first_drawer_height = read_config_value(config: config, key: :first_drawer_height, default: 0).to_f
   @front_thickness = read_config_value(config: config, key: :front_thickness, default: CabinetDimensions::FRONT_THICKNESS).to_f
-  @corner_front_panel_width = [read_config_value(config: config, key: :corner_front_panel_width, default: 0).to_f, 0].max
+  @corner_front_width = [read_config_value(config: config, key: :corner_front_width, default: 0).to_f, 0].max
   @corner_front_panel_side = read_config_value(config: config, key: :corner_front_panel_side, default: 'left').to_s.downcase
   @corner_front_panel_side = 'left' unless %w[left right].include?(@corner_front_panel_side)
 
@@ -44,7 +44,7 @@ def setup_appearance(config)
   @drawer_count = 0
   @drawers_asymmetric = false
   @first_drawer_height = 0
-  @corner_front_panel_width = 0
+  @corner_front_width = 0
 end
 
 def setup_front(config)
