@@ -21,7 +21,7 @@ module CabinetBuilder
 
 def setup_appearance(config)
   @cabinet_type = read_config_value(config: config, key: :cabinet_type, default: 'kitchen').to_s.downcase
-  @cabinet_type = 'kitchen' unless %w[kitchen wardrobe].include?(@cabinet_type)
+  @cabinet_type = 'kitchen' unless %w[kitchen wardrobe corner].include?(@cabinet_type)
   @nazwa_szafki = read_config_value(config: config, key: :nazwa_szafki, default: 'szafka').to_s.strip
   @nazwa_szafki = 'szafka' if @nazwa_szafki.empty?
   @color = read_config_value(config: config, key: :color, default: CabinetDimensions::DEFAULT_COLOR)

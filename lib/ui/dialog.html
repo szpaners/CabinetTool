@@ -17,6 +17,7 @@
     <div class="tabs nav nav-tabs nav-justified mb-2">
         <button class="tab nav-link active" onclick="switchTab(this, 'dimensions')" type="button">Dolna</button>
         <button class="tab nav-link" onclick="switchTab(this, 'materials')" type="button">Szafa</button>
+        <button class="tab nav-link" onclick="switchTab(this, 'corner')" type="button">Narożna</button>
         <button class="tab nav-link" onclick="switchTab(this, 'advanced')" type="button">Zaawansowane</button>
     </div>
 
@@ -574,6 +575,120 @@
                 <div class="form-group is-hidden" id="wardrobe_blend_right_depth_group">
                     <label for="wardrobe_blend_right_depth_value">Blenda prawa głębokość (mm):</label>
                     <input type="number" id="wardrobe_blend_right_depth_value" value="0" class="form-control form-control-sm">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="corner" class="tab-content">
+        <div class="section card card-body mb-2">
+            <h3 class="section-title">Narożna — wymiary i wygląd</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="corner_height">Wysokość całkowita (mm):</label>
+                    <input type="number" id="corner_height" value="800" class="form-control form-control-sm">
+                </div>
+                <div class="form-group">
+                    <label for="corner_width">Szerokość (mm):</label>
+                    <input type="number" id="corner_width" value="900" class="form-control form-control-sm">
+                </div>
+                <div class="form-group">
+                    <label for="corner_depth">Głębokość (mm):</label>
+                    <input type="number" id="corner_depth" value="900" class="form-control form-control-sm">
+                </div>
+            </div>
+            <div class="form-grid mt-2">
+                <div class="form-group">
+                    <label for="corner_panel_thickness">Grubość płyty (mm):</label>
+                    <input type="number" id="corner_panel_thickness" value="18" class="form-control form-control-sm">
+                </div>
+                <div class="form-group">
+                    <label for="corner_front_thickness">Grubość frontu (mm):</label>
+                    <input type="number" id="corner_front_thickness" value="18" class="form-control form-control-sm">
+                </div>
+                <div class="form-group">
+                    <label for="corner_back_thickness">Grubość pleców (mm):</label>
+                    <input type="number" id="corner_back_thickness" value="3" class="form-control form-control-sm">
+                </div>
+            </div>
+            <div class="form-grid mt-2">
+                <div class="form-group">
+                    <label for="corner_nazwa_szafki">Nazwa:</label>
+                    <input type="text" id="corner_nazwa_szafki" value="szafka narożna" class="form-control form-control-sm">
+                </div>
+                <div class="form-group">
+                    <label for="corner_color">Kolor:</label>
+                    <input type="color" id="corner_color" value="#8B5A2B" class="form-control form-control-sm">
+                </div>
+            </div>
+        </div>
+
+        <div class="section card card-body mb-2">
+            <h3 class="section-title">Wypełnienie</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="corner_filling">Wypełnienie:</label>
+                    <select id="corner_filling" class="form-select form-select-sm">
+                        <option value="none">Brak</option>
+                        <option value="shelves">Półki</option>
+                    </select>
+                </div>
+                <div class="form-group is-hidden" id="corner_shelf_count_group">
+                    <label for="corner_shelf_count">Ilość półek:</label>
+                    <input type="number" id="corner_shelf_count" value="1" min="1" class="form-control form-control-sm">
+                </div>
+            </div>
+        </div>
+
+        <div class="section card card-body mb-2">
+            <h3 class="section-title">Cokół dolny</h3>
+            <div class="form-grid">
+                <div class="form-group checkbox-group">
+                    <label><input type="checkbox" id="corner_cokol_dolny_checkbox" onchange="toggleCornerCokolDolnyInput()" class="form-check-input me-1"> Cokół dolny</label>
+                </div>
+                <div class="form-group is-hidden" id="corner_cokol_dolny_group">
+                    <label for="corner_cokol_dolny_value">Wartość (mm):</label>
+                    <input type="number" id="corner_cokol_dolny_value" value="0" class="form-control form-control-sm">
+                </div>
+                <div class="form-group is-hidden" id="corner_cokol_dolny_offset_group">
+                    <label for="corner_cokol_dolny_offset_value">Odsunięcie wgłąb (mm):</label>
+                    <input type="number" id="corner_cokol_dolny_offset_value" value="0" min="0" class="form-control form-control-sm">
+                </div>
+            </div>
+        </div>
+
+        <div class="section card card-body mb-2">
+            <h3 class="section-title">Blenda prawa/lewa</h3>
+            <div class="form-grid">
+                <div class="form-group checkbox-group">
+                    <label><input type="checkbox" id="corner_blend_left_checkbox" onchange="toggleCornerBlendInput('left')" class="form-check-input me-1"> Blenda lewa</label>
+                </div>
+                <div class="form-group is-hidden" id="corner_blend_left_group">
+                    <label for="corner_blend_left_value">Wartość (mm):</label>
+                    <input type="number" id="corner_blend_left_value" value="0" class="form-control form-control-sm">
+                </div>
+                <div class="form-group checkbox-group">
+                    <label><input type="checkbox" id="corner_blend_left_depth_checkbox" onchange="toggleCornerBlendDepthInput('left')" class="form-check-input me-1"> Głębokość lewa</label>
+                </div>
+                <div class="form-group is-hidden" id="corner_blend_left_depth_group">
+                    <label for="corner_blend_left_depth_value">Głębokość (mm):</label>
+                    <input type="number" id="corner_blend_left_depth_value" value="0" class="form-control form-control-sm">
+                </div>
+            </div>
+            <div class="form-grid mt-2">
+                <div class="form-group checkbox-group">
+                    <label><input type="checkbox" id="corner_blend_right_checkbox" onchange="toggleCornerBlendInput('right')" class="form-check-input me-1"> Blenda prawa</label>
+                </div>
+                <div class="form-group is-hidden" id="corner_blend_right_group">
+                    <label for="corner_blend_right_value">Wartość (mm):</label>
+                    <input type="number" id="corner_blend_right_value" value="0" class="form-control form-control-sm">
+                </div>
+                <div class="form-group checkbox-group">
+                    <label><input type="checkbox" id="corner_blend_right_depth_checkbox" onchange="toggleCornerBlendDepthInput('right')" class="form-check-input me-1"> Głębokość prawa</label>
+                </div>
+                <div class="form-group is-hidden" id="corner_blend_right_depth_group">
+                    <label for="corner_blend_right_depth_value">Głębokość (mm):</label>
+                    <input type="number" id="corner_blend_right_depth_value" value="0" class="form-control form-control-sm">
                 </div>
             </div>
         </div>
