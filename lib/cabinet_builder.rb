@@ -574,6 +574,11 @@ module CabinetBuilder
 def draw_blend_left
   return unless @blend_left_value > 0
 
+  if @cabinet_type == 'corner'
+    draw_corner_blend(side: 'left')
+    return
+  end
+
   has_front_surface = front_surface_enabled?
   max_depth = @blend_left_depth_value > 0 ? @blend_left_depth_value : @internal_depth + (has_front_surface ? @front_thickness : 0)
   y_offset = has_front_surface ? -@front_thickness : 0
@@ -594,6 +599,11 @@ end
 def draw_blend_right
   return unless @blend_right_value > 0
 
+  if @cabinet_type == 'corner'
+    draw_corner_blend(side: 'right')
+    return
+  end
+
   has_front_surface = front_surface_enabled?
   y_offset = has_front_surface ? -@front_thickness : 0
   x = @width + @blend_right_value
@@ -611,6 +621,46 @@ def draw_blend_right
 
   draw_named_panel(name: 'Blend Right', points: points, thickness: @blend_right_value, extrusion: @blend_right_value)
 end
+
+    def draw_corner_blend(side:)
+      front_width = [[@corner_front_width, 0].max, @width].min
+      panel_width = [@width - front_width, 0].max
+      return if panel_width <= 0
+
+      blend_value = side == 'left' ? @blend_left_value : @blend_right_value
+      blend_depth_value = side == 'left' ? @blend_left_depth_value : @blend_right_depth_value
+      return unless blend_value > 0
+
+      side_matches_panel = (@corner_front_panel_side == 'left' && side == 'left') || (@corner_front_panel_side == 'right' && side == 'right')
+      return unless side_matches_panel
+
+      depth_span = blend_depth_value > 0 ? [blend_depth_value, panel_width].min : panel_width
+      return if depth_span <= 0
+
+      panel_end_x = @corner_front_panel_side == 'left' ? panel_width : @width - panel_width
+      if @corner_front_panel_side == 'left'
+        x_min = panel_end_x - depth_span
+        x_max = panel_end_x
+      else
+        x_min = panel_end_x
+        x_max = panel_end_x + depth_span
+      end
+
+      y = -@panel_thickness
+      blend_bottom_z = -@cokol_dolny_value
+      blend_top_z = @height + @cokol_gorny_value
+      return if blend_top_z <= blend_bottom_z
+
+      points = [
+        [x_min, y, blend_bottom_z],
+        [x_max, y, blend_bottom_z],
+        [x_max, y, blend_top_z],
+        [x_min, y, blend_top_z]
+      ]
+
+      blend_name = side == 'left' ? 'Blend Left' : 'Blend Right'
+      draw_named_panel(name: blend_name, points: points, thickness: @panel_thickness, extrusion: blend_value)
+    end
 
     def draw_corner_front_layout
       return unless @cabinet_type == 'corner'
