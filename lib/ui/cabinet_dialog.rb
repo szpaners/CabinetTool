@@ -97,6 +97,8 @@ def cabinet_params(params)
     blend_right_value: params['blend_right_value'].to_f.round.mm,
     blend_left_depth_value: params['blend_left_depth_value'].to_f.round.mm,
     blend_right_depth_value: params['blend_right_depth_value'].to_f.round.mm,
+    blend_left_offset_value: params['blend_left_offset_value'].to_f.round.mm,
+    blend_right_offset_value: params['blend_right_offset_value'].to_f.round.mm,
     cokol_dolny_value: params['cokol_dolny_value'].to_f.round.mm,
     cokol_gorny_value: params['cokol_gorny_value'].to_f.round.mm,
     cokol_dolny_offset_value: params['cokol_dolny_offset_value'].to_f.round.mm,

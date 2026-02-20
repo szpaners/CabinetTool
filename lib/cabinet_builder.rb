@@ -629,23 +629,26 @@ end
 
       blend_value = side == 'left' ? @blend_left_value : @blend_right_value
       blend_depth_value = side == 'left' ? @blend_left_depth_value : @blend_right_depth_value
+      blend_offset_value = side == 'left' ? @blend_left_offset_value : @blend_right_offset_value
       return unless blend_value > 0
 
-      blend_bottom_z = -@cokol_dolny_value
+      # W szafce narożnej blenda nie powinna schodzić na wysokość cokołu dolnego.
+      blend_bottom_z = 0
       blend_top_z = @height + @cokol_gorny_value
       return if blend_top_z <= blend_bottom_z
 
       if side == @corner_front_panel_side
-        depth_span = blend_depth_value > 0 ? [blend_depth_value, panel_width].min : panel_width
+        available_panel_span = [panel_width - blend_offset_value, 0].max
+        depth_span = blend_depth_value > 0 ? [blend_depth_value, available_panel_span].min : available_panel_span
         return if depth_span <= 0
 
         panel_end_x = @corner_front_panel_side == 'left' ? panel_width : @width - panel_width
         if @corner_front_panel_side == 'left'
-          x_min = panel_end_x - depth_span
-          x_max = panel_end_x
+          x_max = panel_end_x - blend_offset_value
+          x_min = x_max - depth_span
         else
-          x_min = panel_end_x
-          x_max = panel_end_x + depth_span
+          x_min = panel_end_x + blend_offset_value
+          x_max = x_min + depth_span
         end
 
         y = -@panel_thickness

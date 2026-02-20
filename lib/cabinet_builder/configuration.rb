@@ -77,6 +77,8 @@ end
       @blend_right_value = read_config_value(config: config, key: :blend_right_value, default: 0).to_f
       @blend_left_depth_value = read_config_value(config: config, key: :blend_left_depth_value, default: 0).to_f
       @blend_right_depth_value = read_config_value(config: config, key: :blend_right_depth_value, default: 0).to_f
+      @blend_left_offset_value = [read_config_value(config: config, key: :blend_left_offset_value, default: 0).to_f, 0].max
+      @blend_right_offset_value = [read_config_value(config: config, key: :blend_right_offset_value, default: 0).to_f, 0].max
     end
 
     def setup_cokols(config)
