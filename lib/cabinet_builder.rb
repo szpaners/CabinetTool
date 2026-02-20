@@ -631,32 +631,45 @@ end
       blend_depth_value = side == 'left' ? @blend_left_depth_value : @blend_right_depth_value
       return unless blend_value > 0
 
-      side_matches_panel = (@corner_front_panel_side == 'left' && side == 'left') || (@corner_front_panel_side == 'right' && side == 'right')
-      return unless side_matches_panel
-
-      depth_span = blend_depth_value > 0 ? [blend_depth_value, panel_width].min : panel_width
-      return if depth_span <= 0
-
-      panel_end_x = @corner_front_panel_side == 'left' ? panel_width : @width - panel_width
-      if @corner_front_panel_side == 'left'
-        x_min = panel_end_x - depth_span
-        x_max = panel_end_x
-      else
-        x_min = panel_end_x
-        x_max = panel_end_x + depth_span
-      end
-
-      y = -@panel_thickness
       blend_bottom_z = -@cokol_dolny_value
       blend_top_z = @height + @cokol_gorny_value
       return if blend_top_z <= blend_bottom_z
 
-      points = [
-        [x_min, y, blend_bottom_z],
-        [x_max, y, blend_bottom_z],
-        [x_max, y, blend_top_z],
-        [x_min, y, blend_top_z]
-      ]
+      if side == @corner_front_panel_side
+        depth_span = blend_depth_value > 0 ? [blend_depth_value, panel_width].min : panel_width
+        return if depth_span <= 0
+
+        panel_end_x = @corner_front_panel_side == 'left' ? panel_width : @width - panel_width
+        if @corner_front_panel_side == 'left'
+          x_min = panel_end_x - depth_span
+          x_max = panel_end_x
+        else
+          x_min = panel_end_x
+          x_max = panel_end_x + depth_span
+        end
+
+        y = -@panel_thickness
+        points = [
+          [x_min, y, blend_bottom_z],
+          [x_max, y, blend_bottom_z],
+          [x_max, y, blend_top_z],
+          [x_min, y, blend_top_z]
+        ]
+      else
+        has_front_surface = front_surface_enabled?
+        y_offset = has_front_surface ? -@front_thickness : 0
+        max_depth = @internal_depth + (has_front_surface ? @front_thickness : 0)
+        depth_span = blend_depth_value > 0 ? [blend_depth_value, max_depth].min : max_depth
+        return if depth_span <= 0
+
+        x = side == 'left' ? 0 : @width + blend_value
+        points = [
+          [x, y_offset, blend_bottom_z],
+          [x, y_offset, blend_top_z],
+          [x, y_offset + depth_span, blend_top_z],
+          [x, y_offset + depth_span, blend_bottom_z]
+        ]
+      end
 
       blend_name = side == 'left' ? 'Blend Left' : 'Blend Right'
       draw_named_panel(name: blend_name, points: points, thickness: @panel_thickness, extrusion: blend_value)
