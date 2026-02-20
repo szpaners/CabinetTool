@@ -44,7 +44,8 @@ module CabinetBuilder
     end
 
     def panel_tag_for(panel_name)
-      suffix = panel_name.to_s.downcase.start_with?('front') ? 'front' : 'korpus'
+      normalized_name = panel_name.to_s.downcase
+      suffix = normalized_name.include?('front') ? 'front' : 'korpus'
       tag_name = "#{@nazwa_szafki}_#{suffix}"
       @model.layers[tag_name] || @model.layers.add(tag_name)
     end
