@@ -23,20 +23,6 @@
 
     <div id="dimensions" class="tab-content active">
         <div class="section card card-body mb-2">
-            <h3 class="section-title">Podgląd na żywo</h3>
-            <div class="live-preview">
-                <div class="preview-canvas iso-preview-canvas" id="preview_canvas">
-                    <svg id="preview_iso_svg" viewBox="0 0 340 220" role="img" aria-label="Podgląd izometryczny szafki">
-                        <g id="preview_iso_shadow"></g>
-                        <g id="preview_iso_cabinet"></g>
-                        <g id="preview_iso_details"></g>
-                        <g id="preview_iso_front"></g>
-                    </svg>
-                </div>
-                <div class="preview-summary" id="preview_summary"></div>
-            </div>
-        </div>
-        <div class="section card card-body mb-2">
             <h3 class="section-title">Wymiary korpusu</h3>
             <div class="form-grid">
                 <div class="form-group">
@@ -551,30 +537,38 @@
                     <input type="number" id="wardrobe_cokol_gorny_offset_value" value="0" min="0" class="form-control form-control-sm">
                 </div>
             </div>
-            <div class="form-grid mt-2">
-                <div class="form-group checkbox-group">
-                    <label><input type="checkbox" id="wardrobe_blend_left_checkbox" class="form-check-input me-1"> Blenda lewa</label>
+            <div class="blend-section mt-2">
+                <div class="form-grid">
+                    <div class="form-group checkbox-group">
+                        <label><input type="checkbox" id="wardrobe_blend_left_checkbox" class="form-check-input me-1"> Blenda lewa</label>
+                    </div>
+                    <div class="form-group is-hidden" id="wardrobe_blend_left_group">
+                        <label for="wardrobe_blend_left_value">Wartość (mm):</label>
+                        <input type="number" id="wardrobe_blend_left_value" value="0" class="form-control form-control-sm">
+                    </div>
+                    <div class="form-group checkbox-group is-hidden" id="wardrobe_blend_left_depth_checkbox_group">
+                        <label><input type="checkbox" id="wardrobe_blend_left_depth_checkbox" class="form-check-input me-1"> Głębokość lewa</label>
+                    </div>
+                    <div class="form-group is-hidden" id="wardrobe_blend_left_depth_group">
+                        <label for="wardrobe_blend_left_depth_value">Głębokość (mm):</label>
+                        <input type="number" id="wardrobe_blend_left_depth_value" value="0" class="form-control form-control-sm">
+                    </div>
                 </div>
-                <div class="form-group is-hidden" id="wardrobe_blend_left_group">
-                    <label for="wardrobe_blend_left_value">Blenda lewa (mm):</label>
-                    <input type="number" id="wardrobe_blend_left_value" value="0" class="form-control form-control-sm">
-                </div>
-                <div class="form-group is-hidden" id="wardrobe_blend_left_depth_group">
-                    <label for="wardrobe_blend_left_depth_value">Blenda lewa głębokość (mm):</label>
-                    <input type="number" id="wardrobe_blend_left_depth_value" value="0" class="form-control form-control-sm">
-                </div>
-            </div>
-            <div class="form-grid mt-2">
-                <div class="form-group checkbox-group">
-                    <label><input type="checkbox" id="wardrobe_blend_right_checkbox" class="form-check-input me-1"> Blenda prawa</label>
-                </div>
-                <div class="form-group is-hidden" id="wardrobe_blend_right_group">
-                    <label for="wardrobe_blend_right_value">Blenda prawa (mm):</label>
-                    <input type="number" id="wardrobe_blend_right_value" value="0" class="form-control form-control-sm">
-                </div>
-                <div class="form-group is-hidden" id="wardrobe_blend_right_depth_group">
-                    <label for="wardrobe_blend_right_depth_value">Blenda prawa głębokość (mm):</label>
-                    <input type="number" id="wardrobe_blend_right_depth_value" value="0" class="form-control form-control-sm">
+                <div class="form-grid">
+                    <div class="form-group checkbox-group">
+                        <label><input type="checkbox" id="wardrobe_blend_right_checkbox" class="form-check-input me-1"> Blenda prawa</label>
+                    </div>
+                    <div class="form-group is-hidden" id="wardrobe_blend_right_group">
+                        <label for="wardrobe_blend_right_value">Wartość (mm):</label>
+                        <input type="number" id="wardrobe_blend_right_value" value="0" class="form-control form-control-sm">
+                    </div>
+                    <div class="form-group checkbox-group is-hidden" id="wardrobe_blend_right_depth_checkbox_group">
+                        <label><input type="checkbox" id="wardrobe_blend_right_depth_checkbox" class="form-check-input me-1"> Głębokość prawa</label>
+                    </div>
+                    <div class="form-group is-hidden" id="wardrobe_blend_right_depth_group">
+                        <label for="wardrobe_blend_right_depth_value">Głębokość (mm):</label>
+                        <input type="number" id="wardrobe_blend_right_depth_value" value="0" class="form-control form-control-sm">
+                    </div>
                 </div>
             </div>
         </div>
